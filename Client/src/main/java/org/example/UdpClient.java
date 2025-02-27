@@ -3,6 +3,14 @@ package org.example;
 import java.io.IOException;
 import java.net.*;
 
+
+///  ideas
+///
+/// it should wait for messaged and append them in an array
+/// when it receives it send a message with flag ack
+/// message may be null
+/// s
+
 public class UdpClient {
 
 
@@ -17,6 +25,9 @@ public class UdpClient {
     }
 
     public String sendEcho(String msg) throws IOException {
+        /*
+         --> this is wrongs
+
         buf = msg.getBytes();
         DatagramPacket packet
                 = new DatagramPacket(buf, buf.length, address, 4445);
@@ -27,6 +38,7 @@ public class UdpClient {
         String received = new String(
                 packet.getData(), 0, packet.getLength());
         return received;
+        */
     }
 
     public void close() {
