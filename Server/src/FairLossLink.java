@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
-
+import java.security.*;
 /// ideas
 /// server trys to send a message and records the message id sent
 /// tries until its able to receive a message with ACK flag positive
@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class FairLossLink {
 
 
-    private DatagramSocket socket;
+    private final DatagramSocket socket;
     private boolean running;
     private byte[] buffer = new byte[256];
 
@@ -21,7 +21,7 @@ public class FairLossLink {
     }
 
 
-    public void sendMessage(String msg) throws IOException {
+    public void sendMessage(String msg) throws IOException, NoSuchAlgorithmException {
         buffer = msg.getBytes();
         DatagramPacket packet
                 = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), 4445);
@@ -29,7 +29,6 @@ public class FairLossLink {
         socket.send(packet);
         String sent = new String(packet.getData(), 0, packet.getLength());
         System.out.println("sent " + sent);
-
 
     }
 
