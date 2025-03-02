@@ -10,7 +10,8 @@ public class PerfectLink extends FairLossLink {
     ConcurrentHashMap<Integer, Boolean> MessagesAck = new ConcurrentHashMap<Integer, Boolean>();
 
 
-    public PerfectLink() throws SocketException {
+    public PerfectLink(int port) throws SocketException {
+        super(port);
     }
 
     @Override

@@ -11,7 +11,7 @@ public class Main {
         System.out.println("Hello and welcome!");
         //FairLossLink fll = new FairLossLink();
 
-        PerfectLink pl = new PerfectLink();
+        PerfectLink pl = new PerfectLink(4555);
 
         pl.startSendMessageThread();
         pl.StartReceiveMessagesThread();

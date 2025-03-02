@@ -15,8 +15,8 @@ public class FairLossLink {
     private boolean running;
     //private byte[] buffer = new byte[256];
 
-    public FairLossLink() throws SocketException {
-        socket = new DatagramSocket(4445);
+    public FairLossLink(int port) throws SocketException {
+        socket = new DatagramSocket(port);
     }
 
 
