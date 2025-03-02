@@ -83,11 +83,11 @@ public class PerfectLink extends FairLossLink {
         UdpMessage msg = receivedTuple.getMessage();
         Integer portToSend = receivedTuple.getPort();
 
-        switch (msg.type()) {
+        switch (msg.getType()) {
 
             case MessageType.Message -> {
                 if (!isMessageDuplicate(msg)) {
-                    ReceivedMessages.put(msg.getMessageUniqueId(), msg.message());
+                    ReceivedMessages.put(msg.getMessageUniqueId(), msg.getMessage());
                     /// send echo response to sender
                     try {
                         Thread.sleep(1000);
@@ -108,10 +108,10 @@ public class PerfectLink extends FairLossLink {
 
     private void PrettyPrintMessage(UdpMessage msg){
         System.out.println("message received");
-        System.out.println("sendID: " + msg.senderID() +
-                " || msgID: " + msg.messageID() +
-                " ||  msg: " + msg.message() +
-                " || type: " + msg.type()
+        System.out.println("sendID: " + msg.getSenderId() +
+                " || msgID: " + msg.getMessageId() +
+                " ||  msg: " + msg.getMessage() +
+                " || type: " + msg.getType()
         );
     }
 

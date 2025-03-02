@@ -34,7 +34,7 @@ public class FairLossLink {
         socket.send(packet);
         String sent = new String(packet.getData(), 0, packet.getLength());
         System.out.println("message sent");
-        System.out.println("sendID: " + msg.senderID() + " || msgID: "+ msg.messageID() + " ||  msg: " + msg.message());
+        System.out.println("sendID: " + msg.getSenderId() + " || msgID: "+ msg.getMessageId() + " ||  msg: " + msg.getMessage());
 
 
     }
