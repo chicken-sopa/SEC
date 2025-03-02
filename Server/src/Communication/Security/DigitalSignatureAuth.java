@@ -11,7 +11,7 @@ public class DigitalSignatureAuth<T extends IMessage> {
     public final KeyPairGenerator keyGen;
 
     public DigitalSignatureAuth() throws NoSuchAlgorithmException {
-        keyGen = KeyPairGenerator.getInstance(Constants.getAlgorithm());
+        keyGen = KeyPairGenerator.getInstance(Constants.getRsa());
         keyGen.initialize(Constants.getKeySize());
     }
 
@@ -34,6 +34,7 @@ public class DigitalSignatureAuth<T extends IMessage> {
         signature.update(msg.serializeMessage());
 
         byte[] signatureBytes = Base64.getDecoder().decode(signatureStr);
+
         return signature.verify(signatureBytes);
     }
 

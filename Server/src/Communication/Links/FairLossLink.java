@@ -34,12 +34,12 @@ public class FairLossLink<T extends IMessage> {
                 = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), portToSend);
 
         socket.send(packet);
-        String sent = new String(packet.getData(), 0, packet.getLength());
+        //String sent = new String(packet.getData(), 0, packet.getLength());
         System.out.println("message sent");
         System.out.println("sendID: " + msg.getSenderId() + " || msgID: "+ msg.getMessageId() + " ||  msg: " + msg.getMessageValue());
     }
 
-    public MessageDeliveryTuple<T, Integer> receiveMessage() throws IOException, ClassNotFoundException {
+    public MessageDeliveryTuple<T, Integer> receiveMessage() throws Exception {
         byte[] buffer = new byte[1024];
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
