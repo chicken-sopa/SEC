@@ -36,7 +36,6 @@ public record UdpMessage(
         messageUniqueIds[1] = messageID;
         return Arrays.hashCode(messageUniqueIds);
     }
-
 }
 
 
