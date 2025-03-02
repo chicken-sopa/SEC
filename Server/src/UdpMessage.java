@@ -27,6 +27,13 @@ public record UdpMessage(
         }
     }
 
+    public Integer[] getMessageUniqueIds() {
+        Integer[] messageUniqueIds = new Integer[2];
+        messageUniqueIds[0] = senderID;
+        messageUniqueIds[1] = messageID;
+        return messageUniqueIds;
+    }
+
 }
 
 
