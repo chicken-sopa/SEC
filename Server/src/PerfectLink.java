@@ -16,7 +16,14 @@ public class PerfectLink extends FairLossLink {
 
     @Override
     public void sendMessage(UdpMessage msg) throws IOException, NoSuchAlgorithmException {
-        super.sendMessage(msg);
+        while(!MessagesAck.get(msg.messageID())){
+            try{
+                super.sendMessage(msg);
+                Thread.sleep(100);
+            } catch (IOException | NoSuchAlgorithmException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -27,31 +34,22 @@ public class PerfectLink extends FairLossLink {
 
     public void startSendMessageThread() {
         Thread t = new Thread(() -> {
+            Scanner myObj = new Scanner(System.in);
 
-            while (true) {
-                try {
-                    Scanner myObj = new Scanner(System.in);
+            System.out.println("Enter msg: ");
 
-                    System.out.println("Enter msg: ");
+            // String input
+            String message = myObj.nextLine();
 
-                    // String input
-                    String message = myObj.nextLine();
+            UdpMessage messageToSend = new UdpMessage(1, 1, message, MessageType.Message);
 
-                    UdpMessage messageToSend = new UdpMessage(1, 1, message, MessageType.Message);
+            MessagesAck.put(messageToSend.messageID(), false);
 
-                    MessagesAck.put(messageToSend.messageID(), false);
-
-                    while (MessagesAck.get(messageToSend.messageID()) == false) {
-                        sendMessage(messageToSend);
-                        Thread.sleep(100);
-                    }
-
-
-                } catch (IOException | NoSuchAlgorithmException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            try {
+                sendMessage(messageToSend);
+            } catch (IOException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
             }
-
         });
 
         t.start();
@@ -89,8 +87,6 @@ public class PerfectLink extends FairLossLink {
     }
 
     public void processMessageReceived(UdpMessage msg) throws IOException, NoSuchAlgorithmException, InterruptedException {
-
-
         switch (msg.type()) {
 
             case Message -> {
