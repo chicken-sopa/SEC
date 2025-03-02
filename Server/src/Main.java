@@ -3,22 +3,11 @@ import Communication.Links.PerfectLink;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.println("Hello and welcome!");
-        //Communication.Links.FairLossLink fll = new Communication.Links.FairLossLink();
 
-        PerfectLink pl = new PerfectLink(4555);
+        Server server = new Server(4555);
 
-        pl.startSendMessageThread();
-        pl.StartReceiveMessagesThread();
-
-        //fll.sendMessage(args[0]);
-        //fll.receiveMessage();
-
+        server.init();
     }
 }

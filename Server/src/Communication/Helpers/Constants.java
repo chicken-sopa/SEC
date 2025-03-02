@@ -2,6 +2,7 @@ package Communication.Helpers;
 
 public final class Constants {
 
+    private static final String Rsa = "RSA";
     private static final String algorithm = "SHA256withRSA";
     private static final int KeySize = 2048;
 
@@ -15,5 +16,9 @@ public final class Constants {
 
     public static int getKeySize() {
         return KeySize;
+    }
+
+    public static String getRsa() {
+        return Rsa;
     }
 }

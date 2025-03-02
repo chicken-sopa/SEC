@@ -1,12 +1,11 @@
 package Communication.Messages;
 
-public class SignedUdpMessage {
+import Communication.Messages.Base.IMessage;
+import Communication.Messages.Base.SignedMessage;
 
-    private UdpMessage message;
-    private String signature;
+public class SignedUdpMessage<T extends IMessage> extends SignedMessage<T> {
 
-    public SignedUdpMessage(UdpMessage msg,  String signature) {
-        message =  msg;
-        this.signature = signature;
+    public SignedUdpMessage(T msg, String signature) {
+        super(msg, signature);
     }
 }
