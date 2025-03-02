@@ -1,3 +1,8 @@
+package Communication.Links;
+
+import Communication.Links.Data.MessageDeliveryTuple;
+import Communication.Messages.UdpMessage;
+
 import java.io.IOException;
 import java.net.*;
 import java.security.*;
@@ -44,7 +49,7 @@ public class FairLossLink {
         byte[] receivedData = packet.getData();
 
 
-        // Deserialize the byte array into a UdpMessage object
+        // Deserialize the byte array into a Communication.Messages.UdpMessage object
         return new MessageDeliveryTuple<>(UdpMessage.deserializeMessage(receivedData), packet.getPort());
 
 

@@ -1,3 +1,5 @@
+package Communication.Links.Data;
+
 public class MessageDeliveryTuple<UdpMessage, Integer> extends Tuple<UdpMessage, Integer> {
 
     public MessageDeliveryTuple(UdpMessage message, Integer port) {

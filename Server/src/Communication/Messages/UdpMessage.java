@@ -1,3 +1,5 @@
+package Communication.Messages;
+
 import java.io.*;
 import java.util.Arrays;
 
@@ -10,7 +12,7 @@ public record UdpMessage(
 
 
     //Serialize message object in order to send trough UDP
-    byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         // Serialize to a byte array
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
         ObjectOutput oo = new ObjectOutputStream(bStream);
@@ -20,7 +22,7 @@ public record UdpMessage(
         return bStream.toByteArray();
     }
 
-    // Deserialize a byte array back into a UdpMessage object
+    // Deserialize a byte array back into a Communication.Messages.UdpMessage object
     public static UdpMessage deserializeMessage(byte[] data) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bStream = new ByteArrayInputStream(data);
              ObjectInputStream oi = new ObjectInputStream(bStream)) {

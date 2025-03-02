@@ -1,3 +1,9 @@
+package Communication.Links;
+
+import Communication.Links.Data.MessageDeliveryTuple;
+import Communication.Messages.MessageType;
+import Communication.Messages.UdpMessage;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
@@ -79,7 +85,7 @@ public class PerfectLink extends FairLossLink {
 
         switch (msg.type()) {
 
-            case Message -> {
+            case MessageType.Message -> {
                 if (!isMessageDuplicate(msg)) {
                     ReceivedMessages.put(msg.getMessageUniqueId(), msg.message());
                     /// send echo response to sender
@@ -93,7 +99,7 @@ public class PerfectLink extends FairLossLink {
                 }
             }
 
-            case Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
+            case MessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
 
         }
     }

@@ -1,3 +1,5 @@
+package Communication.Links.Data;
+
 public class Tuple<X, Y> {
     protected final X x;
     protected final Y y;
