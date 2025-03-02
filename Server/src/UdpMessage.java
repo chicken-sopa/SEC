@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Arrays;
 
 public record UdpMessage(
     int senderID,
@@ -27,11 +28,11 @@ public record UdpMessage(
         }
     }
 
-    public Integer[] getMessageUniqueIds() {
+    public int getMessageUniqueId() {
         Integer[] messageUniqueIds = new Integer[2];
         messageUniqueIds[0] = senderID;
         messageUniqueIds[1] = messageID;
-        return messageUniqueIds;
+        return Arrays.hashCode(messageUniqueIds);
     }
 
 }

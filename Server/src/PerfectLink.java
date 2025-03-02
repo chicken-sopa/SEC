@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PerfectLink extends FairLossLink {
 
-    ConcurrentHashMap<Integer[], String> ReceivedMessages = new ConcurrentHashMap<Integer[], String>();
-    ConcurrentHashMap<Integer[], Boolean> MessagesAck = new ConcurrentHashMap<Integer[], Boolean>();
+    ConcurrentHashMap<Integer, String> ReceivedMessages = new ConcurrentHashMap<Integer, String>();
+    ConcurrentHashMap<Integer, Boolean> MessagesAck = new ConcurrentHashMap<Integer, Boolean>();
 
 
     public PerfectLink(int port) throws SocketException {
@@ -16,7 +16,7 @@ public class PerfectLink extends FairLossLink {
 
 
     public void sendMessage(UdpMessage msg) throws IOException, NoSuchAlgorithmException {
-        while(!MessagesAck.get(msg.getMessageUniqueIds())){
+        while(!MessagesAck.get(msg.getMessageUniqueId())){
             try{
                 super.sendMessage(msg);
                 Thread.sleep(100);
@@ -37,7 +37,7 @@ public class PerfectLink extends FairLossLink {
 
             UdpMessage messageToSend = new UdpMessage(1, 1, message, MessageType.Message);
 
-            MessagesAck.put(messageToSend.getMessageUniqueIds(), false);
+            MessagesAck.put(messageToSend.getMessageUniqueId(), false);
 
             try {
                 sendMessage(messageToSend);
@@ -75,7 +75,7 @@ public class PerfectLink extends FairLossLink {
 
             case Message -> {
                 if (!isMessageDuplicate(msg)) {
-                    ReceivedMessages.put(msg.getMessageUniqueIds(), msg.message());
+                    ReceivedMessages.put(msg.getMessageUniqueId(), msg.message());
                     /// send echo response to sender
                     try {
                         Thread.sleep(1000);
@@ -87,7 +87,7 @@ public class PerfectLink extends FairLossLink {
                 }
             }
 
-            case Ack -> MessagesAck.put(msg.getMessageUniqueIds(), true);
+            case Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
 
         }
     }
@@ -104,7 +104,7 @@ public class PerfectLink extends FairLossLink {
     }
 
     private boolean isMessageDuplicate(UdpMessage msg) {
-        return ReceivedMessages.get(msg.getMessageUniqueIds()) != null;
+        return ReceivedMessages.get(msg.getMessageUniqueId()) != null;
     }
 
     //endregion
