@@ -8,11 +8,16 @@ public class Main {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
         // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-        FairLossLink fll = new FairLossLink();
+        System.out.println("Hello and welcome!");
+        //FairLossLink fll = new FairLossLink();
 
-        fll.sendMessage(args[0]);
-        fll.receiveMessage();
+        PerfectLink pl = new PerfectLink();
+
+        pl.startSendMessageThread();
+        pl.StartReceiveMessagesThread();
+
+        //fll.sendMessage(args[0]);
+        //fll.receiveMessage();
 
     }
 }

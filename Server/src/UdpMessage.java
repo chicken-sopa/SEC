@@ -1,19 +1,33 @@
+import java.io.*;
+
 public record UdpMessage(
     int senderID,
     int messageID,
     String message,
     MessageType type
-){}
+) implements Serializable {
 
 
+    //Serialize message object in order to send trough UDP
+    byte[] serializeMessage() throws IOException {
+        // Serialize to a byte array
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        ObjectOutput oo = new ObjectOutputStream(bStream);
+        oo.writeObject(this);
+        oo.close();
 
-enum MessageType{
-    Ack,
-    Message,
-    /*Init,
-    Propose,
-    Decide
-     */
+        return bStream.toByteArray();
+    }
+
+    // Deserialize a byte array back into a UdpMessage object
+    public static UdpMessage deserializeMessage(byte[] data) throws IOException, ClassNotFoundException {
+        try (ByteArrayInputStream bStream = new ByteArrayInputStream(data);
+             ObjectInputStream oi = new ObjectInputStream(bStream)) {
+            return (UdpMessage) oi.readObject();
+        }
+    }
 
 }
+
+
 

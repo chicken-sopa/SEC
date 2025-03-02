@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.net.*;
-import java.util.Arrays;
 import java.security.*;
 /// ideas
 /// server trys to send a message and records the message id sent
@@ -14,30 +13,43 @@ public class FairLossLink {
 
     private final DatagramSocket socket;
     private boolean running;
-    private byte[] buffer = new byte[256];
+    //private byte[] buffer = new byte[256];
 
     public FairLossLink() throws SocketException {
         socket = new DatagramSocket(4445);
     }
 
 
-    public void sendMessage(String msg) throws IOException, NoSuchAlgorithmException {
-        buffer = msg.getBytes();
+    public void sendMessage(UdpMessage msg) throws IOException, NoSuchAlgorithmException {
+
+        byte[] buffer = msg.serializeMessage();
         DatagramPacket packet
                 = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), 4445);
 
         socket.send(packet);
         String sent = new String(packet.getData(), 0, packet.getLength());
-        System.out.println("sent " + sent);
+        System.out.println("message sent");
+        System.out.println("sendID: " + msg.senderID() + " || msgID: "+ msg.messageID() + " ||  msg: " + msg.message());
+
 
     }
 
-    public void receiveMessage() throws IOException {
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-        socket.receive(packet);
-        String received = new String(packet.getData(), 0, packet.getLength());
-        System.out.println("received " + received);
+    public UdpMessage receiveMessage() throws IOException, ClassNotFoundException {
+        byte[] buffer = new byte[1024];
 
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+
+        socket.receive(packet);
+        byte[] receivedData = packet.getData();
+
+
+        // Deserialize the byte array into a UdpMessage object
+        return UdpMessage.deserializeMessage(receivedData);
+
+        //System.out.println("received " + received);
+
+        //return received;
     }
 
 
