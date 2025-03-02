@@ -1,12 +1,12 @@
 package Communication.Security;
 
 import Communication.Helpers.Constants;
-import Communication.Messages.UdpMessage;
+import Communication.Messages.Base.IMessage;
 
 import java.security.*;
 import java.util.Base64;
 
-public class DigitalSignatureAuth {
+public class DigitalSignatureAuth<T extends IMessage> {
 
     public final KeyPairGenerator keyGen;
 
@@ -19,7 +19,7 @@ public class DigitalSignatureAuth {
         return keyGen.generateKeyPair();
     }
 
-    public String signMessage(UdpMessage msg, PrivateKey pKey) throws Exception{
+    public String signMessage(T msg, PrivateKey pKey) throws Exception{
         Signature signature = Signature.getInstance(Constants.getAlgorithm());
         signature.initSign(pKey);
         signature.update(msg.serializeMessage());
@@ -28,7 +28,7 @@ public class DigitalSignatureAuth {
         return Base64.getEncoder().encodeToString(signedBytes);
     }
 
-    public boolean verifySignature(UdpMessage msg, PublicKey pubKey, String signatureStr) throws Exception{
+    public boolean verifySignature(T msg, PublicKey pubKey, String signatureStr) throws Exception{
         Signature signature = Signature.getInstance(Constants.getAlgorithm());
         signature.initVerify(pubKey);
         signature.update(msg.serializeMessage());
