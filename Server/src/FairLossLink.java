@@ -20,11 +20,11 @@ public class FairLossLink {
     }
 
 
-    public void sendMessage(UdpMessage msg) throws IOException, NoSuchAlgorithmException {
+    public void sendMessage(UdpMessage msg, Integer portToSend) throws IOException, NoSuchAlgorithmException {
 
         byte[] buffer = msg.serializeMessage();
         DatagramPacket packet
-                = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), 4445);
+                = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), portToSend);
 
         socket.send(packet);
         String sent = new String(packet.getData(), 0, packet.getLength());
@@ -34,7 +34,7 @@ public class FairLossLink {
 
     }
 
-    public UdpMessage receiveMessage() throws IOException, ClassNotFoundException {
+    public MessageDeliveryTuple<UdpMessage, Integer> receiveMessage() throws IOException, ClassNotFoundException {
         byte[] buffer = new byte[1024];
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -45,11 +45,9 @@ public class FairLossLink {
 
 
         // Deserialize the byte array into a UdpMessage object
-        return UdpMessage.deserializeMessage(receivedData);
+        return new MessageDeliveryTuple<>(UdpMessage.deserializeMessage(receivedData), packet.getPort());
 
-        //System.out.println("received " + received);
 
-        //return received;
     }
 
 
