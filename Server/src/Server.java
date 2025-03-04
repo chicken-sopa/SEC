@@ -1,9 +1,5 @@
 import Communication.Collection.CollectMessage;
-import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
 import Communication.Links.AuthenticatedPerfectLink;
-import Communication.Links.Data.MessageDeliveryTuple;
-import Communication.Links.LinkMessages.Base.LinkMessageType;
-import Communication.Links.LinkMessages.UdpLinkMessage;
 import Communication.Links.Security.DigitalSignatureAuth;
 
 import java.net.SocketException;
@@ -28,20 +24,15 @@ public class Server {
     private void startSendMessageThread(){
         Thread t = new Thread(() -> {
             Scanner myObj = new Scanner(System.in);
-
             Integer portToSend = 4555;
-
             System.out.println("Enter msg: ");
-
-            // String input
+            // input & msg creation
             int epoch = Integer.parseInt(myObj.nextLine());
             String message = myObj.nextLine();
-
             CollectMessage msg =  new CollectMessage(epoch, message);
-            UdpLinkMessage<CollectMessage> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
 
             try {
-                authenticatedPerfectLink.sendMessage(messageToSend, portToSend);
+                authenticatedPerfectLink.sendMessage(msg, portToSend);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -54,10 +45,7 @@ public class Server {
         new Thread(() -> {
             while (true) {
                 try {
-                    MessageDeliveryTuple<ILinkMessage<CollectMessage>, Integer> messageReceived = authenticatedPerfectLink.receiveMessage();
-                    if  (messageReceived != null){
-                        authenticatedPerfectLink.processMessageReceived(messageReceived);
-                    }
+                    CollectMessage messageReceived = authenticatedPerfectLink.receiveMessage();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

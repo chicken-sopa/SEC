@@ -28,7 +28,7 @@ public class FairLossLink<T extends IMessage> {
         socket.send(packet);
     }
 
-    public MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveMessage() throws Exception {
+    protected MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveLinkMessage() throws Exception {
 
         byte[] buffer = new byte[2048];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);

@@ -24,20 +24,27 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         keyPair = this.digitalSignatureAuth.generateKeyPair();
     }
 
-    @Override
-    public void sendMessage(ILinkMessage<T> msg, Integer portToSend) throws Exception {
+    public void sendMessage(T msg, Integer portToSend) throws Exception {
 
-        String signature = digitalSignatureAuth.signMessage(msg, keyPair.getPrivate());
+        UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
 
-        SignedUdpLinkMessage<T> authenticatedMessage = new SignedUdpLinkMessage<>(msg, signature);
+        String signature = digitalSignatureAuth.signMessage(messageToSend, keyPair.getPrivate());
+
+        SignedUdpLinkMessage<T> authenticatedMessage = new SignedUdpLinkMessage<>(messageToSend, signature);
 
         super.sendMessage(authenticatedMessage, portToSend);
     }
 
-    @Override
-    public MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveMessage() throws Exception {
+    public T receiveMessage() throws Exception {
+        MessageDeliveryTuple<ILinkMessage<T>, Integer> messageTuple = receiveLinkMessage();
+        if (messageTuple == null)
+            return null;
+        return messageTuple.getMessage().getMessageValue();
+    }
 
-        MessageDeliveryTuple<ILinkMessage<T>, Integer> messageReceived = super.receiveMessage();
+    protected MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveLinkMessage() throws Exception {
+
+        MessageDeliveryTuple<ILinkMessage<T>, Integer> messageReceived = super.receiveLinkMessage();
         if (messageReceived == null)
             return null;
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
@@ -45,10 +52,14 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), keyPair.getPublic(), signedReceivedMessage.getSignature());
         if (!verified)
             return null;
+        processMessageReceived(messageReceived);
+
+        if (messageReceived.getMessage().getType() == LinkMessageType.Ack)
+            return null;
         return messageReceived;
     }
 
-    @Override
+
     @SuppressWarnings("unchecked")
     public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {
         ILinkMessage<T> msg = receivedMsg.getMessage();

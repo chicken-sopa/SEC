@@ -48,9 +48,9 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
         }
     }
 
-    public MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveMessage() throws Exception {
+    protected MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveLinkMessage() throws Exception {
 
-        MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg = super.receiveMessage();
+        MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg = super.receiveLinkMessage();
         Auxiliary.PrettyPrintUdpMessageReceived(receivedMsg.getMessage());
         ILinkMessage<T> msg = receivedMsg.getMessage();
 
@@ -68,23 +68,21 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
         return ReceivedMessages.get(msg.getMessageUniqueId()) != null;
     }
 
-    @SuppressWarnings("unchecked")
-    public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {
-        ILinkMessage<T> msg = receivedMsg.getMessage();
-        Integer portToSend = receivedMsg.getPort();
-
-        switch (msg.getType()) {
-
-            case LinkMessageType.Message -> {
-                /// send echo response to sender
-                AckMessage ackMsg = new AckMessage("message ack");
-                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(1, 1, (T) ackMsg, LinkMessageType.Ack);
-                super.sendMessage(ackMessage, portToSend);
-            }
-
-            case LinkMessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
-        }
-    }
-
-
+//    @SuppressWarnings("unchecked")
+//    public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {
+//        ILinkMessage<T> msg = receivedMsg.getMessage();
+//        Integer portToSend = receivedMsg.getPort();
+//
+//        switch (msg.getType()) {
+//
+//            case LinkMessageType.Message -> {
+//                /// send echo response to sender
+//                AckMessage ackMsg = new AckMessage("message ack");
+//                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(1, 1, (T) ackMsg, LinkMessageType.Ack);
+//                super.sendMessage(ackMessage, portToSend);
+//            }
+//
+//            case LinkMessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
+//        }
+//    }
 }
