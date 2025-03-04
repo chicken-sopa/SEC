@@ -1,5 +1,5 @@
+import Communication.Collection.CollectMessage;
 import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Communication.Links.LinkMessages.AckMessage;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Data.MessageDeliveryTuple;
 import Communication.Links.LinkMessages.Base.LinkMessageType;
@@ -12,8 +12,8 @@ import java.util.Scanner;
 
 public class Server {
 
-    AuthenticatedPerfectLink<AckMessage>  authenticatedPerfectLink;
-    DigitalSignatureAuth<AckMessage>  digitalSignatureAuth;
+    AuthenticatedPerfectLink<CollectMessage>  authenticatedPerfectLink;
+    DigitalSignatureAuth<CollectMessage>  digitalSignatureAuth;
 
     public Server(int port) throws SocketException, NoSuchAlgorithmException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
@@ -34,9 +34,11 @@ public class Server {
             System.out.println("Enter msg: ");
 
             // String input
+            int epoch = Integer.parseInt(myObj.nextLine());
             String message = myObj.nextLine();
-            AckMessage msg =  new AckMessage(message);
-            UdpLinkMessage<AckMessage> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
+
+            CollectMessage msg =  new CollectMessage(epoch, message);
+            UdpLinkMessage<CollectMessage> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
 
             try {
                 authenticatedPerfectLink.sendMessage(messageToSend, portToSend);
@@ -52,7 +54,7 @@ public class Server {
         new Thread(() -> {
             while (true) {
                 try {
-                    MessageDeliveryTuple<ILinkMessage<AckMessage>, Integer> messageReceived = authenticatedPerfectLink.receiveMessage();
+                    MessageDeliveryTuple<ILinkMessage<CollectMessage>, Integer> messageReceived = authenticatedPerfectLink.receiveMessage();
                     if  (messageReceived != null){
                         authenticatedPerfectLink.processMessageReceived(messageReceived);
                     }
