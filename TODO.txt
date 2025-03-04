@@ -1,0 +1,19 @@
+# TODO
+
+### Legenda:
+    - AB - António
+    - A  - Alexandre
+    - Z  - Zé
+
+## Links:
+    - Fazer o link incrementar automáticamente os ID's e fazer a sua gestão (AB)
+
+## Conditional Collect:
+    - Adicionar coisas (A)
+
+## Server:
+    - Tratar de instanciar sabendo as chaves publicas de outros servers e os seus Ports (AB)
+
+## Cliente:
+    - Conseguir enviar mensagens para o server com a string para fazer Append
+        (esperar pela confirmação do prof se é ou não para utilizar Links)
