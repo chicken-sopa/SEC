@@ -1,4 +1,4 @@
-package Communication.Security;
+package Communication.Links.Security;
 
 import Communication.Helpers.Constants;
 import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;

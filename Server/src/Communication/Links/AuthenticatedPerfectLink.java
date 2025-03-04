@@ -7,7 +7,7 @@ import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
 import Communication.Links.LinkMessages.Base.LinkMessageType;
 import Communication.Links.LinkMessages.SignedUdpLinkMessage;
 import Communication.Links.LinkMessages.UdpLinkMessage;
-import Communication.Security.DigitalSignatureAuth;
+import Communication.Links.Security.DigitalSignatureAuth;
 
 import java.net.SocketException;
 import java.security.KeyPair;
