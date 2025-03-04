@@ -1,10 +1,12 @@
 package Communication.Links;
 
+import Communication.Helpers.Auxiliary;
+import Communication.Links.LinkMessages.Base.Contracts.IMessage;
+import Communication.Links.LinkMessages.AckMessage;
 import Communication.Links.Data.MessageDeliveryTuple;
-import Communication.Messages.Base.IMessage;
-import Communication.Messages.Base.Message;
-import Communication.Messages.MessageType;
-import Communication.Messages.UdpMessage;
+import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Communication.Links.LinkMessages.Base.LinkMessageType;
+import Communication.Links.LinkMessages.UdpLinkMessage;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -13,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
 
-    ConcurrentHashMap<Integer, String> ReceivedMessages = new ConcurrentHashMap<Integer, String>();
+    ConcurrentHashMap<Integer, IMessage> ReceivedMessages = new ConcurrentHashMap<Integer, IMessage>();
     ConcurrentHashMap<Integer, Boolean> MessagesAck = new ConcurrentHashMap<Integer, Boolean>();
 
 
@@ -22,13 +24,14 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
     }
 
 
-    public void sendMessage(T msg, Integer portToSend) throws Exception {
+    public void sendMessage(ILinkMessage<T> msg, Integer portToSend) throws Exception {
         if (!MessagesAck.containsKey(msg.getMessageUniqueId())){
             MessagesAck.put(msg.getMessageUniqueId(), false);
         }
         while (!MessagesAck.get(msg.getMessageUniqueId())) {
             try {
                 super.sendMessage(msg, portToSend);
+                Auxiliary.PrettyPrintUdpMessageSent(msg);
                 Thread.sleep(500);
             } catch (IOException | NoSuchAlgorithmException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -36,20 +39,22 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
         }
     }
 
-    public void sendAckMessage(T msg, Integer portToSend) throws Exception {
+    public void sendAckMessage(ILinkMessage<T> msg, Integer portToSend) throws Exception {
         try {
             super.sendMessage(msg, portToSend);
+            Auxiliary.PrettyPrintUdpMessageSent(msg);
         } catch (IOException | NoSuchAlgorithmException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public MessageDeliveryTuple<T, Integer> receiveMessage() throws Exception {
+    public MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveMessage() throws Exception {
 
-        MessageDeliveryTuple<T, Integer> receivedMsg = super.receiveMessage();
-        T msg = receivedMsg.getMessage();
+        MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg = super.receiveMessage();
+        Auxiliary.PrettyPrintUdpMessageReceived(receivedMsg.getMessage());
+        ILinkMessage<T> msg = receivedMsg.getMessage();
 
-        if (msg.getType() == MessageType.Ack){
+        if (msg.getType() == LinkMessageType.Ack){
             return receivedMsg;
         }
         else if(!isMessageDuplicate(msg)) {
@@ -59,29 +64,25 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
         return null;
     }
 
-    private boolean isMessageDuplicate(T msg) {
+    private boolean isMessageDuplicate(ILinkMessage<T> msg) {
         return ReceivedMessages.get(msg.getMessageUniqueId()) != null;
     }
 
     @SuppressWarnings("unchecked")
-    public void processMessageReceived(MessageDeliveryTuple<T, Integer> receivedMsg) throws Exception {
-        T msg = receivedMsg.getMessage();
+    public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {
+        ILinkMessage<T> msg = receivedMsg.getMessage();
         Integer portToSend = receivedMsg.getPort();
 
         switch (msg.getType()) {
 
-            case MessageType.Message -> {
+            case LinkMessageType.Message -> {
                 /// send echo response to sender
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                UdpMessage ackMessage = new UdpMessage(1, 1, "message ack", MessageType.Ack);
-                super.sendMessage((T) ackMessage, portToSend);
+                AckMessage ackMsg = new AckMessage("message ack");
+                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(1, 1, (T) ackMsg, LinkMessageType.Ack);
+                super.sendMessage(ackMessage, portToSend);
             }
 
-            case MessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
+            case LinkMessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
         }
     }
 

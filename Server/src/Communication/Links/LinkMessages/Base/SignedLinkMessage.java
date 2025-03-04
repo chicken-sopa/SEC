@@ -1,17 +1,20 @@
-package Communication.Messages.Base;
+package Communication.Links.LinkMessages.Base;
 
 
 
-import Communication.Messages.MessageType;
+
+import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Communication.Links.LinkMessages.Base.Contracts.IMessage;
+import Communication.Links.LinkMessages.Base.Contracts.ISignedLinkMessage;
 
 import java.io.*;
 
-public abstract class SignedMessage<T extends IMessage> implements ISignedMessage, Serializable {
+public abstract class SignedLinkMessage<T extends IMessage> implements ISignedLinkMessage<T> {
 
     private final String signature;
-    private final T message;
+    private final ILinkMessage<T> message;
 
-    public SignedMessage(T msg, String signature){
+    public SignedLinkMessage(ILinkMessage<T> msg, String signature){
         message = msg;
         this.signature = signature;
     }
@@ -22,7 +25,7 @@ public abstract class SignedMessage<T extends IMessage> implements ISignedMessag
     }
 
     @Override
-    public T getMessage() {
+    public ILinkMessage<T> getMessage() {
         return message;
     }
 
@@ -53,12 +56,12 @@ public abstract class SignedMessage<T extends IMessage> implements ISignedMessag
     }
 
     @Override
-    public String getMessageValue(){
+    public T getMessageValue(){
         return message.getMessageValue();
     }
 
     @Override
-    public MessageType getType() {
+    public LinkMessageType getType() {
         return message.getType();
     }
 }
