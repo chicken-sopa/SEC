@@ -1,30 +1,31 @@
-package Communication.Messages.Base;
+package Communication.Links.LinkMessages.Base;
 
-import Communication.Messages.MessageType;
-import Communication.Messages.UdpMessage;
+import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Communication.Links.LinkMessages.Base.Contracts.IMessage;
+import Communication.Links.LinkMessages.UdpLinkMessage;
 
 import java.io.*;
 import java.util.Arrays;
 
-public abstract class Message implements IMessage, Serializable{
+public abstract class LinkMessage<T extends IMessage> implements ILinkMessage<T>{
 
     private final int senderId;
     private final int messageId;
-    private final String message;
-    private final MessageType type;
+    private final T message;
+    private final LinkMessageType type;
 
-    public Message(int senderId, int messageId, String message, MessageType type){
+    public LinkMessage(int senderId, int messageId, T message, LinkMessageType type){
         this.senderId = senderId;
         this.messageId = messageId;
         this.message = message;
         this.type = type;
     }
 
-    // Deserialize a byte array back into a Communication.Messages.UdpMessage object
-    public UdpMessage deserializeMessage(byte[] data) throws IOException, ClassNotFoundException {
+    // Deserialize a byte array back into a Communication.LinkMessages.UdpMessage object
+    public UdpLinkMessage<T> deserializeMessage(byte[] data) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bStream = new ByteArrayInputStream(data);
              ObjectInputStream oi = new ObjectInputStream(bStream)) {
-            return (UdpMessage) oi.readObject();
+            return (UdpLinkMessage<T>) oi.readObject();
         }
     }
 
@@ -54,12 +55,12 @@ public abstract class Message implements IMessage, Serializable{
     }
 
     @Override
-    public String getMessageValue() {
+    public T getMessageValue() {
         return message;
     }
 
     @Override
-    public MessageType getType() {
+    public LinkMessageType getType() {
         return type;
     }
 

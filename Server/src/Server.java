@@ -1,8 +1,10 @@
 import Communication.Helpers.Auxiliary;
+import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Communication.Links.LinkMessages.AckMessage;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Data.MessageDeliveryTuple;
-import Communication.Messages.MessageType;
-import Communication.Messages.UdpMessage;
+import Communication.Links.LinkMessages.Base.LinkMessageType;
+import Communication.Links.LinkMessages.UdpLinkMessage;
 import Communication.Security.DigitalSignatureAuth;
 
 import java.net.SocketException;
@@ -11,8 +13,8 @@ import java.util.Scanner;
 
 public class Server {
 
-    AuthenticatedPerfectLink<UdpMessage>  authenticatedPerfectLink;
-    DigitalSignatureAuth<UdpMessage>  digitalSignatureAuth;
+    AuthenticatedPerfectLink<AckMessage>  authenticatedPerfectLink;
+    DigitalSignatureAuth<AckMessage>  digitalSignatureAuth;
 
     public Server(int port) throws SocketException, NoSuchAlgorithmException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
@@ -34,8 +36,8 @@ public class Server {
 
             // String input
             String message = myObj.nextLine();
-
-            UdpMessage messageToSend = new UdpMessage(1, 1, message, MessageType.Message);
+            AckMessage msg =  new AckMessage(message);
+            UdpLinkMessage<AckMessage> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
 
             try {
                 authenticatedPerfectLink.sendMessage(messageToSend, portToSend);
@@ -51,9 +53,8 @@ public class Server {
         new Thread(() -> {
             while (true) {
                 try {
-                    MessageDeliveryTuple<UdpMessage,Integer> messageReceived = authenticatedPerfectLink.receiveMessage();
+                    MessageDeliveryTuple<ILinkMessage<AckMessage>, Integer> messageReceived = authenticatedPerfectLink.receiveMessage();
                     if  (messageReceived != null){
-                        Auxiliary.PrettyPrintUdpMessage(messageReceived.getMessage());
                         authenticatedPerfectLink.processMessageReceived(messageReceived);
                     }
                 } catch (Exception e) {

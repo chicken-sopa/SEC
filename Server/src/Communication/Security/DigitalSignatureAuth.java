@@ -1,7 +1,8 @@
 package Communication.Security;
 
 import Communication.Helpers.Constants;
-import Communication.Messages.Base.IMessage;
+import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Communication.Links.LinkMessages.Base.Contracts.IMessage;
 
 import java.security.*;
 import java.util.Base64;
@@ -19,7 +20,7 @@ public class DigitalSignatureAuth<T extends IMessage> {
         return keyGen.generateKeyPair();
     }
 
-    public String signMessage(T msg, PrivateKey pKey) throws Exception{
+    public String signMessage(ILinkMessage<T> msg, PrivateKey pKey) throws Exception{
         Signature signature = Signature.getInstance(Constants.getAlgorithm());
         signature.initSign(pKey);
         signature.update(msg.serializeMessage());
@@ -28,7 +29,7 @@ public class DigitalSignatureAuth<T extends IMessage> {
         return Base64.getEncoder().encodeToString(signedBytes);
     }
 
-    public boolean verifySignature(T msg, PublicKey pubKey, String signatureStr) throws Exception{
+    public boolean verifySignature(ILinkMessage<T> msg, PublicKey pubKey, String signatureStr) throws Exception{
         Signature signature = Signature.getInstance(Constants.getAlgorithm());
         signature.initVerify(pubKey);
         signature.update(msg.serializeMessage());
