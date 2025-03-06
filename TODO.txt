@@ -7,6 +7,7 @@
 
 ## Links:
     - Fazer o link incrementar automáticamente os ID's e fazer a sua gestão (AB)
+    - Fazer o SendMessage criar uma thread que trata o envio de mensagens
 
 ## Conditional Collect:
     - Adicionar coisas (A)
