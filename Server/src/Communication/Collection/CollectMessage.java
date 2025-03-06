@@ -8,11 +8,16 @@ import Communication.Links.LinkMessages.Base.Contracts.IMessage;
 public class CollectMessage implements IMessage {
 
     private final int epochId;
-    private final String strToAppend;
+    private final String message;
 
-    public CollectMessage(int epochId, String strToAppend) {
+    public CollectMessage(int epochId) {
         this.epochId = epochId;
-        this.strToAppend = strToAppend;
+        this.message = "INIT COLLECT" + Integer.toString(epochId);
+    }
+
+    public CollectMessage(int epochId, String message) {
+        this.epochId = epochId;
+        this.message = message;
     }
 
     public int getEpochId() {
@@ -21,6 +26,6 @@ public class CollectMessage implements IMessage {
 
     @Override
     public String message() {
-        return strToAppend;
+        return message;
     }
 }

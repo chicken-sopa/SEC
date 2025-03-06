@@ -10,6 +10,7 @@ public class Server {
 
     AuthenticatedPerfectLink<CollectMessage>  authenticatedPerfectLink;
     DigitalSignatureAuth<CollectMessage>  digitalSignatureAuth;
+    Boolean isLeader = false;
 
     public Server(int port) throws SocketException, NoSuchAlgorithmException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
@@ -21,18 +22,33 @@ public class Server {
         startReceiveMessageThread();
     }
 
-    private void startSendMessageThread(){
+    private void startSendMessageThread() {
         Thread t = new Thread(() -> {
             Scanner myObj = new Scanner(System.in);
             Integer portToSend = 4555;
-            System.out.println("Enter msg: ");
-            // input & msg creation
+
+            // Prompt user for leader status
+            System.out.println("Do you want to be the leader? (Type 'yes' to confirm)");
+            String confirm = myObj.nextLine().trim().toLowerCase();
+
+            isLeader = confirm.equals("yes");
+            // If not the leader, exit the thread
+            if (isLeader) {
+                System.out.println("This process is the current leader.");
+            }
+
+            // Prompt for epoch and message
+            System.out.println("Enter epoch: ");
             int epoch = Integer.parseInt(myObj.nextLine());
+
+            System.out.println("Enter message: ");
             String message = myObj.nextLine();
-            CollectMessage msg =  new CollectMessage(epoch, message);
+
+            CollectMessage msg = new CollectMessage(epoch, message);
 
             try {
                 authenticatedPerfectLink.sendMessage(msg, portToSend);
+                System.out.println("Message sent successfully.");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -40,6 +56,7 @@ public class Server {
 
         t.start();
     }
+
 
     private void startReceiveMessageThread(){
         new Thread(() -> {
