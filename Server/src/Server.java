@@ -25,7 +25,7 @@ public class Server {
     private void startSendMessageThread() {
         Thread t = new Thread(() -> {
             Scanner myObj = new Scanner(System.in);
-            Integer portToSend = 4555;
+            Integer portToSend = 4551;
 
             // Prompt user for leader status
             System.out.println("Do you want to be the leader? (Type 'yes' to confirm)");
@@ -35,6 +35,8 @@ public class Server {
             // If not the leader, exit the thread
             if (isLeader) {
                 System.out.println("This process is the current leader.");
+            }else{
+                return;
             }
 
             // Prompt for epoch and message

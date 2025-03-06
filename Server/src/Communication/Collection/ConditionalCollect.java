@@ -31,27 +31,27 @@ public class ConditionalCollect<T extends CollectMessage> {
     public void startCollection(int epochId, List<Integer> targetProcesses) throws Exception {
         T collectRequest = (T) new CollectMessage(epochId);
         for (Integer process : targetProcesses) {
-            link.sendMessage(collectRequest, process);
+            link.sendMessage(collectRequest, 4550 + process);
         }
     }
 
     /**
      * Processes incoming collect responses.
      */
-    public void receiveMessages() throws Exception {
-        while (collectedMessages.size() < quorumSize) {
-            CollectMessage received = link.receiveMessage();
-            if (received == null) continue; //signature couldnt be verified
-
-            String msg = received.message();
-            int sender = received.getPort();
-
-            // Store the valid message if it's from a new sender
-            if (receivedFrom.add(sender)) {
-                collectedMessages.put(sender, msg);
-            }
-        }
-    }
+//    public void receiveMessages() throws Exception {
+//        while (collectedMessages.size() < quorumSize) {
+//            CollectMessage received = link.receiveMessage();
+//            if (received == null) continue; //signature couldnt be verified
+//
+//            String msg = received.message();
+//            int sender = received.getPort();
+//
+//            // Store the valid message if it's from a new sender
+//            if (receivedFrom.add(sender)) {
+//                collectedMessages.put(sender, msg);
+//            }
+//        }
+//    }
 
     /**
      * Returns the collected messages once the quorum is reached.
