@@ -8,6 +8,7 @@
 ## Links:
     - Fazer o link incrementar automáticamente os ID's e fazer a sua gestão (AB)
     - Fazer o SendMessage criar uma thread que trata o envio de mensagens
+    - Fazer o ReceiveMessage chamar uma função qualquer sempre que chega uma mensagem
 
 ## Conditional Collect:
     - Fazer os ports sequenciais (A)
