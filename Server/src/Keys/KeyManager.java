@@ -6,8 +6,7 @@ import java.util.Map;
 
 import static Communication.Security.KeyLoader.loadPrivateKey;
 import static Communication.Security.KeyLoader.loadPublicKey;
-import static Node.Server.getProcessId;
-
+import Configuration.ProcessConfig;
 public class KeyManager {
     private static final Map<Integer, PublicKey> NODES_PUBLIC_KEYS = new HashMap<>();
     private static final Map<Integer, PublicKey> CLIENT_PUBLIC_KEYS = new HashMap<>();
@@ -22,7 +21,7 @@ public class KeyManager {
             CLIENT_PUBLIC_KEYS.put(0, loadPublicKey("crypto/client0_public.pem"));
             CLIENT_PUBLIC_KEYS.put(1, loadPublicKey("crypto/client1_public.pem"));
             // Load private key for this node
-            privateKey = loadPrivateKey("keys/node" + getProcessId() + "_private.pem");
+            privateKey = loadPrivateKey("crypto/node" + ProcessConfig.getProcessId() + "_private.pem");
         } catch (Exception e) {
             throw new RuntimeException("Failed to load keys", e);
         }

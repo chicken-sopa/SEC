@@ -1,6 +1,5 @@
-package Node;
-
 import Communication.Collection.BaseMessage;
+import Communication.Collection.InitCollectMessage;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Security.DigitalSignatureAuth;
 
@@ -10,7 +9,6 @@ import java.util.Scanner;
 
 public class Server {
 
-    private static Server instance; // Static instance for global access
     AuthenticatedPerfectLink<BaseMessage>  authenticatedPerfectLink;
     DigitalSignatureAuth<BaseMessage>  digitalSignatureAuth;
     Boolean isLeader = false;
@@ -21,13 +19,14 @@ public class Server {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth);
         sc = new Scanner(System.in);
-        instance = this; // Store the singleton instance
     }
 
     public void init(){
-        startSendMessageProcedure();
-        startReceiveMessageThread();
         assertLeaderStatus();
+        if(isLeader)
+        startSendMessageProcedure();
+        else
+        startReceiveMessageThread();
     }
 
     private void assertLeaderStatus(){
@@ -39,8 +38,6 @@ public class Server {
         // If not the leader, exit the thread
         if (isLeader) {
             System.out.println("This process is the current leader.");
-        }else{
-            return;
         }
     }
 
@@ -54,7 +51,7 @@ public class Server {
         System.out.println("Enter message: ");
         String message = sc.nextLine();
 
-        BaseMessage msg = new BaseMessage(epoch, message);
+        InitCollectMessage msg = new InitCollectMessage(epoch);
 
         try {
             authenticatedPerfectLink.sendMessage(msg, portToSend);
@@ -74,12 +71,6 @@ public class Server {
                 }
             }
         }).start();
-    }
-    public static int getProcessId() {
-        if (instance == null) {
-            throw new IllegalStateException("Node.Server instance has not been initialized.");
-        }
-        return instance.processId;
     }
 }
 

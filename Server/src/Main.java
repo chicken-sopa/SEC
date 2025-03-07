@@ -1,4 +1,4 @@
-import Node.Server;
+import Configuration.ProcessConfig;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +20,7 @@ public class Main {
             } catch (NumberFormatException ignored) {}
             System.out.println("Invalid input. Please enter a number between 0 and 5.");
         }
-
+        ProcessConfig.setProcessId(processId);
         // Assign a unique port using 455X format
         Integer portToSend = 4550 + processId;
         System.out.println("Process " + processId + " will use port: " + portToSend);
