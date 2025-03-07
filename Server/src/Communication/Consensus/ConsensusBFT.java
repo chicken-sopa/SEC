@@ -1,8 +1,6 @@
 package Communication.Consensus;
 
-import Communication.Collection.ConditionalCollect;
-import Communication.Types.StateMessage;
-import Communication.Types.ValTSPair;
+import Communication.Types.ValTSPair.ValTSPair;
 
 import java.util.List;
 

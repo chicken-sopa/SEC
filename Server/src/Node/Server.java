@@ -1,4 +1,6 @@
-import Communication.Collection.CollectMessage;
+package Node;
+
+import Communication.Collection.BaseMessage;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Security.DigitalSignatureAuth;
 
@@ -8,15 +10,18 @@ import java.util.Scanner;
 
 public class Server {
 
-    AuthenticatedPerfectLink<CollectMessage>  authenticatedPerfectLink;
-    DigitalSignatureAuth<CollectMessage>  digitalSignatureAuth;
+    private static Server instance; // Static instance for global access
+    AuthenticatedPerfectLink<BaseMessage>  authenticatedPerfectLink;
+    DigitalSignatureAuth<BaseMessage>  digitalSignatureAuth;
     Boolean isLeader = false;
     Scanner sc;
+    int processId;
 
-    public Server(int port) throws SocketException, NoSuchAlgorithmException {
+    public Server(int port, int processId) throws SocketException, NoSuchAlgorithmException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth);
         sc = new Scanner(System.in);
+        instance = this; // Store the singleton instance
     }
 
     public void init(){
@@ -49,7 +54,7 @@ public class Server {
         System.out.println("Enter message: ");
         String message = sc.nextLine();
 
-        CollectMessage msg = new CollectMessage(epoch, message);
+        BaseMessage msg = new BaseMessage(epoch, message);
 
         try {
             authenticatedPerfectLink.sendMessage(msg, portToSend);
@@ -63,11 +68,19 @@ public class Server {
         new Thread(() -> {
             while (true) {
                 try {
-                    CollectMessage messageReceived = authenticatedPerfectLink.receiveMessage();
+                    BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         }).start();
     }
+    public static int getProcessId() {
+        if (instance == null) {
+            throw new IllegalStateException("Node.Server instance has not been initialized.");
+        }
+        return instance.processId;
+    }
 }
+
+

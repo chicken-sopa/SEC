@@ -1,4 +1,4 @@
-import Communication.Links.PerfectLink;
+import Node.Server;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +25,7 @@ public class Main {
         Integer portToSend = 4550 + processId;
         System.out.println("Process " + processId + " will use port: " + portToSend);
 
-        Server server = new Server(portToSend);
+        Server server = new Server(portToSend, processId);
 
         server.init();
     }
