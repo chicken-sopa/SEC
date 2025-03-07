@@ -26,13 +26,23 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
 
     public void sendMessage(T msg, Integer portToSend) throws Exception {
 
-        UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
+        Thread t = new Thread(() -> {
 
-        String signature = digitalSignatureAuth.signMessage(messageToSend, keyPair.getPrivate());
+            try {
+                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
 
-        SignedUdpLinkMessage<T> authenticatedMessage = new SignedUdpLinkMessage<>(messageToSend, signature);
+                String signature = digitalSignatureAuth.signMessage(messageToSend, keyPair.getPrivate());
 
-        super.sendMessage(authenticatedMessage, portToSend);
+                SignedUdpLinkMessage<T> authenticatedMessage = new SignedUdpLinkMessage<>(messageToSend, signature);
+
+                super.sendMessage(authenticatedMessage, portToSend);
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        t.start();
+
     }
 
     public T receiveMessage() throws Exception {
