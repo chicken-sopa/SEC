@@ -5,7 +5,7 @@ import Communication.Links.LinkMessages.Base.Contracts.IMessage;
 /**
  * Message used for the Conditional Collect abstraction.
  */
-public class CollectMessage implements IMessage {
+public class BaseMessage implements IMessage {
 
     private final int epochId;
     private final String message;

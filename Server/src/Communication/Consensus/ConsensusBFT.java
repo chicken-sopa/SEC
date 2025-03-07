@@ -1,14 +1,27 @@
 package Communication.Consensus;
 
+import Communication.Collection.ConditionalCollect;
+import Communication.Types.StateMessage;
+import Communication.Types.ValTSPair;
+
+import java.util.List;
+
 public class ConsensusBFT {
+
+    ValTSPair latestWriteMsg;
+    List<ValTSPair> writeSet;
 
     // last message
     // messages written
 
 
 
-
     public void sendReadRequest(){
+        //ConditionalCollect<> conditionalCollect = new ConditionalCollect();
+        //conditionalCollect.startCollection();
+        //conditionalCollect.receiveMessages();
+        //return conditionalCollect.collectedMessages();
+
 
     }
 
@@ -25,14 +38,33 @@ public class ConsensusBFT {
 
     }
 
-    public void processQuorumWriteMessages(){
-
-    }
-
 
     public void sendAccepts(){
 
     }
+
+
+    public void leaderConsensus(){
+        sendReadRequest();
+        sendStateAnswer();
+        sendCollectedAnswers();
+    }
+
+    public void processConsensusRequestMessage(/* msg : Consensus */){
+
+        //when message type
+
+
+        //process read request
+        //process state response
+        //process collected response
+        //process write response
+        //process accept response
+
+
+
+    }
+
 
 
 }
