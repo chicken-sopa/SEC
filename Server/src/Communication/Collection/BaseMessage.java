@@ -1,27 +1,28 @@
 package Communication.Collection;
 
 import Communication.Links.LinkMessages.Base.Contracts.IMessage;
+import java.io.Serializable;
 
-/**
- * Message used for the Conditional Collect abstraction.
- */
-public class BaseMessage implements IMessage {
+public abstract class BaseMessage implements IMessage, Serializable {
+    private final String messageType;
+    private final int senderId; // Optional: to record which node sent the message
 
-    private final int epochId;
-    private final Object message;
-
-
-    public BaseMessage(int epochId, String message) {
-        this.epochId = epochId;
-        this.message = message;
+    public BaseMessage(String messageType, int senderId) {
+        this.messageType = messageType;
+        this.senderId = senderId;
     }
 
-    public int getEpochId() {
-        return epochId;
+    public String getMessageType() {
+        return messageType;
     }
 
+    public int getSenderId() {
+        return senderId;
+    }
+
+    // For simple messages, we return 'this' as the payload.
     @Override
     public Object message() {
-        return message;
+        return this;
     }
 }

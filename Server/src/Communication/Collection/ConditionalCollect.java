@@ -3,7 +3,7 @@ package Communication.Collection;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Data.MessageDeliveryTuple;
 import Communication.Links.LinkMessages.UdpLinkMessage;
-import Communication.Collection.CollectMessage;
+import Communication.Collection.BaseMessage;
 
 
 import java.util.*;
@@ -13,45 +13,45 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementation of the Conditional Collect abstraction.
  * This collects authenticated messages from at least (N - f) processes.
  */
-public class ConditionalCollect<T extends CollectMessage> {
+public class ConditionalCollect<T extends BaseMessage> {
 
-    private final AuthenticatedPerfectLink<CollectMessage> link;
+    private final AuthenticatedPerfectLink<BaseMessage> link;
     private final int quorumSize;
     private final Map<Integer, T> collectedMessages = new ConcurrentHashMap<>();
     private final Set<Integer> receivedFrom = Collections.synchronizedSet(new HashSet<>());
 
     public ConditionalCollect(AuthenticatedPerfectLink<T> link, int quorumSize) {
-        this.link = (AuthenticatedPerfectLink<CollectMessage>) link;
+        this.link = (AuthenticatedPerfectLink<BaseMessage>) link;
         this.quorumSize = quorumSize;
     }
 
     /**
      * Initiates the Conditional Collect by sending a request to all processes.
      */
-    public void startCollection(int epochId, List<Integer> targetProcesses) throws Exception {
-        T collectRequest = (T) new CollectMessage(epochId);
-        for (Integer process : targetProcesses) {
-            link.sendMessage(collectRequest, 4550 + process);
+    public void startCollection(int epochId) throws Exception {
+        T collectRequest = (T) new InitCollectMessage(epochId);
+        for (int i = 0;  i <= 5 ;i++) {
+            link.sendMessage(collectRequest, 4550 + i);
         }
     }
 
     /**
      * Processes incoming collect responses.
      */
-//    public void receiveMessages() throws Exception {
-//        while (collectedMessages.size() < quorumSize) {
-//            CollectMessage received = link.receiveMessage();
-//            if (received == null) continue; //signature couldnt be verified
-//
-//            String msg = received.message();
-//            int sender = received.getPort();
-//
-//            // Store the valid message if it's from a new sender
-//            if (receivedFrom.add(sender)) {
-//                collectedMessages.put(sender, msg);
-//            }
-//        }
-//    }
+    public void receiveMessages() throws Exception {
+        while (collectedMessages.size() < quorumSize) {
+            StateMessage received = (StateMessage) link.receiveMessage();
+            if (received == null) continue; //signature couldnt be verified
+
+
+            int sender = received.getSenderId();
+
+            // Store the valid message if it's from a new sender
+            if (receivedFrom.add(sender)) {
+                collectedMessages.put(sender, (T) received);
+            }
+        }
+    }
 
     /**
      * Returns the collected messages once the quorum is reached.

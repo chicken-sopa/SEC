@@ -8,20 +8,22 @@ import Communication.Links.LinkMessages.Base.LinkMessageType;
 import Communication.Links.LinkMessages.SignedUdpLinkMessage;
 import Communication.Links.LinkMessages.UdpLinkMessage;
 import Communication.Links.Security.DigitalSignatureAuth;
+import Keys.KeyManager;
 
 import java.net.SocketException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 
 public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T> {
 
     DigitalSignatureAuth<T> digitalSignatureAuth;
-    KeyPair keyPair;
+    private final PrivateKey privateKey = KeyManager.getPrivateKey();
+
 
     public AuthenticatedPerfectLink(int port, DigitalSignatureAuth<T> digitalSignatureAuth) throws SocketException, NoSuchAlgorithmException {
         super(port);
         this.digitalSignatureAuth = digitalSignatureAuth;
-        keyPair = this.digitalSignatureAuth.generateKeyPair();
     }
 
     public void sendMessage(T msg, Integer portToSend) throws Exception {
@@ -31,7 +33,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             try {
                 UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
 
-                String signature = digitalSignatureAuth.signMessage(messageToSend, keyPair.getPrivate());
+                String signature = digitalSignatureAuth.signMessage(messageToSend, privateKey);
 
                 SignedUdpLinkMessage<T> authenticatedMessage = new SignedUdpLinkMessage<>(messageToSend, signature);
 
@@ -58,8 +60,8 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         if (messageReceived == null)
             return null;
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
-
-        boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), keyPair.getPublic(), signedReceivedMessage.getSignature());
+        int processId = signedReceivedMessage.getSenderId();
+        boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getNodePublicKey(processId), signedReceivedMessage.getSignature());
         if (!verified)
             return null;
         processMessageReceived(messageReceived);
@@ -81,7 +83,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
                 /// send echo response to sender
                 AckMessage ackMsg = new AckMessage("message ack");
                 UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(1, 1, (T) ackMsg, LinkMessageType.Ack);
-                String signature = digitalSignatureAuth.signMessage(ackMessage, keyPair.getPrivate());
+                String signature = digitalSignatureAuth.signMessage(ackMessage,privateKey);
 
                 SignedUdpLinkMessage<T> signedAckMessage = new SignedUdpLinkMessage<>(ackMessage, signature);
                 super.sendAckMessage(signedAckMessage, portToSend);

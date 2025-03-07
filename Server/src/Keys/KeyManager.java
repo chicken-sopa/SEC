@@ -16,11 +16,11 @@ public class KeyManager {
     static {
         try {
             // Preload public keys (in reality, read from a config file or constants)
-            NODES_PUBLIC_KEYS.put(0, loadPublicKey("keys/node0_public.pem"));
-            NODES_PUBLIC_KEYS.put(1, loadPublicKey("keys/node1_public.pem"));
-            NODES_PUBLIC_KEYS.put(2, loadPublicKey("keys/node2_public.pem"));
-            CLIENT_PUBLIC_KEYS.put(0, loadPublicKey("keys/client0_public.pem"));
-            CLIENT_PUBLIC_KEYS.put(1, loadPublicKey("keys/client1_public.pem"));
+            NODES_PUBLIC_KEYS.put(0, loadPublicKey("crypto/node0_public.pem"));
+            NODES_PUBLIC_KEYS.put(1, loadPublicKey("crypto/node1_public.pem"));
+            NODES_PUBLIC_KEYS.put(2, loadPublicKey("crypto/node2_public.pem"));
+            CLIENT_PUBLIC_KEYS.put(0, loadPublicKey("crypto/client0_public.pem"));
+            CLIENT_PUBLIC_KEYS.put(1, loadPublicKey("crypto/client1_public.pem"));
             // Load private key for this node
             privateKey = loadPrivateKey("keys/node" + getProcessId() + "_private.pem");
         } catch (Exception e) {

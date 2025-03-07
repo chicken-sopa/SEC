@@ -15,7 +15,6 @@ import java.util.Base64;
 public class SignedWriteset extends Writeset {
     private String signature;
     private final int serverId;
-    private final Keys.KeyManager keyManager = new Keys.KeyManager();
 
     public SignedWriteset(int serverId, PrivateKey privateKey) throws Exception {
         super();
@@ -79,14 +78,14 @@ public class SignedWriteset extends Writeset {
         // Step 1: Verify each SignedValTSPair
         for (SignedValTSPair valueWritten : getWriteset()) {
             int clientID = valueWritten.getClientId();
-            PublicKey publicKey = keyManager.getClientPublicKey(clientID);
+            PublicKey publicKey = KeyManager.getClientPublicKey(clientID);
             if (!valueWritten.verifySignature(publicKey)) {
                 return false;
             }
         }
 
         // Step 2: Verify the writeset's signature
-        PublicKey publicKey = keyManager.getNodePublicKey(processId);
+        PublicKey publicKey = KeyManager.getNodePublicKey(processId);
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initVerify(publicKey);
 
