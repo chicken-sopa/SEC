@@ -25,7 +25,6 @@ public class Server {
         assertLeaderStatus();
         if(isLeader)
         startSendMessageProcedure();
-        else
         startReceiveMessageThread();
     }
 

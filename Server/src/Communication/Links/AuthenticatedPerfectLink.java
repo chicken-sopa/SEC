@@ -15,6 +15,8 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 
+import static Configuration.ProcessConfig.getProcessId;
+
 public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T> {
 
     DigitalSignatureAuth<T> digitalSignatureAuth;
@@ -31,7 +33,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         Thread t = new Thread(() -> {
 
             try {
-                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(1, 1, msg, LinkMessageType.Message);
+                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(getProcessId(), 1, msg, LinkMessageType.Message);
 
                 String signature = digitalSignatureAuth.signMessage(messageToSend, privateKey);
 
@@ -55,16 +57,18 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
     }
 
     protected MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveLinkMessage() throws Exception {
-
         MessageDeliveryTuple<ILinkMessage<T>, Integer> messageReceived = super.receiveLinkMessage();
-        if (messageReceived == null)
+        if (messageReceived == null) {
             return null;
+        }
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
         int processId = signedReceivedMessage.getSenderId();
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getNodePublicKey(processId), signedReceivedMessage.getSignature());
-        if (!verified)
+        if (!verified) {
             return null;
-        processMessageReceived(messageReceived);
+        }
+            processMessageReceived(messageReceived);
+
 
         if (messageReceived.getMessage().getType() == LinkMessageType.Ack)
             return null;
@@ -76,20 +80,27 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
     public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {
         ILinkMessage<T> msg = receivedMsg.getMessage();
         Integer portToSend = receivedMsg.getPort();
-
         switch (msg.getType()) {
 
             case LinkMessageType.Message -> {
                 /// send echo response to sender
-                AckMessage ackMsg = new AckMessage("message ack");
-                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(1, 1, (T) ackMsg, LinkMessageType.Ack);
+                AckMessage ackMsg = new AckMessage(msg.getMessageUniqueId());
+                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(getProcessId(), 1, (T) ackMsg, LinkMessageType.Ack);
                 String signature = digitalSignatureAuth.signMessage(ackMessage,privateKey);
 
                 SignedUdpLinkMessage<T> signedAckMessage = new SignedUdpLinkMessage<>(ackMessage, signature);
                 super.sendAckMessage(signedAckMessage, portToSend);
             }
+            case LinkMessageType.Ack -> {
+                AckMessage ack = (AckMessage) msg.getMessageValue();
+                System.out.println();
+                Integer receivedAckId = ack.message(); //
+                MessagesAck.put(receivedAckId, true);
+            }
 
-            case LinkMessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
+
+
+
         }
     }
 }
