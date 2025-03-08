@@ -92,7 +92,6 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             }
             case LinkMessageType.Ack -> {
                 AckMessage ack = (AckMessage) msg.getMessageValue();
-                System.out.println(ack.message());
                 Integer receivedAckId = ack.message();
                 MessagesAck.put(receivedAckId, true);
             }
