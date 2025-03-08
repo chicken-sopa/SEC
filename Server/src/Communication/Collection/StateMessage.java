@@ -9,7 +9,7 @@ public class StateMessage extends BaseMessage {
     private final SignedWriteset writeset;
 
     public StateMessage(int senderId, SignedValTSPair val, SignedWriteset writeset) {
-        super("STATE", senderId);
+        super(MessageType.STATE, senderId);
         this.val = val;
         this.writeset = writeset;
     }
@@ -24,6 +24,8 @@ public class StateMessage extends BaseMessage {
 
     @Override
     public String prettyPrint() {
-        return "Val -> "+ getVal().toString() + " Write -> "+ getWriteset().toString();
+        return super.prettyPrint() +
+                "Val -> "+ getVal().toString() +
+                " Write -> "+ getWriteset().toString();
     }
 }

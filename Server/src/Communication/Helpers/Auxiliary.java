@@ -7,19 +7,19 @@ public class Auxiliary {
 
     @SuppressWarnings("rawtypes")
     public static void PrettyPrintUdpMessageReceived(ILinkMessage msg){
-        System.out.println("message received => sendID: " + msg.getSenderId() +
+        System.out.println("message received => senderID: " + msg.getSenderId() +
                 " || msgID: " + msg.getMessageId() +
                 " ||  msg: " + msg.getMessageValue().prettyPrint() +
-                " || type: " + msg.getType()
+                " || LinkType: " + msg.getType()
         );
     }
 
     @SuppressWarnings("rawtypes")
     public static void PrettyPrintUdpMessageSent(ILinkMessage msg){
-        System.out.println("message sent => sendID: " + msg.getSenderId() +
+        System.out.println("message sent => senderID: " + msg.getSenderId() +
                 " || msgID: " + msg.getMessageId() +
                 " ||  msg: " + msg.getMessageValue().prettyPrint() +
-                " || type: " + msg.getType()
+                " || LinkType: " + msg.getType()
         );
     }
 }

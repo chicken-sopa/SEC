@@ -4,15 +4,15 @@ import Communication.Links.LinkMessages.Base.Contracts.IMessage;
 import java.io.Serializable;
 
 public abstract class BaseMessage implements IMessage, Serializable {
-    private final String messageType;
+    protected final MessageType messageType;
     private final int senderId; // Optional: to record which node sent the message
 
-    public BaseMessage(String messageType, int senderId) {
+    public BaseMessage(MessageType messageType, int senderId) {
         this.messageType = messageType;
         this.senderId = senderId;
     }
 
-    public String getMessageType() {
+    public MessageType getMessageType() {
         return messageType;
     }
 
@@ -24,5 +24,10 @@ public abstract class BaseMessage implements IMessage, Serializable {
     @Override
     public Object message() {
         return this;
+    }
+
+    @Override
+    public String prettyPrint(){
+        return "Type("+ messageType+")";
     }
 }
