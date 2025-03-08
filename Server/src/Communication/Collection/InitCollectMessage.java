@@ -1,7 +1,5 @@
 package Communication.Collection;
 
-import Communication.Collection.BaseMessage;
-
 public class InitCollectMessage extends BaseMessage {
     private final long timestamp;
 
@@ -12,5 +10,10 @@ public class InitCollectMessage extends BaseMessage {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public String prettyPrint() {
+        return "Init Collect Message";
     }
 }

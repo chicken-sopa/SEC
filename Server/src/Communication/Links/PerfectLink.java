@@ -63,22 +63,4 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
     private boolean isMessageDuplicate(ILinkMessage<T> msg) {
         return ReceivedMessages.get(msg.getMessageUniqueId()) != null;
     }
-
-//    @SuppressWarnings("unchecked")
-//    public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {
-//        ILinkMessage<T> msg = receivedMsg.getMessage();
-//        Integer portToSend = receivedMsg.getPort();
-//
-//        switch (msg.getType()) {
-//
-//            case LinkMessageType.Message -> {
-//                /// send echo response to sender
-//                AckMessage ackMsg = new AckMessage("message ack");
-//                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(1, 1, (T) ackMsg, LinkMessageType.Ack);
-//                super.sendMessage(ackMessage, portToSend);
-//            }
-//
-//            case LinkMessageType.Ack -> MessagesAck.put(msg.getMessageUniqueId(), true);
-//        }
-//    }
 }

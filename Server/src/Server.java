@@ -19,6 +19,7 @@ public class Server {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth);
         sc = new Scanner(System.in);
+        this.processId = processId;
     }
 
     public void init(){
@@ -48,9 +49,6 @@ public class Server {
 
         System.out.println("Enter epoch: ");
         int epoch = Integer.parseInt(sc.nextLine());
-
-        System.out.println("Enter message: ");
-        String message = sc.nextLine();
 
         InitCollectMessage msg = new InitCollectMessage(epoch);
 

@@ -21,4 +21,9 @@ public class StateMessage extends BaseMessage {
     public SignedWriteset getWriteset() {
         return writeset;
     }
+
+    @Override
+    public String prettyPrint() {
+        return "Val -> "+ getVal().toString() + " Write -> "+ getWriteset().toString();
+    }
 }
