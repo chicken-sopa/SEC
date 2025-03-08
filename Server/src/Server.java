@@ -24,7 +24,7 @@ public class Server {
     public void init(){
         assertLeaderStatus();
         if(isLeader)
-        startSendMessageProcedure();
+            startSendMessageProcedure();
         startReceiveMessageThread();
     }
 
@@ -41,9 +41,11 @@ public class Server {
     }
 
     private void startSendMessageProcedure() {
-        Integer portToSend = 4551;
 
         // Prompt for epoch and message
+        System.out.println("Enter Destination Port: ");
+        int portToSend = Integer.parseInt(sc.nextLine());
+
         System.out.println("Enter epoch: ");
         int epoch = Integer.parseInt(sc.nextLine());
 

@@ -2,11 +2,9 @@ package Communication.Links;
 
 import Communication.Helpers.Auxiliary;
 import Communication.Links.LinkMessages.Base.Contracts.IMessage;
-import Communication.Links.LinkMessages.AckMessage;
 import Communication.Links.Data.MessageDeliveryTuple;
 import Communication.Links.LinkMessages.Base.Contracts.ILinkMessage;
 import Communication.Links.LinkMessages.Base.LinkMessageType;
-import Communication.Links.LinkMessages.UdpLinkMessage;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -18,11 +16,9 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
     ConcurrentHashMap<Integer, IMessage> ReceivedMessages = new ConcurrentHashMap<Integer, IMessage>();
     ConcurrentHashMap<Integer, Boolean> MessagesAck = new ConcurrentHashMap<Integer, Boolean>();
 
-
     public PerfectLink(int port) throws SocketException {
         super(port);
     }
-
 
     public void sendMessage(ILinkMessage<T> msg, Integer portToSend) throws Exception {
         if (!MessagesAck.containsKey(msg.getMessageUniqueId())){
