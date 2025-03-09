@@ -3,6 +3,7 @@ package Communication.Types.Writeset;
 import Communication.Types.ValTSPair.SignedValTSPair;
 import Keys.KeyManager;
 
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -12,7 +13,7 @@ import java.util.Base64;
  * Represents a digitally signed Writeset, extending the regular Writeset.
  * Ensures both individual entries and the full writeset remain untampered.
  */
-public class SignedWriteset extends Writeset {
+public class SignedWriteset extends Writeset implements Serializable {
     private String signature;
     private final int serverId;
 

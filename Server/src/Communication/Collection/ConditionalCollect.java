@@ -9,6 +9,8 @@ import Communication.Collection.BaseMessage;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static Configuration.ProcessConfig.getProcessId;
+
 /**
  * Implementation of the Conditional Collect abstraction.
  * This collects authenticated messages from at least (N - f) processes.
@@ -29,8 +31,9 @@ public class ConditionalCollect<T extends BaseMessage> {
      * Initiates the Conditional Collect by sending a request to all processes.
      */
     public void startCollection(int epochId) throws Exception {
-        T collectRequest = (T) new InitCollectMessage(epochId);
-        for (int i = 0;  i <= 5 ;i++) {
+        T collectRequest = (T) new InitCollectMessage(getProcessId());
+        for (int i = 0;  i <= 2  ;i++) {
+            System.out.println("A enviar para o port " + (4550 + i));
             link.sendMessage(collectRequest, 4550 + i);
         }
     }
@@ -40,17 +43,23 @@ public class ConditionalCollect<T extends BaseMessage> {
      */
     public void receiveMessages() throws Exception {
         while (collectedMessages.size() < quorumSize) {
-            StateMessage received = (StateMessage) link.receiveMessage();
-            if (received == null) continue; //signature couldnt be verified
-
-
+                BaseMessage received =  link.receiveMessage();
+            if (received == null ) continue; //signature couldnt be verified
             int sender = received.getSenderId();
+            System.out.println("Recebendo resposta de collect de " + sender);
+            System.out.println("Received message class: " + received.getClass().getName() + "with type" + received.messageType);
+            if(received.messageType == MessageType.STATE) {
+                StateMessage receivedState = (StateMessage) received;
 
-            // Store the valid message if it's from a new sender
-            if (receivedFrom.add(sender)) {
-                collectedMessages.put(sender, (T) received);
+                System.out.println("Recebendo resposta de collect de " + sender);
+
+                // Store the valid message if it's from a new sender
+                if (receivedFrom.add(sender)) {
+                    collectedMessages.put(sender, (T) receivedState);
+                }
             }
         }
+        System.out.println("Received quorum of replies");
     }
 
     /**

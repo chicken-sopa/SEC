@@ -13,10 +13,10 @@ public class Main {
         // Prompt user for a process ID between 0 and 5
         int processId;
         while (true) {
-            System.out.println("Enter a process ID (0-5): ");
+            System.out.println("Enter a process ID (0-2): ");
             try {
                 processId = Integer.parseInt(myObj.nextLine());
-                if (processId >= 0 && processId <= 5) break;
+                if (processId >= 0 && processId <= 2) break;
             } catch (NumberFormatException ignored) {}
             System.out.println("Invalid input. Please enter a number between 0 and 5.");
         }

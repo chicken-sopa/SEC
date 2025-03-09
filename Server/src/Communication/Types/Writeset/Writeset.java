@@ -10,7 +10,9 @@ public class Writeset implements Serializable {
 
     private ArrayList<SignedValTSPair> writeset;
 
-    public Writeset() {}
+    public Writeset() {
+        writeset = new ArrayList<>();
+    }
 
 
     public ArrayList<SignedValTSPair> getWriteset() {

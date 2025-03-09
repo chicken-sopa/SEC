@@ -4,7 +4,9 @@ import Communication.Collection.BaseMessage;
 import Communication.Types.ValTSPair.SignedValTSPair;
 import Communication.Types.Writeset.SignedWriteset;
 
-public class StateMessage extends BaseMessage {
+import java.io.Serializable;
+
+public class StateMessage extends BaseMessage implements Serializable {
     private final SignedValTSPair val;
     private final SignedWriteset writeset;
 

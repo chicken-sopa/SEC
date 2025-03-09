@@ -9,11 +9,8 @@
     - Fazer o ReceiveMessage chamar uma função qualquer sempre que chega uma mensagem (AB)
 
 ## Conditional Collect:
-    - Fazer os ports sequenciais (A)
-    - Criar a classe de mensagem abstrata das quais as outras vao herdar (A)
     - Finalizar conditional collect, enviando as mensagens para os processos corretos e recebendo e guardando as corretamente (A)
     - Testar conditional collect com multiplos processos (A)
-    -
 
 ## Server:
     - Tratar de instanciar sabendo as chaves publicas de outros servers e os seus Ports (AB)
