@@ -30,7 +30,7 @@ public class FairLossLink<T extends IMessage> {
     }
 
     protected MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveLinkMessage() throws Exception {
-        byte[] buffer = new byte[2048];
+        byte[] buffer = new byte[8192];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
 
@@ -38,13 +38,13 @@ public class FairLossLink<T extends IMessage> {
         byte[] receivedData = new byte[packet.getLength()];
         System.arraycopy(buffer, 0, receivedData, 0, packet.getLength());
 
+
         return new MessageDeliveryTuple<>(deserializeMessage(receivedData), packet.getPort());
     }
 
 
     @SuppressWarnings("unchecked")
     protected ILinkMessage<T> deserializeMessage(byte[] data) throws IOException, ClassNotFoundException {
-        System.out.println("Recieved serialized message length before deserialization: " + data.length);
 
         if (data == null || data.length == 0) {
             System.out.println("Received an empty datagram.");

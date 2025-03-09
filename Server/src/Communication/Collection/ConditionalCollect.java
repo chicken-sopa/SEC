@@ -46,12 +46,9 @@ public class ConditionalCollect<T extends BaseMessage> {
                 BaseMessage received =  link.receiveMessage();
             if (received == null ) continue; //signature couldnt be verified
             int sender = received.getSenderId();
-            System.out.println("Recebendo resposta de collect de " + sender);
-            System.out.println("Received message class: " + received.getClass().getName() + "with type" + received.messageType);
             if(received.messageType == MessageType.STATE) {
                 StateMessage receivedState = (StateMessage) received;
 
-                System.out.println("Recebendo resposta de collect de " + sender);
 
                 // Store the valid message if it's from a new sender
                 if (receivedFrom.add(sender)) {

@@ -90,12 +90,13 @@ public class Server {
             while (true) {
                 try {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
-                    switch (messageReceived.getMessageType()){
-                        case MessageType.INIT_COLLECT -> {
-                            System.out.println("Mensagem de inti collect recebida, de sender id" + messageReceived.getSenderId() + " a responder para o port" + (4550 + messageReceived.getSenderId()));
-                            SignedValTSPair valTSPair = new SignedValTSPair(1,"aaaaaa",getProcessId(), KeyManager.getPrivateKey());
-                            StateMessage response = new StateMessage(getProcessId(),valTSPair,writeset);
-                            authenticatedPerfectLink.sendMessage(response,4550 + messageReceived.getSenderId());
+                    if(messageReceived != null){
+                        switch (messageReceived.getMessageType()) {
+                            case MessageType.INIT_COLLECT -> {
+                                SignedValTSPair valTSPair = new SignedValTSPair(1, "aaaaaa", getProcessId(), KeyManager.getPrivateKey());
+                                StateMessage response = new StateMessage(getProcessId(), valTSPair, writeset);
+                                authenticatedPerfectLink.sendMessage(response, 4550 + messageReceived.getSenderId());
+                            }
                         }
                     }
                 } catch (Exception e) {

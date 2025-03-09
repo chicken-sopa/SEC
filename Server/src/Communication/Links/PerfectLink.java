@@ -47,7 +47,6 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
     protected MessageDeliveryTuple<ILinkMessage<T>, Integer> receiveLinkMessage() throws Exception {
 
         MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg = super.receiveLinkMessage();
-        System.out.println("received Msg" + receivedMsg);
         Auxiliary.PrettyPrintUdpMessageReceived(receivedMsg.getMessage());
         ILinkMessage<T> msg = receivedMsg.getMessage();
 

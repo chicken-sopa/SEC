@@ -41,7 +41,6 @@ public abstract class SignedLinkMessage<T extends IMessage> implements ISignedLi
         ObjectOutput oo = new ObjectOutputStream(bStream);
         oo.writeObject(this);
         oo.close();
-        System.out.println("outgoing serialization lenght" + bStream.toByteArray().length);
         return bStream.toByteArray();
     }
 
