@@ -19,7 +19,7 @@ public class ConditionalCollect<T extends BaseMessage> {
 
     private final AuthenticatedPerfectLink<BaseMessage> link;
     private final int quorumSize;
-    private final Map<Integer, T> collectedMessages = new ConcurrentHashMap<>();
+    private final Map<Integer, StateMessage> collectedMessages = new ConcurrentHashMap<>();
     private final Set<Integer> receivedFrom = Collections.synchronizedSet(new HashSet<>());
 
     public ConditionalCollect(AuthenticatedPerfectLink<T> link, int quorumSize) {
@@ -52,7 +52,7 @@ public class ConditionalCollect<T extends BaseMessage> {
 
                 // Store the valid message if it's from a new sender
                 if (receivedFrom.add(sender)) {
-                    collectedMessages.put(sender, (T) receivedState);
+                    collectedMessages.put(sender, receivedState);
                 }
             }
         }
@@ -62,7 +62,7 @@ public class ConditionalCollect<T extends BaseMessage> {
     /**
      * Returns the collected messages once the quorum is reached.
      */
-    public Map<Integer, T> getCollectedMessages() {
+    public Map<Integer, StateMessage> getCollectedMessages() {
         return collectedMessages;
     }
 
