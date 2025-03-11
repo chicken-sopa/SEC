@@ -92,7 +92,7 @@ public class Server {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
                     if(messageReceived != null){
                         switch (messageReceived.getMessageType()) {
-                            case MessageType.INIT_COLLECT -> {
+                            case INIT_COLLECT -> {
                                 SignedValTSPair valTSPair = new SignedValTSPair(1, "aaaaaa", getProcessId(), KeyManager.getPrivateKey());
                                 StateMessage response = new StateMessage(getProcessId(), valTSPair, writeset);
                                 authenticatedPerfectLink.sendMessage(response, 4550 + messageReceived.getSenderId());

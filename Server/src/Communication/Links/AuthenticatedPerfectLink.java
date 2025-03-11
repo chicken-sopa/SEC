@@ -81,7 +81,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         Integer portToSend = receivedMsg.getPort();
         switch (msg.getType()) {
 
-            case LinkMessageType.Message -> {
+            case Message -> {
                 /// send echo response to sender
                 AckMessage ackMsg = new AckMessage(msg.getMessageUniqueId());
                 UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(getProcessId(), messageIdCounter++, (T) ackMsg, LinkMessageType.Ack);
@@ -90,7 +90,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
                 SignedUdpLinkMessage<T> signedAckMessage = new SignedUdpLinkMessage<>(ackMessage, signature);
                 super.sendAckMessage(signedAckMessage, portToSend);
             }
-            case LinkMessageType.Ack -> {
+            case Ack -> {
                 AckMessage ack = (AckMessage) msg.getMessageValue();
                 Integer receivedAckId = ack.message();
                 MessagesAck.put(receivedAckId, true);

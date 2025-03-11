@@ -11,6 +11,7 @@
 ## Conditional Collect:
     - Pensar como proteger de replay attacks (A)
     - Fazer operacoes de verificacao criptografica nos estagios mais importantes do consenso (A)
+    - Passar a receber algumas das infos como argumento do programa em vez de como input para facilitar os testes (A)
 
 ## Server:
     - Tratar de instanciar sabendo as chaves publicas de outros servers e os seus Ports (AB)

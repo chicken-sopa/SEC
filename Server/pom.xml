@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Referência ao projeto pai -->
+    <parent>
+        <groupId>com.sec</groupId>
+        <artifactId>SEC_project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- Nome do módulo -->
+    <artifactId>Server</artifactId>
+    <packaging>jar</packaging> <!-- "jar" para um módulo compilável -->
+
+    <build>
+        <!-- Configuração do diretório de código-fonte para a estrutura customizada -->
+        <sourceDirectory>src</sourceDirectory>
+    </build>
+</project>
