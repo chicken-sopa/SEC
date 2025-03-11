@@ -6,6 +6,7 @@ import Communication.Collection.ConditionalCollect;
 import Communication.Collection.StateMessage;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Types.ValTSPair.ValTSPair;
+import Keys.KeyManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ public class ConsensusBFT {
 
     private  ValTSPair latestWriteMsg = null;
     private  List<ValTSPair> writeSet = null;
-
     private int currentTS = 0;
 
     private final int quorumSize;
@@ -64,9 +64,16 @@ public class ConsensusBFT {
 
 
         collectedStates.forEach((senderId,state)->{
-            ValTSPair currentVal = state.getVal().getValTSPair();
-            quantitiesOfProposedValues.merge(currentVal, 1, Integer::sum);
-           // break;
+            try {
+                if(state.getVal().verifySignature(KeyManager.getClientPublicKey(state.getVal().getClientId()))){
+                    ValTSPair currentVal = state.getVal().getValTSPair();
+                    quantitiesOfProposedValues.merge(currentVal, 1, Integer::sum);
+                    // break;
+
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
 
 

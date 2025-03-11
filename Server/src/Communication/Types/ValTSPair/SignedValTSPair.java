@@ -25,7 +25,7 @@ public class SignedValTSPair implements Serializable {
     private String generateSignature(PrivateKey privateKey) throws Exception {
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initSign(privateKey);
-        sign.update((valTSPair.valTS() + valTSPair.val()).getBytes());
+        sign.update(valTSPair.val().getBytes());
         return Base64.getEncoder().encodeToString(sign.sign());
     }
 
@@ -47,7 +47,7 @@ public class SignedValTSPair implements Serializable {
     public boolean verifySignature(PublicKey publicKey) throws Exception {
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initVerify(publicKey);
-        sign.update((valTSPair.valTS() + valTSPair.val()).getBytes());
+        sign.update(valTSPair.val().getBytes());
         return sign.verify(Base64.getDecoder().decode(signature));
     }
 }

@@ -45,6 +45,7 @@ public class ConditionalCollect<T extends BaseMessage> {
         while (collectedMessages.size() < quorumSize) {
                 BaseMessage received =  link.receiveMessage();
             if (received == null ) continue; //signature couldnt be verified
+            //TODO: this might be incorrect, we might not be supposed to drop this
             int sender = received.getSenderId();
             if(received.messageType == MessageType.STATE) {
                 StateMessage receivedState = (StateMessage) received;
@@ -69,8 +70,7 @@ public class ConditionalCollect<T extends BaseMessage> {
     /**
      * Checks whether the collected messages satisfy a specific condition.
      */
-    public boolean isValidCollection() {
-        // Implement the condition C(M) based on the specific Byzantine Consensus algorithm
-        return collectedMessages.size() >= quorumSize;
+    public void isValidCollection() {
     }
+
 }
