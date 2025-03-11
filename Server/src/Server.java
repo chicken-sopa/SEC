@@ -22,11 +22,12 @@ public class Server {
     int processId;
     SignedWriteset writeset;
 
-    public Server(int port, int processId) throws SocketException, NoSuchAlgorithmException {
+    public Server(int port, int processId, boolean isLeader) throws SocketException, NoSuchAlgorithmException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth);
         conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink,2);
         sc = new Scanner(System.in);
+        this.isLeader = isLeader;
         this.processId = processId;
         try {
             writeset = new SignedWriteset(getProcessId(), KeyManager.getPrivateKey());
@@ -36,44 +37,16 @@ public class Server {
     }
 
     public void init(){
-        assertLeaderStatus();
         if(isLeader)
             startSendMessageProcedure();
         startReceiveMessageThread();
     }
 
-    private void assertLeaderStatus(){
-        // Prompt user for leader status
-        System.out.println("Do you want to be the leader? (Type 'yes' to confirm)");
-        String confirm = sc.nextLine().trim().toLowerCase();
 
-        isLeader = confirm.equals("yes");
-        // If not the leader, exit the thread
-        if (isLeader) {
-            System.out.println("This process is the current leader.");
-        }
-    }
 
     private void startSendMessageProcedure() {
-
-        // Prompt for epoch and message
-//        System.out.println("Enter Destination Port: ");
-//        int portToSend = Integer.parseInt(sc.nextLine());
-//
-        System.out.println("Enter epoch: ");
-        int epoch = Integer.parseInt(sc.nextLine());
-//
-//        InitCollectMessage msg = new InitCollectMessage(epoch);
-//
-//        try {
-//            authenticatedPerfectLink.sendMessage(msg, portToSend);
-//            System.out.println("Message sent successfully.");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-
         try {
-            conditionalCollect.startCollection(epoch);
+            conditionalCollect.startCollection();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

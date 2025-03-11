@@ -30,7 +30,7 @@ public class ConditionalCollect<T extends BaseMessage> {
     /**
      * Initiates the Conditional Collect by sending a request to all processes.
      */
-    public void startCollection(int epochId) throws Exception {
+    public void startCollection() throws Exception {
         T collectRequest = (T) new InitCollectMessage(getProcessId());
         for (int i = 0;  i <= 2  ;i++) {
             System.out.println("A enviar para o port " + (4550 + i));

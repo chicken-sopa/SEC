@@ -48,15 +48,15 @@ def start_node_in_terminal(command, name):
 # Configuração dos comandos para cada nó
 nodes = [
     {
-        "command": ["java", "-cp", "Server/target/classes", "Main"],
+        "command": ["java", "-cp", "Server/target/classes", "Main", "2"],
         "name": "Node-2",
     },
     {
-        "command": ["java", "-cp", "Server/target/classes", "Main"],
+        "command": ["java", "-cp", "Server/target/classes", "Main" , "1"],
         "name": "Node-1",
     },
     {
-        "command": ["java", "-cp", "Server/target/classes", "Main"],
+        "command": ["java", "-cp", "Server/target/classes", "Main", "0", "yes"],
         "name": "Node-0",
     },
 ]
