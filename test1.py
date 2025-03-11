@@ -1,6 +1,7 @@
 import subprocess
 import platform
 import time
+import os
 
 
 def start_node_in_terminal(command, name):
@@ -27,11 +28,13 @@ def start_node_in_terminal(command, name):
             ["gnome-terminal", "--", "bash", "-c", f"{bash_command}; exec bash"]
         )
     elif system_name == "Darwin":  # macOS
-        # No macOS: usar AppleScript para abrir o Terminal e executar o comando
+        script_dir = os.getcwd()  # Obter o diretório de trabalho atual no momento da execução
         bash_command = " ".join(command)
-        subprocess.Popen(
-            ["osascript", "-e", f'tell app "Terminal" to do script "{bash_command}"']
-        )
+        bash_command_escaped = bash_command.replace('"', '\\"')  # Escapar aspas duplas
+        subprocess.Popen([
+            "osascript", "-e",
+            f'tell application "Terminal" to do script "cd {script_dir}; {bash_command_escaped}"'
+        ])
     else:
         raise Exception(
             "Sistema operacional não suportado. Apenas Windows, Linux e macOS são suportados."
@@ -39,7 +42,6 @@ def start_node_in_terminal(command, name):
 
     # Aguardar antes de iniciar o próximo nó
     time.sleep(1)
-
     print(f"{name} foi iniciado com sucesso.")
 
 
@@ -60,9 +62,10 @@ nodes = [
 ]
 
 # Compilar o projeto com Maven (opcional)
-#print("Compilando o projeto...")
-#subprocess.run(["mvn", "clean", "install"], check=True, cwd="Server")
-#print("Compilação concluída.")
+# print("Compilando o projeto...")
+# subprocess.run(["mvn", "clean", "install"], check=True, cwd="Server")
+# print("Compilação concluída.")
+
 
 # Iniciar todos os nós nos terminais
 for node_info in nodes:
