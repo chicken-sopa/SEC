@@ -4,5 +4,6 @@ public enum MessageType {
     INIT_COLLECT,
     STATE,
     COLLECTED,
-    WRITE
+    WRITE,
+    APPEND
 }

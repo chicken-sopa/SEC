@@ -2,5 +2,5 @@ package Lib;
 
 public interface ILib {
 
-    public void AppendMessage(String messageToAppend);
+    public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception;
 }
