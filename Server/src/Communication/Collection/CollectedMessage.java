@@ -6,6 +6,10 @@ import Communication.Types.Writeset.SignedWriteset;
 import java.util.Map;
 
 public class CollectedMessage extends BaseMessage{
+    public Map<Integer, StateMessage> getCollectedStates() {
+        return collectedStates;
+    }
+
     Map<Integer, StateMessage>  collectedStates;
     public CollectedMessage(int senderId ,Map<Integer, StateMessage>  collectedMessages) {
         super(MessageType.COLLECTED, senderId );
