@@ -1,6 +1,7 @@
 import Communication.Collection.*;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Security.DigitalSignatureAuth;
+import Communication.Messages.AppendMessage;
 import Communication.Messages.BaseMessage;
 import Communication.Messages.StateMessage;
 import Communication.Types.ValTSPair.SignedValTSPair;
@@ -69,6 +70,11 @@ public class Server {
                                 StateMessage response = new StateMessage(getProcessId(), valTSPair, writeset);
                                 authenticatedPerfectLink.sendMessage(response, 4550 + messageReceived.getSenderId());
                             }
+                            case APPEND -> {
+                                AppendMessage message = (AppendMessage)messageReceived;
+                                System.out.println("Received "+message.prettyPrint()+ " || Message -> "+message.getMessage());
+                            }
+
                         }
                     }
                 } catch (Exception e) {

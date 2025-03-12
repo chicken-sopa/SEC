@@ -1,4 +1,4 @@
-package Lib.Messages;
+package Communication.Messages;
 
 public class AppendMessage extends BaseMessage{
 
