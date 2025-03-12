@@ -1,9 +1,9 @@
 package Communication.Collection;
 
 import Communication.Links.AuthenticatedPerfectLink;
-import Communication.Links.Data.MessageDeliveryTuple;
-import Communication.Links.LinkMessages.UdpLinkMessage;
-import Communication.Collection.BaseMessage;
+import Communication.Messages.BaseMessage;
+import Communication.Messages.MessageType;
+import Communication.Messages.StateMessage;
 
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class ConditionalCollect<T extends BaseMessage> {
             if (received == null ) continue; //signature couldnt be verified
             //TODO: this might be incorrect, we might not be supposed to drop this
             int sender = received.getSenderId();
-            if(received.messageType == MessageType.STATE) {
+            if(received.getMessageType() == MessageType.STATE) {
                 StateMessage receivedState = (StateMessage) received;
 
 

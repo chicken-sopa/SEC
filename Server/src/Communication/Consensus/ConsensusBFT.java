@@ -2,6 +2,10 @@ package Communication.Consensus;
 
 import Communication.Collection.*;
 import Communication.Links.AuthenticatedPerfectLink;
+import Communication.Messages.AcceptMessage;
+import Communication.Messages.BaseMessage;
+import Communication.Messages.StateMessage;
+import Communication.Messages.WriteMessage;
 import Communication.Types.ValTSPair.SignedValTSPair;
 import Communication.Types.ValTSPair.ValTSPair;
 import Communication.Types.Writeset.SignedWriteset;

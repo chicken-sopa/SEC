@@ -1,14 +1,10 @@
 package Communication.Consensus;
 
-import Communication.Collection.BaseMessage;
-import Communication.Collection.InitCollectMessage;
+import Communication.Messages.BaseMessage;
 import Communication.Links.AuthenticatedPerfectLink;
-import Communication.Links.PerfectLink;
-import Communication.Links.Security.DigitalSignatureAuth;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
-import java.util.prefs.BackingStoreException;
 
 public class BroadcastMessage<T extends BaseMessage> {
 

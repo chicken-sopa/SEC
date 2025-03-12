@@ -1,9 +1,6 @@
-package Communication.Collection;
+package Communication.Messages;
 
 import Communication.Types.ValTSPair.SignedValTSPair;
-import Communication.Types.ValTSPair.ValTSPair;
-
-import java.util.Map;
 
 public class WriteMessage extends BaseMessage{
      SignedValTSPair pairToProposeWrite;

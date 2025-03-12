@@ -1,8 +1,9 @@
 import Communication.Collection.*;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Security.DigitalSignatureAuth;
+import Communication.Messages.BaseMessage;
+import Communication.Messages.StateMessage;
 import Communication.Types.ValTSPair.SignedValTSPair;
-import Communication.Types.ValTSPair.ValTSPair;
 import Communication.Types.Writeset.SignedWriteset;
 import Keys.KeyManager;
 

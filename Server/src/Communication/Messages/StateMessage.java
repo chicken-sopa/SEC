@@ -1,6 +1,5 @@
-package Communication.Collection;
+package Communication.Messages;
 
-import Communication.Collection.BaseMessage;
 import Communication.Types.ValTSPair.SignedValTSPair;
 import Communication.Types.Writeset.SignedWriteset;
 

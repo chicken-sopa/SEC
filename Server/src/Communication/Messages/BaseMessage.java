@@ -1,4 +1,4 @@
-package Communication.Collection;
+package Communication.Messages;
 
 import Communication.Links.LinkMessages.Base.Contracts.IMessage;
 import java.io.Serializable;

@@ -1,4 +1,4 @@
-package Communication.Collection;
+package Communication.Messages;
 
 public enum MessageType {
     INIT_COLLECT,

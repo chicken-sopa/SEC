@@ -1,11 +1,12 @@
 package Communication.Collection;
 
-import Communication.Types.ValTSPair.SignedValTSPair;
-import Communication.Types.Writeset.SignedWriteset;
+import Communication.Messages.BaseMessage;
+import Communication.Messages.MessageType;
+import Communication.Messages.StateMessage;
 
 import java.util.Map;
 
-public class CollectedMessage extends BaseMessage{
+public class CollectedMessage extends BaseMessage {
     public Map<Integer, StateMessage> getCollectedStates() {
         return collectedStates;
     }

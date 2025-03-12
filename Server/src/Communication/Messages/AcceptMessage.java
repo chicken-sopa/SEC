@@ -1,4 +1,4 @@
-package Communication.Collection;
+package Communication.Messages;
 
 import Communication.Types.ValTSPair.SignedValTSPair;
 
