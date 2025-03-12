@@ -1,7 +1,7 @@
-package Links.LinkMessages.Base.Contracts;
+package Lib.Links.LinkMessages.Base.Contracts;
 
 
-import Links.LinkMessages.Base.LinkMessageType;
+import Lib.Links.LinkMessages.Base.LinkMessageType;
 
 import java.io.IOException;
 import java.io.Serializable;

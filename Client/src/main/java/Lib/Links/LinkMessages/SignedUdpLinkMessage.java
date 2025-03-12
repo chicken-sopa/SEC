@@ -1,8 +1,8 @@
-package Links.LinkMessages;
+package Lib.Links.LinkMessages;
 
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
-import Links.LinkMessages.Base.SignedLinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.Base.SignedLinkMessage;
 
 public class SignedUdpLinkMessage<T extends IMessage> extends SignedLinkMessage<T> {
 

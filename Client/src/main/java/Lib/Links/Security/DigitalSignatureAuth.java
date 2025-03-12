@@ -1,9 +1,9 @@
-package Links.Security;
+package Lib.Links.Security;
 
 
-import Helpers.Constants;
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Helpers.Constants;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
 
 import java.security.*;
 import java.util.Base64;

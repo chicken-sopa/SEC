@@ -1,8 +1,8 @@
-package Links.LinkMessages.Base;
+package Lib.Links.LinkMessages.Base;
 
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
-import Links.LinkMessages.UdpLinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.UdpLinkMessage;
 
 import java.io.*;
 import java.util.Arrays;

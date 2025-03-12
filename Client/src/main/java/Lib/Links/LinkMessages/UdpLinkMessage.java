@@ -1,8 +1,8 @@
-package Links.LinkMessages;
+package Lib.Links.LinkMessages;
 
-import Links.LinkMessages.Base.Contracts.IMessage;
-import Links.LinkMessages.Base.LinkMessage;
-import Links.LinkMessages.Base.LinkMessageType;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.Base.LinkMessage;
+import Lib.Links.LinkMessages.Base.LinkMessageType;
 
 public class UdpLinkMessage<T extends IMessage> extends LinkMessage<T> {
 

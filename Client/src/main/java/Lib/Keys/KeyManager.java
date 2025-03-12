@@ -1,4 +1,4 @@
-package Keys;
+package Lib.Keys;
 
 import Configuration.ClientConfig;
 
@@ -6,8 +6,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
-import static Keys.KeyLoader.loadPrivateKey;
-import static Keys.KeyLoader.loadPublicKey;
+import static Lib.Keys.KeyLoader.loadPrivateKey;
+import static Lib.Keys.KeyLoader.loadPublicKey;
 
 public class KeyManager {
     private static final Map<Integer, PublicKey> NODES_PUBLIC_KEYS = new HashMap<>();

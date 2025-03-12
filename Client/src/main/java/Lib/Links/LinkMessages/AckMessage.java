@@ -1,6 +1,6 @@
-package Links.LinkMessages;
+package Lib.Links.LinkMessages;
 
-import Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
 
 public record AckMessage(
         Integer message //message id that was acked

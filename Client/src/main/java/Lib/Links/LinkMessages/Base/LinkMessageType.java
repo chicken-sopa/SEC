@@ -1,4 +1,4 @@
-package Links.LinkMessages.Base;
+package Lib.Links.LinkMessages.Base;
 
 public enum LinkMessageType {
     Ack,

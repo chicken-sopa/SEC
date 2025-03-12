@@ -1,8 +1,8 @@
-package Links.LinkMessages.Base;
+package Lib.Links.LinkMessages.Base;
 
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
-import Links.LinkMessages.Base.Contracts.ISignedLinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.Base.Contracts.ISignedLinkMessage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

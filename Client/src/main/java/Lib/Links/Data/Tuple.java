@@ -1,4 +1,4 @@
-package Links.Data;
+package Lib.Links.Data;
 
 public class Tuple<X, Y> {
     protected final X x;

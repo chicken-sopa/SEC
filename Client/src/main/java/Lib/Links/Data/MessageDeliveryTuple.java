@@ -1,4 +1,4 @@
-package Links.Data;
+package Lib.Links.Data;
 
 public class MessageDeliveryTuple<UdpMessage, Integer> extends Tuple<UdpMessage, Integer> {
 

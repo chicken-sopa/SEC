@@ -1,14 +1,14 @@
-package Links;
-import Keys.KeyManager;
+package Lib.Links;
+import Lib.Keys.KeyManager;
 
-import Links.Data.MessageDeliveryTuple;
-import Links.LinkMessages.AckMessage;
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
-import Links.LinkMessages.Base.LinkMessageType;
-import Links.LinkMessages.SignedUdpLinkMessage;
-import Links.LinkMessages.UdpLinkMessage;
-import Links.Security.DigitalSignatureAuth;
+import Lib.Links.Data.MessageDeliveryTuple;
+import Lib.Links.LinkMessages.AckMessage;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.Base.LinkMessageType;
+import Lib.Links.LinkMessages.SignedUdpLinkMessage;
+import Lib.Links.LinkMessages.UdpLinkMessage;
+import Lib.Links.Security.DigitalSignatureAuth;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;

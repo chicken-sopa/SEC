@@ -1,4 +1,4 @@
-package Helpers;
+package Lib.Helpers;
 
 public final class Constants {
 

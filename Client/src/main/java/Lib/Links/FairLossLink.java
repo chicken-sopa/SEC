@@ -1,8 +1,8 @@
-package Links;
+package Lib.Links;
 
-import Links.Data.MessageDeliveryTuple;
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.Data.MessageDeliveryTuple;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;

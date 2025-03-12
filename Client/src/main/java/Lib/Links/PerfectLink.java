@@ -1,10 +1,10 @@
-package Links;
+package Lib.Links;
 
-import Helpers.Auxiliary;
-import Links.Data.MessageDeliveryTuple;
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
-import Links.LinkMessages.Base.Contracts.IMessage;
-import Links.LinkMessages.Base.LinkMessageType;
+import Lib.Helpers.Auxiliary;
+import Lib.Links.Data.MessageDeliveryTuple;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.IMessage;
+import Lib.Links.LinkMessages.Base.LinkMessageType;
 
 import java.io.IOException;
 import java.net.SocketException;

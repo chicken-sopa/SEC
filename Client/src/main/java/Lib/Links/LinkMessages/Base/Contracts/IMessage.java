@@ -1,4 +1,4 @@
-package Links.LinkMessages.Base.Contracts;
+package Lib.Links.LinkMessages.Base.Contracts;
 
 import java.io.Serializable;
 

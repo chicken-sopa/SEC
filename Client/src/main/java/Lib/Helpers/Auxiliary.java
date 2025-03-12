@@ -1,7 +1,7 @@
-package Helpers;
+package Lib.Helpers;
 
 
-import Links.LinkMessages.Base.Contracts.ILinkMessage;
+import Lib.Links.LinkMessages.Base.Contracts.ILinkMessage;
 
 public class Auxiliary {
     private Auxiliary() {}
