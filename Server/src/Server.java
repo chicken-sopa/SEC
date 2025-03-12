@@ -43,8 +43,6 @@ public class Server {
         startReceiveMessageThread();
     }
 
-
-
     private void startSendMessageProcedure() {
         try {
             conditionalCollect.startCollection();

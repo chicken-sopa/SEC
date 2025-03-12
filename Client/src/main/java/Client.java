@@ -3,24 +3,22 @@ import Lib.Lib;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Scanner;
 
 public class Client {
 
-    Scanner sc;
     ILib lib;
     int counter = 1;
+    int Id;
 
-    public Client(int myPort) throws SocketException, NoSuchAlgorithmException {
-        sc = new Scanner(System.in);
+    public Client(int myPort, int myId) throws SocketException, NoSuchAlgorithmException {
         lib = new Lib(myPort);
+        Id = myId;
     }
 
-    public void sendSomething() throws Exception {
-        System.out.println("Type destination port:");
-        int destinationPort = sc.nextInt();
-        lib.SendAppendMessage("MessageFromClient-" + counter++, destinationPort);
+    public void sendSomething(int[] portList) throws Exception {
+        for(int destinationPort : portList) {
+            lib.SendAppendMessage("MessageFromClient-" + counter++, destinationPort);
+        }
+
     }
-
-
 }

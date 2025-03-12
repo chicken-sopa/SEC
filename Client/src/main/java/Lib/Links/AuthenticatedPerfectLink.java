@@ -13,6 +13,7 @@ import Lib.Links.Security.DigitalSignatureAuth;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static Configuration.ClientConfig.getProcessId;
 
@@ -20,7 +21,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
 
     DigitalSignatureAuth<T> digitalSignatureAuth;
     private final PrivateKey privateKey = KeyManager.getPrivateKey();
-    int messageIdCounter = 0;
+    AtomicInteger messageIdCounter = new AtomicInteger(0);
 
     public AuthenticatedPerfectLink(int port, DigitalSignatureAuth<T> digitalSignatureAuth) throws SocketException, NoSuchAlgorithmException {
         super(port);
@@ -32,7 +33,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         Thread t = new Thread(() -> {
 
             try {
-                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(getProcessId(), messageIdCounter++, msg, LinkMessageType.Message);
+                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(getProcessId(), messageIdCounter.getAndAdd(1), msg, LinkMessageType.Message);
 
                 String signature = digitalSignatureAuth.signMessage(messageToSend, privateKey);
 
@@ -84,7 +85,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             case Message -> {
                 /// send echo response to sender
                 AckMessage ackMsg = new AckMessage(msg.getMessageUniqueId());
-                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(getProcessId(), messageIdCounter++, (T) ackMsg, LinkMessageType.Ack);
+                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(getProcessId(), messageIdCounter.getAndAdd(1), (T) ackMsg, LinkMessageType.Ack);
                 String signature = digitalSignatureAuth.signMessage(ackMessage,privateKey);
 
                 SignedUdpLinkMessage<T> signedAckMessage = new SignedUdpLinkMessage<>(ackMessage, signature);

@@ -20,7 +20,6 @@ public class Lib implements ILib {
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(myPort, digitalSignatureAuth);
     }
 
-
     @Override
     public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
         AppendMessage message = new AppendMessage(MessageType.APPEND, ClientConfig.getProcessId(), messageToAppend);
