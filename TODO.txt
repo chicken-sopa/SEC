@@ -6,7 +6,6 @@
     - Z  - Zé
 
 ## Links:
-    - Fazer o ReceiveMessage chamar uma função qualquer sempre que chega uma mensagem (AB)
 
 ## Conditional Collect:
     - Pensar como proteger de replay attacks (A)
@@ -14,7 +13,7 @@
     - Passar a receber algumas das infos como argumento do programa em vez de como input para facilitar os testes (A)
 
 ## Server:
-    - Tratar de instanciar sabendo as chaves publicas de outros servers e os seus Ports (AB)
+    - Fazer o Servidor saber reagir a mensagens do Cliente
 
 ## Cliente:
     - Conseguir enviar mensagens para o server com a string para fazer Append
