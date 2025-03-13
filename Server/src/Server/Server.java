@@ -6,6 +6,7 @@ import Communication.Consensus.ConsensusBFT;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import  com.sec.Messages.BaseMessage;
+import com.sec.Messages.MessageType;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
 
@@ -71,6 +72,9 @@ public class Server {
             while (true) {
                 try {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
+                    if(messageReceived.getMessageType().equals(MessageType.APPEND)){
+
+                    }
                     consensusBFT.processConsensusRequestMessage(messageReceived);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
