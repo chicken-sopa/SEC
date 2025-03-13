@@ -16,8 +16,8 @@ import static Configuration.ProcessConfig.getProcessId;
 
 public class Server {
 
-    AuthenticatedPerfectLink<BaseMessage>  authenticatedPerfectLink;
-    DigitalSignatureAuth<BaseMessage>  digitalSignatureAuth;
+    AuthenticatedPerfectLink<BaseMessage> authenticatedPerfectLink;
+    DigitalSignatureAuth<BaseMessage> digitalSignatureAuth;
     ConditionalCollect<BaseMessage> conditionalCollect;
     ConsensusBFT consensusBFT;
     Boolean isLeader = false;
@@ -34,7 +34,7 @@ public class Server {
 
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth);
-        conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink,quorumSize);
+        conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink, quorumSize);
 
         sc = new Scanner(System.in);
         this.isLeader = isLeader;
@@ -47,8 +47,8 @@ public class Server {
         }
     }
 
-    public void init(){
-        if(isLeader)
+    public void init() {
+        if (isLeader)
             startSendMessageProcedure();
         startReceiveMessageThread();
     }
@@ -67,25 +67,12 @@ public class Server {
 
     }
 
-    private void startReceiveMessageThread(){
+    private void startReceiveMessageThread() {
         new Thread(() -> {
             while (true) {
                 try {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
-                    if(messageReceived != null){
-                        switch (messageReceived.getMessageType()) {
-                            case INIT_COLLECT -> {
-                                SignedValTSPair valTSPair = new SignedValTSPair(1, "aaaaaa", getProcessId(), KeyManager.getPrivateKey());
-                                StateMessage response = new StateMessage(getProcessId(), valTSPair, writeset);
-                                authenticatedPerfectLink.sendMessage(response, 4550 + messageReceived.getSenderId());
-                            }
-                            case APPEND -> {
-                                AppendMessage message = (AppendMessage)messageReceived;
-                                System.out.println("Received "+message.prettyPrint()+ " || Message -> "+message.getMessage());
-                            }
-
-                        }
-                    }
+                    consensusBFT.processConsensusRequestMessage(messageReceived);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
