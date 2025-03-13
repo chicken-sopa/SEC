@@ -11,9 +11,9 @@ public class Main {
         int myPort = 5550 + clientId;
         ClientConfig.setProcessId(clientId);
 
-        int[] destinationPortList = new int[4];
-        for (int i = 0; i < 4; i++) {
-            destinationPortList[i] = Integer.parseInt("455"+ i);
+        int[] destinationPortList = new int[3];
+        for (int i = 0; i <= 2; i++) {
+            destinationPortList[i] = 4550 + i;
         }
 
         Client client = new Client(myPort, clientId);
