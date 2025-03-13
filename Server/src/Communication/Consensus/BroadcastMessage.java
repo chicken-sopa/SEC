@@ -1,7 +1,7 @@
 package Communication.Consensus;
 
-import Communication.Messages.BaseMessage;
-import Communication.Links.AuthenticatedPerfectLink;
+import  com.sec.Messages.BaseMessage;
+import  com.sec.Links.AuthenticatedPerfectLink;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;

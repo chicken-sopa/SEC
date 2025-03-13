@@ -1,9 +1,9 @@
 package Communication.Collection;
 
-import Communication.Links.AuthenticatedPerfectLink;
-import Communication.Messages.BaseMessage;
-import Communication.Messages.MessageType;
-import Communication.Messages.StateMessage;
+import  com.sec.Links.AuthenticatedPerfectLink;
+import  com.sec.Messages.BaseMessage;
+import  com.sec.Messages.MessageType;
+import  com.sec.Messages.StateMessage;
 
 
 import java.util.*;

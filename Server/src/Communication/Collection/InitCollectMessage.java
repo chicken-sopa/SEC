@@ -1,7 +1,7 @@
 package Communication.Collection;
 
-import Communication.Messages.BaseMessage;
-import Communication.Messages.MessageType;
+import  com.sec.Messages.BaseMessage;
+import  com.sec.Messages.MessageType;
 
 public class InitCollectMessage extends BaseMessage {
     public InitCollectMessage(int senderId, int currentConsensusID) {

@@ -1,14 +1,16 @@
 package Lib;
 
 import Configuration.ClientConfig;
-import Lib.Links.AuthenticatedPerfectLink;
-import Lib.Links.Security.DigitalSignatureAuth;
-import Lib.Messages.AppendMessage;
-import Lib.Messages.BaseMessage;
-import Lib.Messages.MessageType;
+import com.sec.Links.AuthenticatedPerfectLink;
+import com.sec.Links.Security.DigitalSignatureAuth;
+import com.sec.Messages.AppendMessage;
+import com.sec.Messages.BaseMessage;
+import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
+
+import static Configuration.ClientConfig.getProcessId;
 
 public class Lib implements ILib {
 
@@ -17,12 +19,12 @@ public class Lib implements ILib {
 
     public Lib(int myPort) throws NoSuchAlgorithmException, SocketException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
-        authenticatedPerfectLink = new AuthenticatedPerfectLink<>(myPort, digitalSignatureAuth);
+        authenticatedPerfectLink = new AuthenticatedPerfectLink<>(myPort, digitalSignatureAuth, getProcessId());
     }
 
     @Override
     public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
-        AppendMessage message = new AppendMessage(MessageType.APPEND, ClientConfig.getProcessId(), messageToAppend);
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend,getProcessId());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 }
