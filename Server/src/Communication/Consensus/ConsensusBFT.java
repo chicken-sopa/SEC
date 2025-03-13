@@ -14,21 +14,30 @@ import Keys.KeyManager;
 import java.util.*;
 
 public class ConsensusBFT {
-        //TODO PERVEBER QUANDO TEMOS CURRENT_VAL_TS
+    //TODO PERVEBER QUANDO TEMOS CURRENT_VAL_TS
     private final ValTSPair latestWriteMsg = null;
-    private final SignedWriteset writeSet = new SignedWriteset(this.SENDER_ID, KeyManager.getPrivateKey());
 
-    private final HashMap<SignedValTSPair, Integer> writeRequestsReceived = new HashMap<>();
+    private HashMap<Integer, SignedWriteset> writesetByConsensusID = new HashMap<>();
 
-    private final HashMap<SignedValTSPair, Integer> acceptRequestsReceived = new HashMap<>();
+    //private final SignedWriteset writeSet = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey());
 
-    private final List<SignedValTSPair> valuesReadyToWrite = new ArrayList<>();
+    private final HashMap<Integer, HashMap<SignedValTSPair, Integer>> writeRequestsReceivedByConsensusID = new HashMap<>();
 
-    private SignedValTSPair currentValTSPair = null;
+    private final HashMap<Integer, HashMap<SignedValTSPair, Integer>> acceptRequestsReceivedByConsensusID = new HashMap<>();
 
-    private final int currentTS = 0;
+    private final HashMap<Integer, SignedValTSPair> valuesReadyToWrite = new HashMap<>();
 
-    private final int SENDER_ID = 0;
+    private final HashMap<Integer, ConsensusState> leaderConsensusState = new HashMap<>();
+
+    private HashMap<Integer,SignedValTSPair> currentValTSPairByConsensusID = new HashMap<>();
+
+    //private final int currentTS = 0;
+
+    private Integer currentConsensusID = 0;
+
+    private final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
+
+    private final int SERVER_ID;
 
     private final int f = 1;
     private final int quorumSize;
@@ -40,18 +49,22 @@ public class ConsensusBFT {
     // last message
     // messages written
 
-
-    public ConsensusBFT(ValTSPair latestWriteMsg, int quorumSize, AuthenticatedPerfectLink<BaseMessage> link) throws Exception {
-        this.quorumSize = quorumSize;
-        this.link = link;
-
+    public boolean isServerLeader() {
+        return SERVER_ID == 0;
     }
 
 
-    public Map<Integer, StateMessage> sendReadRequestAndReceiveStates(int timestampMsg) throws Exception {
+    public ConsensusBFT(ValTSPair latestWriteMsg, int quorumSize, AuthenticatedPerfectLink<BaseMessage> link, int serverID) throws Exception {
+        this.quorumSize = quorumSize;
+        this.link = link;
+        this.SERVER_ID = serverID;
+    }
+
+
+    public Map<Integer, StateMessage> sendReadRequestAndReceiveStates(int currentConsensusID) throws Exception {
         //check if proposed has clientId and sign corrected
         ConditionalCollect<BaseMessage> conditionalCollect = new ConditionalCollect<BaseMessage>(link, quorumSize);
-        conditionalCollect.startCollection(timestampMsg);
+        conditionalCollect.startCollection(currentConsensusID);
         conditionalCollect.receiveMessages();
         Map<Integer, StateMessage> collectedMsg = (Map<Integer, StateMessage>) conditionalCollect.getCollectedMessages();
 
@@ -60,20 +73,29 @@ public class ConsensusBFT {
     }
 
 
-    public void processReadMessage() throws Exception {
-        StateMessage stateMessage = new StateMessage(this.SENDER_ID, currentValTSPair, writeSet);
+    public void processReadMessage(int msgConsensusID) throws Exception {
+        SignedWriteset currentWriteset = writesetByConsensusID.get(msgConsensusID);
+
+        if (currentWriteset == null) {
+            currentWriteset = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey());
+            writesetByConsensusID.put(msgConsensusID, currentWriteset);
+        }
+
+        SignedValTSPair currentValTsPair = currentValTSPairByConsensusID.get(msgConsensusID);
+
+        StateMessage stateMessage = new StateMessage(this.SERVER_ID, currentValTsPair , currentWriteset, msgConsensusID);
         link.sendMessage(stateMessage, 4550);
     }
 
 
-    public void sendCollectedMsg(Map<Integer, StateMessage> collectedStates) throws Exception {
+    public void sendCollectedMsg(Map<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<BaseMessage>(link, quorumSize);
-        CollectedMessage collectedMessage = new CollectedMessage(this.SENDER_ID, collectedStates);
-        broadcastMessage.sendBroadcast(currentTS, collectedMessage);
+        CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, collectedStates, msgConsensusID);
+        broadcastMessage.sendBroadcast(collectedMessage);
     }
 
 
-    public ValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage) {
+    public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage) {
         //TODO check if signature is valid
 
         //1º value of the most recent ts in bizantine quorum and if value is in writeset f+1
@@ -92,81 +114,116 @@ public class ConsensusBFT {
                 })
                 .toList();
 
+        if (possibleMaxTsValue.isPresent()) {
 
-        int maxTsValue = collectedCurrentValues.stream()
-                .max(Comparator.comparing(ValTSPair::valTS)).get().valTS();
+            int maxTsValue = possibleMaxTsValue.get().getValTSPair().valTS();
+
+        Optional<SignedValTSPair> possibleMaxTsValue = collectedCurrentValues.stream()
+                .max(Comparator.comparing((pair) -> {
+                    return pair.getValTSPair().valTS();
+                }));
 
 
-        collectedCurrentValues = collectedCurrentValues.stream().filter((pair) ->
-                pair.valTS() == maxTsValue).toList();// != maxTsValue.get().valTS());
+            collectedCurrentValues = collectedCurrentValues.stream().filter((pair) ->
+                    pair.getValTSPair().valTS() == maxTsValue).toList();// != maxTsValue.get().valTS());
 
-        List<SignedWriteset> collectedWriteSets = collectedStates.values()
-                .stream()
-                .map(StateMessage::getWriteset)
-                .filter(set -> {
-                    try {
-                        return set.verifyWriteset(collectedMessage.getSenderId());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })// Extract ValTSPair from each StateMessage
-                .toList();
-        ;
+            List<SignedWriteset> collectedWriteSets = collectedStates.values()
+                    .stream()
+                    .map(StateMessage::getWriteset)
+                    .filter(set -> {
+                        try {
+                            return set.verifyWriteset(collectedMessage.getSenderId());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })// Extract ValTSPair from each StateMessage
+                    .toList();
+            ;
 
-        for (ValTSPair pair : collectedCurrentValues) {
-            long numberTimesPairInWriteSet = collectedWriteSets.stream().map(SignedWriteset::getWriteset)
-                    .flatMap(List::stream) // Flatten nested lists into a single stream
-                    .filter(val -> val.getValTSPair().equals(pair)) // Count occurrences of firstValue
-                    .count();
-            if (numberTimesPairInWriteSet > (quorumSize + 1)) {
-                return pair;
+            for (SignedValTSPair pair : collectedCurrentValues) {
+                long numberTimesPairInWriteSet = collectedWriteSets.stream().map(SignedWriteset::getWriteset)
+                        .flatMap(List::stream) // Flatten nested lists into a single stream
+                        .filter(val -> val.getValTSPair().equals(pair)) // Count occurrences of firstValue
+                        .count();
+                if (numberTimesPairInWriteSet > (quorumSize + 1)) {
+                    return pair;
+                }
             }
         }
 
 
-        if (collectedStates.get(0).getVal().getValTSPair().val() != null) {
-            return collectedStates.get(0).getVal().getValTSPair();
+        return collectedStates.get(0).getVal(); // when we have nothing always value that leader has
+
+
+    }
+
+
+    public void sendWriteRequest(SignedValTSPair pairToWrite, int msgConsensusID) throws Exception {
+        //currentValTSPair = pairToWrite;
+
+        SignedWriteset currentWriteset = writesetByConsensusID.get(msgConsensusID);
+
+        if (currentWriteset == null) {
+            currentWriteset = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey());
+            writesetByConsensusID.put(msgConsensusID, currentWriteset);
         }
 
-        return latestWriteMsg; // TODO ver bem porque pode estar errado mandar um write com currentValue pode ser melhor mandar null
-    }
+        // update writeSet and current Value to Write in specific consensusID
+        currentWriteset.appendToWriteset(pairToWrite);
+        currentValTSPairByConsensusID.put(msgConsensusID, pairToWrite);
 
-
-    public void sendWriteRequest(SignedValTSPair pairToWrite) throws Exception {
-        //currentValTSPair = pairToWrite;
-        writeSet.appendToWriteset(pairToWrite);
 
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<BaseMessage>(link, quorumSize);
-        WriteMessage writeMessage = new WriteMessage(this.SENDER_ID, pairToWrite);
-        broadcastMessage.sendBroadcast(currentTS, writeMessage);
+        WriteMessage writeMessage = new WriteMessage(this.SERVER_ID, pairToWrite, msgConsensusID);
+        broadcastMessage.sendBroadcast(writeMessage);
     }
 
 
-    public void processWriteRequest(WriteMessage writeMessage) throws Exception {
+    public void processWriteRequestAndSendAccept(WriteMessage writeMessage, int msgConsensusID) throws Exception {
+        //TODO CECK IF -1! THEN DONT SEND MORE
+
         SignedValTSPair pairToWrite = writeMessage.getPairToProposeWrite();
+
+        HashMap<SignedValTSPair, Integer> writeRequestsReceived =
+                writeRequestsReceivedByConsensusID.computeIfAbsent(msgConsensusID, k -> new HashMap<>());
+
 
         writeRequestsReceived.merge(pairToWrite, 1, Integer::sum); // update number of time write request was received
 
         if (writeRequestsReceived.get(pairToWrite) > (2 * f + 1)) {
-
             SignedValTSPair valueToAccept = pairToWrite;
             writeRequestsReceived.put(valueToAccept, -1);
-            sendAccepts(valueToAccept);
+            sendAccepts(valueToAccept, msgConsensusID);
+
+
+        }
+
+
+        long sizeOfPossibleConflictingValues = writeRequestsReceived.entrySet().stream().filter(pair -> {
+            return pair.getValue() < f;
+        }).count(); // if more than 1 has votes bigger that f then abort because none will have 2f+1
+
+        if (isServerLeader() && sizeOfPossibleConflictingValues > 1){
+            leaderConsensusState.put(msgConsensusID, ConsensusState.Aborted);
+            notifyAll();
         }
 
 
     }
 
 
-    public void sendAccepts(SignedValTSPair pairToAccept) throws Exception {
+    public void sendAccepts(SignedValTSPair pairToAccept, int msgConsensusID) throws Exception {
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<BaseMessage>(link, quorumSize);
-        AcceptMessage acceptMessage = new AcceptMessage(this.SENDER_ID, pairToAccept);
-        broadcastMessage.sendBroadcast(currentTS, acceptMessage);
+        AcceptMessage acceptMessage = new AcceptMessage(this.SERVER_ID, pairToAccept, msgConsensusID);
+        broadcastMessage.sendBroadcast(acceptMessage);
     }
 
 
     public void processAcceptMessage(AcceptMessage acceptMessage) {
         SignedValTSPair pairToAccept = acceptMessage.getPairToProposeAccept();
+
+        HashMap<SignedValTSPair, Integer> acceptRequestsReceived =
+                acceptRequestsReceivedByConsensusID.computeIfAbsent(acceptMessage.getMsgConsensusID(), k -> new HashMap<>());
 
         acceptRequestsReceived.merge(pairToAccept, 1, Integer::sum); // update number of time write request was received
 
@@ -174,21 +231,79 @@ public class ConsensusBFT {
 
             SignedValTSPair valueReadyToWrite = pairToAccept;
             acceptRequestsReceived.remove(valueReadyToWrite);
-            valuesReadyToWrite.add(valueReadyToWrite);
+            valuesReadyToWrite.put(acceptMessage.getMsgConsensusID(), valueReadyToWrite);
+
+            if (isServerLeader()) {
+                leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Decided);
+                notifyAll();
+            }
+
+        }
+
+        long sizeOfPossibleConflictingValues = acceptRequestsReceived.entrySet().stream().filter(pair -> {
+            return pair.getValue() < f;
+        }).count(); // if more than 1 has votes bigger that f then abort because none will have 2f+1
+
+        if (isServerLeader() && sizeOfPossibleConflictingValues > 1){
+            leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Aborted);
+            notifyAll();
         }
 
     }
 
 
-    public void leaderConsensus() throws Exception {
+    public synchronized void leaderConsensusThread() throws Exception {
+
+        while (true) {
+
+            startConsensus(currentConsensusID);
+
+            while (leaderConsensusState.getOrDefault(currentConsensusID, ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
+                try {
+                    wait();  // Release lock and wait
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+            if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Decided) {
+                currentConsensusID += 1;
+            }
+
+            else if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Aborted) {
+                //currentTimestamp += 1;
+                leaderConsensusState.put(currentConsensusID, ConsensusState.PROCESSING);
+            }
+
+
+        }
+
+    }
+
+
+    public void startConsensus(int consensusID) throws Exception {
         //readMessages = sendReadRequest();
         //process message read
         //TODO leader decides message to send
 
+        //int currentConsensusID = writesetByConsensusID.size();
+
+        /*
+        * If Leader has no prior current write value or write then get one of the messages sent from the client
+        * TODO
+        *   -ask how to get messages from client
+        *   -make that when no messages from client wait()
+        *   -when message the notify() the thread if a sleep
+        **/
+
+        if (writesetByConsensusID.get(consensusID) == null && currentValTSPairByConsensusID.get(consensusID) == null){
+            currentValTSPairByConsensusID.put(consensusID, messagesFromClient.pollFirst());
+        }
 
 
-        Map<Integer, StateMessage> collectedStates = sendReadRequestAndReceiveStates(currentTS);
-        sendCollectedMsg(collectedStates);
+
+        Map<Integer, StateMessage> collectedStates = sendReadRequestAndReceiveStates(consensusID);
+        sendCollectedMsg(collectedStates, consensusID);
 
         //sendCollectedAnswers();
 
@@ -197,27 +312,24 @@ public class ConsensusBFT {
 
     public void processConsensusRequestMessage(BaseMessage message) throws Exception {
 
-        //when message type
-        switch (message) {
-            case InitCollectMessage readMsg -> processReadMessage();
+        if (message instanceof InitCollectMessage) {
+            processReadMessage(message.getMsgConsensusID());
 
-            case CollectedMessage collectedMessage -> {
-                SignedValTSPair pairToProposeWrite = processCollectedStatesMessage(collectedMessage);
-                sendWriteRequest(pairToProposeWrite);
-            }
+        } else if (message instanceof CollectedMessage collectedMessage) {// Pattern matching
+            SignedValTSPair pairToProposeWrite = processCollectedStatesMessage(collectedMessage);
+            sendWriteRequest(pairToProposeWrite, message.getMsgConsensusID());
 
+        } else if (message instanceof WriteMessage writeMessage) {
+            processWriteRequestAndSendAccept(writeMessage, message.getMsgConsensusID());
 
-            case WriteMessage writeMessage -> processWriteRequest(writeMessage);
+        } else if (message instanceof AcceptMessage acceptMessage) {
+            processAcceptMessage(acceptMessage);
 
-            case AcceptMessage acceptMessage -> processAcceptMessage(acceptMessage);
-
-
-
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + message);
+        } else {
+            throw new IllegalStateException("Unexpected message type: " + message.getClass().getName());
         }
     }
 
 
 }
+
