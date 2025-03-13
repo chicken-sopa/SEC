@@ -79,14 +79,14 @@ public class SignedWriteset extends Writeset implements Serializable {
         // Step 1: Verify each SignedValTSPair
         for (SignedValTSPair valueWritten : getWriteset()) {
             int clientID = valueWritten.getClientId();
-            PublicKey publicKey = KeyManager.getClientPublicKey(clientID);
+            PublicKey publicKey = KeyManager.getPublicKey(clientID);
             if (!valueWritten.verifySignature(publicKey)) {
                 return false;
             }
         }
 
         // Step 2: Verify the writeset's signature
-        PublicKey publicKey = KeyManager.getNodePublicKey(processId);
+        PublicKey publicKey = KeyManager.getPublicKey(processId);
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initVerify(publicKey);
 

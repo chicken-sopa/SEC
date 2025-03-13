@@ -66,7 +66,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         }
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
         int processId = signedReceivedMessage.getSenderId();
-        boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getNodePublicKey(processId), signedReceivedMessage.getSignature());
+        boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getPublicKey(processId), signedReceivedMessage.getSignature());
         if (!verified) {
             return null;
         }

@@ -110,7 +110,7 @@ public class ConsensusBFT {
         //3º if none then value of the leader
         Map<Integer, StateMessage> collectedStates = collectedMessage.getCollectedStates();
 
-        PublicKey nodePublicKey = KeyManager.getNodePublicKey(senderID);
+        PublicKey nodePublicKey = KeyManager.getPublicKey(senderID);
 
         //if(collectedMessage.)
 
@@ -120,7 +120,7 @@ public class ConsensusBFT {
                 .map(StateMessage::getVal)// Extract ValTSPair from each StateMessage
                 .filter(signValTSPair -> {
                     try {
-                        return signValTSPair.verifySignature(KeyManager.getClientPublicKey(signValTSPair.getClientId()));
+                        return signValTSPair.verifySignature(KeyManager.getPublicKey(signValTSPair.getClientId()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -198,7 +198,7 @@ public class ConsensusBFT {
 
         SignedValTSPair pairToWrite = writeMessage.getPairToProposeWrite();
 
-        if (!pairToWrite.verifySignature(KeyManager.getClientPublicKey(pairToWrite.getClientId()))) {
+        if (!pairToWrite.verifySignature(KeyManager.getPublicKey(pairToWrite.getClientId()))) {
             return;
         }
 
@@ -240,7 +240,7 @@ public class ConsensusBFT {
     public void processAcceptMessage(AcceptMessage acceptMessage) throws Exception {
         SignedValTSPair pairToAccept = acceptMessage.getPairToProposeAccept();
 
-        if (!pairToAccept.verifySignature(KeyManager.getClientPublicKey(pairToAccept.getClientId()))) {
+        if (!pairToAccept.verifySignature(KeyManager.getPublicKey(pairToAccept.getClientId()))) {
             return;
         }
 
