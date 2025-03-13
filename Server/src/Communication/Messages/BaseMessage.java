@@ -7,9 +7,12 @@ public abstract class BaseMessage implements IMessage, Serializable {
     protected final MessageType messageType;
     private final int senderId; // Optional: to record which node sent the message
 
-    public BaseMessage(MessageType messageType, int senderId) {
+    private final int consensusID;
+
+    public BaseMessage(MessageType messageType, int senderId, int consensusID) {
         this.messageType = messageType;
         this.senderId = senderId;
+        this.consensusID = consensusID;
     }
 
     public MessageType getMessageType() {
@@ -30,4 +33,6 @@ public abstract class BaseMessage implements IMessage, Serializable {
     public String prettyPrint(){
         return "Type("+ messageType+")";
     }
+
+    public int getMsgConsensusID() {return this.consensusID;}
 }

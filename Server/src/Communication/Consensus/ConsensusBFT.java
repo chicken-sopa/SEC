@@ -29,7 +29,7 @@ public class ConsensusBFT {
 
     private final HashMap<Integer, ConsensusState> leaderConsensusState = new HashMap<>();
 
-    private HashMap<Integer,SignedValTSPair> currentValTSPairByConsensusID = new HashMap<>();
+    private HashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new HashMap<>();
 
     //private final int currentTS = 0;
 
@@ -83,7 +83,7 @@ public class ConsensusBFT {
 
         SignedValTSPair currentValTsPair = currentValTSPairByConsensusID.get(msgConsensusID);
 
-        StateMessage stateMessage = new StateMessage(this.SERVER_ID, currentValTsPair , currentWriteset, msgConsensusID);
+        StateMessage stateMessage = new StateMessage(this.SERVER_ID, currentValTsPair, currentWriteset, msgConsensusID);
         link.sendMessage(stateMessage, 4550);
     }
 
@@ -114,14 +114,15 @@ public class ConsensusBFT {
                 })
                 .toList();
 
-        if (possibleMaxTsValue.isPresent()) {
-
-            int maxTsValue = possibleMaxTsValue.get().getValTSPair().valTS();
 
         Optional<SignedValTSPair> possibleMaxTsValue = collectedCurrentValues.stream()
                 .max(Comparator.comparing((pair) -> {
                     return pair.getValTSPair().valTS();
                 }));
+
+        if (possibleMaxTsValue.isPresent()) {
+
+            int maxTsValue = possibleMaxTsValue.get().getValTSPair().valTS();
 
 
             collectedCurrentValues = collectedCurrentValues.stream().filter((pair) ->
@@ -203,7 +204,7 @@ public class ConsensusBFT {
             return pair.getValue() < f;
         }).count(); // if more than 1 has votes bigger that f then abort because none will have 2f+1
 
-        if (isServerLeader() && sizeOfPossibleConflictingValues > 1){
+        if (isServerLeader() && sizeOfPossibleConflictingValues > 1) {
             leaderConsensusState.put(msgConsensusID, ConsensusState.Aborted);
             notifyAll();
         }
@@ -244,7 +245,7 @@ public class ConsensusBFT {
             return pair.getValue() < f;
         }).count(); // if more than 1 has votes bigger that f then abort because none will have 2f+1
 
-        if (isServerLeader() && sizeOfPossibleConflictingValues > 1){
+        if (isServerLeader() && sizeOfPossibleConflictingValues > 1) {
             leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Aborted);
             notifyAll();
         }
@@ -268,9 +269,7 @@ public class ConsensusBFT {
             }
             if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Decided) {
                 currentConsensusID += 1;
-            }
-
-            else if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Aborted) {
+            } else if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Aborted) {
                 //currentTimestamp += 1;
                 leaderConsensusState.put(currentConsensusID, ConsensusState.PROCESSING);
             }
@@ -289,17 +288,16 @@ public class ConsensusBFT {
         //int currentConsensusID = writesetByConsensusID.size();
 
         /*
-        * If Leader has no prior current write value or write then get one of the messages sent from the client
-        * TODO
-        *   -ask how to get messages from client
-        *   -make that when no messages from client wait()
-        *   -when message the notify() the thread if a sleep
-        **/
+         * If Leader has no prior current write value or write then get one of the messages sent from the client
+         * TODO
+         *   -ask how to get messages from client
+         *   -make that when no messages from client wait()
+         *   -when message the notify() the thread if a sleep
+         **/
 
-        if (writesetByConsensusID.get(consensusID) == null && currentValTSPairByConsensusID.get(consensusID) == null){
+        if (writesetByConsensusID.get(consensusID) == null && currentValTSPairByConsensusID.get(consensusID) == null) {
             currentValTSPairByConsensusID.put(consensusID, messagesFromClient.pollFirst());
         }
-
 
 
         Map<Integer, StateMessage> collectedStates = sendReadRequestAndReceiveStates(consensusID);

@@ -9,8 +9,8 @@ public class StateMessage extends BaseMessage implements Serializable {
     private final SignedValTSPair val;
     private final SignedWriteset writeset;
 
-    public StateMessage(int senderId, SignedValTSPair val, SignedWriteset writeset) {
-        super(MessageType.STATE, senderId);
+    public StateMessage(int senderId, SignedValTSPair val, SignedWriteset writeset, int consensusID) {
+        super(MessageType.STATE, senderId, consensusID);
         this.val = val;
         this.writeset = writeset;
     }
