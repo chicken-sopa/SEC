@@ -1,4 +1,6 @@
 import Communication.Collection.*;
+import Communication.Consensus.Blockchain;
+import Communication.Consensus.ConsensusBFT;
 import Communication.Links.AuthenticatedPerfectLink;
 import Communication.Links.Security.DigitalSignatureAuth;
 import Communication.Messages.AppendMessage;
@@ -8,8 +10,6 @@ import Communication.Types.ValTSPair.SignedValTSPair;
 import Communication.Types.Writeset.SignedWriteset;
 import Keys.KeyManager;
 
-import java.net.SocketException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 import static Configuration.ProcessConfig.getProcessId;
@@ -19,20 +19,29 @@ public class Server {
     AuthenticatedPerfectLink<BaseMessage>  authenticatedPerfectLink;
     DigitalSignatureAuth<BaseMessage>  digitalSignatureAuth;
     ConditionalCollect<BaseMessage> conditionalCollect;
+    ConsensusBFT consensusBFT;
     Boolean isLeader = false;
     Scanner sc;
     int processId;
     SignedWriteset writeset;
 
-    public Server(int port, int processId, boolean isLeader) throws SocketException, NoSuchAlgorithmException {
+    Blockchain blockchain = new Blockchain();
+
+
+    public Server(int port, int processId, boolean isLeader) throws Exception {
+
+        int quorumSize = 2;
+
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth);
-        conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink,2);
+        conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink,quorumSize);
+
         sc = new Scanner(System.in);
         this.isLeader = isLeader;
         this.processId = processId;
         try {
             writeset = new SignedWriteset(getProcessId(), KeyManager.getPrivateKey());
+            consensusBFT = new ConsensusBFT(quorumSize, authenticatedPerfectLink, processId, blockchain);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

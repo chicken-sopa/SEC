@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 
 public class Main {
-    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+    public static void main(String[] args) throws Exception {
 
 
         boolean isLeader = false;

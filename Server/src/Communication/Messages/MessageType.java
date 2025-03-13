@@ -5,5 +5,7 @@ public enum MessageType {
     STATE,
     COLLECTED,
     WRITE,
+
+    ACCEPT,
     APPEND
 }

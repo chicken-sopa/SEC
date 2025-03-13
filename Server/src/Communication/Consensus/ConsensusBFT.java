@@ -2,38 +2,38 @@ package Communication.Consensus;
 
 import Communication.Collection.*;
 import Communication.Links.AuthenticatedPerfectLink;
-import Communication.Messages.AcceptMessage;
-import Communication.Messages.BaseMessage;
-import Communication.Messages.StateMessage;
-import Communication.Messages.WriteMessage;
+import Communication.Messages.*;
 import Communication.Types.ValTSPair.SignedValTSPair;
 import Communication.Types.ValTSPair.ValTSPair;
 import Communication.Types.Writeset.SignedWriteset;
 import Keys.KeyManager;
 
+import java.security.PublicKey;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsensusBFT {
     //TODO PERVEBER QUANDO TEMOS CURRENT_VAL_TS
     private final ValTSPair latestWriteMsg = null;
 
-    private HashMap<Integer, SignedWriteset> writesetByConsensusID = new HashMap<>();
+    private ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
 
     //private final SignedWriteset writeSet = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey());
 
-    private final HashMap<Integer, HashMap<SignedValTSPair, Integer>> writeRequestsReceivedByConsensusID = new HashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<SignedValTSPair, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-    private final HashMap<Integer, HashMap<SignedValTSPair, Integer>> acceptRequestsReceivedByConsensusID = new HashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<SignedValTSPair, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-    private final HashMap<Integer, SignedValTSPair> valuesReadyToWrite = new HashMap<>();
+    private final ConcurrentHashMap<Integer, SignedValTSPair> valuesReadyToWriteByConsensusID = new ConcurrentHashMap<>();
 
-    private final HashMap<Integer, ConsensusState> leaderConsensusState = new HashMap<>();
+    private final ConcurrentHashMap<Integer, ConsensusState> leaderConsensusState = new ConcurrentHashMap<>();
 
-    private HashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new HashMap<>();
+    private ConcurrentHashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new ConcurrentHashMap<>();
 
     //private final int currentTS = 0;
 
-    private Integer currentConsensusID = 0;
+    private AtomicInteger currentConsensusID = new AtomicInteger(0);
 
     private final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
 
@@ -42,6 +42,8 @@ public class ConsensusBFT {
     private final int f = 1;
     private final int quorumSize;
     private final AuthenticatedPerfectLink<BaseMessage> link;
+
+    private final Blockchain blockchain;
 
     //private
 
@@ -54,10 +56,11 @@ public class ConsensusBFT {
     }
 
 
-    public ConsensusBFT(ValTSPair latestWriteMsg, int quorumSize, AuthenticatedPerfectLink<BaseMessage> link, int serverID) throws Exception {
+    public ConsensusBFT(int quorumSize, AuthenticatedPerfectLink<BaseMessage> link, int serverID, Blockchain blockchain) throws Exception {
         this.quorumSize = quorumSize;
         this.link = link;
         this.SERVER_ID = serverID;
+        this.blockchain = blockchain;
     }
 
 
@@ -74,6 +77,7 @@ public class ConsensusBFT {
 
 
     public void processReadMessage(int msgConsensusID) throws Exception {
+
         SignedWriteset currentWriteset = writesetByConsensusID.get(msgConsensusID);
 
         if (currentWriteset == null) {
@@ -95,12 +99,15 @@ public class ConsensusBFT {
     }
 
 
-    public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage) {
-        //TODO check if signature is valid
-
+    public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage, int senderID) {
         //1º value of the most recent ts in bizantine quorum and if value is in writeset f+1
         //3º if none then value of the leader
         Map<Integer, StateMessage> collectedStates = collectedMessage.getCollectedStates();
+
+        PublicKey nodePublicKey = KeyManager.getNodePublicKey(senderID);
+
+        //if(collectedMessage.)
+
 
         List<SignedValTSPair> collectedCurrentValues = collectedStates.values()
                 .stream()
@@ -185,8 +192,12 @@ public class ConsensusBFT {
 
         SignedValTSPair pairToWrite = writeMessage.getPairToProposeWrite();
 
-        HashMap<SignedValTSPair, Integer> writeRequestsReceived =
-                writeRequestsReceivedByConsensusID.computeIfAbsent(msgConsensusID, k -> new HashMap<>());
+        if (!pairToWrite.verifySignature(KeyManager.getClientPublicKey(pairToWrite.getClientId()))) {
+            return;
+        }
+
+        ConcurrentHashMap<SignedValTSPair, Integer> writeRequestsReceived =
+                writeRequestsReceivedByConsensusID.computeIfAbsent(msgConsensusID, k -> new ConcurrentHashMap<>());
 
 
         writeRequestsReceived.merge(pairToWrite, 1, Integer::sum); // update number of time write request was received
@@ -201,7 +212,7 @@ public class ConsensusBFT {
 
 
         long sizeOfPossibleConflictingValues = writeRequestsReceived.entrySet().stream().filter(pair -> {
-            return pair.getValue() < f;
+            return pair.getValue() > f;
         }).count(); // if more than 1 has votes bigger that f then abort because none will have 2f+1
 
         if (isServerLeader() && sizeOfPossibleConflictingValues > 1) {
@@ -220,11 +231,15 @@ public class ConsensusBFT {
     }
 
 
-    public void processAcceptMessage(AcceptMessage acceptMessage) {
+    public void processAcceptMessage(AcceptMessage acceptMessage) throws Exception {
         SignedValTSPair pairToAccept = acceptMessage.getPairToProposeAccept();
 
-        HashMap<SignedValTSPair, Integer> acceptRequestsReceived =
-                acceptRequestsReceivedByConsensusID.computeIfAbsent(acceptMessage.getMsgConsensusID(), k -> new HashMap<>());
+        if (!pairToAccept.verifySignature(KeyManager.getClientPublicKey(pairToAccept.getClientId()))) {
+            return;
+        }
+
+        ConcurrentHashMap<SignedValTSPair, Integer> acceptRequestsReceived =
+                acceptRequestsReceivedByConsensusID.computeIfAbsent(acceptMessage.getMsgConsensusID(), k -> new ConcurrentHashMap<>());
 
         acceptRequestsReceived.merge(pairToAccept, 1, Integer::sum); // update number of time write request was received
 
@@ -232,12 +247,14 @@ public class ConsensusBFT {
 
             SignedValTSPair valueReadyToWrite = pairToAccept;
             acceptRequestsReceived.remove(valueReadyToWrite);
-            valuesReadyToWrite.put(acceptMessage.getMsgConsensusID(), valueReadyToWrite);
+
+            blockchain.writeToBlockchain(acceptMessage.getMsgConsensusID(), valueReadyToWrite.getValTSPair().val());
 
             if (isServerLeader()) {
                 leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Decided);
                 notifyAll();
             }
+
 
         }
 
@@ -252,12 +269,12 @@ public class ConsensusBFT {
 
     }
 
-
+    //TODO NAME TO THINK ABOUT
     public synchronized void leaderConsensusThread() throws Exception {
 
         while (true) {
 
-            startConsensus(currentConsensusID);
+            startConsensus(currentConsensusID.get());
 
             while (leaderConsensusState.getOrDefault(currentConsensusID, ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
                 try {
@@ -268,10 +285,10 @@ public class ConsensusBFT {
                 }
             }
             if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Decided) {
-                currentConsensusID += 1;
+                currentConsensusID.getAndIncrement();
             } else if (leaderConsensusState.get(currentConsensusID) == ConsensusState.Aborted) {
                 //currentTimestamp += 1;
-                leaderConsensusState.put(currentConsensusID, ConsensusState.PROCESSING);
+                leaderConsensusState.put(currentConsensusID.getAndIncrement(), ConsensusState.PROCESSING);
             }
 
 
@@ -288,7 +305,7 @@ public class ConsensusBFT {
         //int currentConsensusID = writesetByConsensusID.size();
 
         /*
-         * If Leader has no prior current write value or write then get one of the messages sent from the client
+         *  If Leader has no prior current write value or write then get one of the messages sent from the client
          * TODO
          *   -ask how to get messages from client
          *   -make that when no messages from client wait()
@@ -302,32 +319,31 @@ public class ConsensusBFT {
 
         Map<Integer, StateMessage> collectedStates = sendReadRequestAndReceiveStates(consensusID);
         sendCollectedMsg(collectedStates, consensusID);
-
-        //sendCollectedAnswers();
-
-        //update ts
     }
 
     public void processConsensusRequestMessage(BaseMessage message) throws Exception {
 
-        if (message instanceof InitCollectMessage) {
-            processReadMessage(message.getMsgConsensusID());
+        switch (message.getMessageType()) {
+            case INIT_COLLECT -> {//InitCollectMessage initCollectMessage -> {
+                processReadMessage(message.getMsgConsensusID());
+            }
 
-        } else if (message instanceof CollectedMessage collectedMessage) {// Pattern matching
-            SignedValTSPair pairToProposeWrite = processCollectedStatesMessage(collectedMessage);
-            sendWriteRequest(pairToProposeWrite, message.getMsgConsensusID());
+            case COLLECTED -> { // CollectedMessage collectedMessage -> {
+                SignedValTSPair pairToProposeWrite = processCollectedStatesMessage((CollectedMessage) message, message.getSenderId());
+                sendWriteRequest(pairToProposeWrite, message.getMsgConsensusID());
+            }
 
-        } else if (message instanceof WriteMessage writeMessage) {
-            processWriteRequestAndSendAccept(writeMessage, message.getMsgConsensusID());
+            case WRITE -> { //WriteMessage writeMessage ->
+                processWriteRequestAndSendAccept((WriteMessage) message, message.getMsgConsensusID());
+            }
 
-        } else if (message instanceof AcceptMessage acceptMessage) {
-            processAcceptMessage(acceptMessage);
+            case ACCEPT -> { //AcceptMessage acceptMessage ->
+                 processAcceptMessage((AcceptMessage) message);}
 
-        } else {
-            throw new IllegalStateException("Unexpected message type: " + message.getClass().getName());
+            default -> throw new IllegalStateException("Unexpected message type: " + message.getClass().getName());
+            }
         }
+
+
     }
-
-
-}
 

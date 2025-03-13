@@ -15,6 +15,5 @@ public class CollectedMessage extends BaseMessage {
     public CollectedMessage(int senderId ,Map<Integer, StateMessage>  collectedMessages, int currentConsensusID) {
         super(MessageType.COLLECTED, senderId,currentConsensusID );
         this.collectedStates = collectedMessages;
-
     }
 }
