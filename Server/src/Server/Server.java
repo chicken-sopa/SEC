@@ -5,7 +5,8 @@ import Communication.Consensus.Blockchain;
 import Communication.Consensus.ConsensusBFT;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
-import  com.sec.Messages.BaseMessage;
+import com.sec.Messages.AppendMessage;
+import com.sec.Messages.BaseMessage;
 import com.sec.Messages.MessageType;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
@@ -49,7 +50,7 @@ public class Server {
 
     public void init() {
         //if (isLeader)
-            //startSendMessageProcedure();
+        //startSendMessageProcedure();
         startReceiveMessageThread();
     }
 
@@ -67,12 +68,34 @@ public class Server {
 
     }*/
 
+    private void startConsensusLeaderThread() {
+        new Thread(() -> {
+
+            while (true) {
+                try {
+                    consensusBFT.leaderConsensusThread();
+                    wait();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+    }
+
+
+    void processMessageFromClient(AppendMessage message){
+        consensusBFT.messagesFromClient.addLast(message.getMessage());
+
+    }
+
+
     private void startReceiveMessageThread() {
         new Thread(() -> {
             while (true) {
                 try {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
-                    if(messageReceived.getMessageType().equals(MessageType.APPEND)){
+                    if (messageReceived.getMessageType().equals(MessageType.APPEND)) {
 
                     }
                     consensusBFT.processConsensusRequestMessage(messageReceived);

@@ -37,7 +37,7 @@ public class ConsensusBFT {
 
     private final AtomicInteger currentConsensusID = new AtomicInteger(0);
 
-    private final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
+    public final Deque<String> messagesFromClient = new ArrayDeque<>();
 
     private final int SERVER_ID;
 
@@ -273,7 +273,7 @@ public class ConsensusBFT {
     //TODO NAME TO THINK ABOUT
     public synchronized void leaderConsensusThread() throws Exception {
 
-        while (true) {
+        while (!messagesFromClient.isEmpty()) {
 
             startConsensus(currentConsensusID.get());
 
@@ -318,6 +318,7 @@ public class ConsensusBFT {
 
         if (writesetByConsensusID.get(consensusID) == null && currentValTSPairByConsensusID.get(consensusID) == null) {
 
+            //SignedValTSPair newPair = new SignedValTSPair();
             currentValTSPairByConsensusID.put(consensusID, messagesFromClient.pollFirst());
 
             System.out.println("Value to propose chosen from client = " + currentValTSPairByConsensusID);
