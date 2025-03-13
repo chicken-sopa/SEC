@@ -1,8 +1,8 @@
 package Communication.Collection;
 
-import Communication.Messages.BaseMessage;
-import Communication.Messages.MessageType;
-import Communication.Messages.StateMessage;
+import  com.sec.Messages.BaseMessage;
+import  com.sec.Messages.MessageType;
+import  com.sec.Messages.StateMessage;
 
 import java.util.Map;
 

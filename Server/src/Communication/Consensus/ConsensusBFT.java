@@ -1,17 +1,23 @@
 package Communication.Consensus;
 
 import Communication.Collection.*;
-import Communication.Links.AuthenticatedPerfectLink;
-import Communication.Messages.*;
-import Communication.Types.ValTSPair.SignedValTSPair;
-import Communication.Types.ValTSPair.ValTSPair;
-import Communication.Types.Writeset.SignedWriteset;
-import Keys.KeyManager;
+import  com.sec.Links.AuthenticatedPerfectLink;
+import com.sec.Messages.AcceptMessage;
+import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
+import com.sec.Messages.Types.ValTSPair.ValTSPair;
+import com.sec.Messages.Types.Writeset.SignedWriteset;
+import com.sec.Keys.KeyManager;
 
 import java.security.PublicKey;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import  com.sec.Messages.BaseMessage;
+import  com.sec.Messages.StateMessage;
+import  com.sec.Messages.WriteMessage;
+
+
+import static Configuration.ProcessConfig.getProcessId;
 
 public class ConsensusBFT {
     //TODO PERVEBER QUANDO TEMOS CURRENT_VAL_TS
@@ -83,7 +89,7 @@ public class ConsensusBFT {
         SignedWriteset currentWriteset = writesetByConsensusID.get(msgConsensusID);
 
         if (currentWriteset == null) {
-            currentWriteset = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey());
+            currentWriteset = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey(getProcessId()));
             writesetByConsensusID.put(msgConsensusID, currentWriteset);
         }
 
@@ -169,7 +175,7 @@ public class ConsensusBFT {
         SignedWriteset currentWriteset = writesetByConsensusID.get(msgConsensusID);
 
         if (currentWriteset == null) {
-            currentWriteset = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey());
+            currentWriteset = new SignedWriteset(this.SERVER_ID, KeyManager.getPrivateKey(getProcessId()));
             writesetByConsensusID.put(msgConsensusID, currentWriteset);
         }
 
