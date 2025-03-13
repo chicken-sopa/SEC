@@ -48,12 +48,12 @@ public class Server {
     }
 
     public void init() {
-        if (isLeader)
-            startSendMessageProcedure();
+        //if (isLeader)
+            //startSendMessageProcedure();
         startReceiveMessageThread();
     }
 
-    private void startSendMessageProcedure() {
+    /*private void startSendMessageProcedure() {
 //        try {
 //            conditionalCollect.startCollection();
 //        } catch (Exception e) {
@@ -65,7 +65,7 @@ public class Server {
             throw new RuntimeException(e);
         }
 
-    }
+    }*/
 
     private void startReceiveMessageThread() {
         new Thread(() -> {

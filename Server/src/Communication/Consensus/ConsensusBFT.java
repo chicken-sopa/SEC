@@ -1,7 +1,7 @@
 package Communication.Consensus;
 
 import Communication.Collection.*;
-import  com.sec.Links.AuthenticatedPerfectLink;
+import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Messages.AcceptMessage;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.ValTSPair.ValTSPair;
