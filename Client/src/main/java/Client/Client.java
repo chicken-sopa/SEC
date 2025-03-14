@@ -2,6 +2,9 @@ package Client;
 
 import Lib.ILib;
 import Lib.Lib;
+import com.sec.Messages.AppendMessage;
+import com.sec.Messages.BaseMessage;
+import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
@@ -23,4 +26,5 @@ public class Client {
         }
 
     }
+
 }

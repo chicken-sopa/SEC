@@ -20,6 +20,7 @@ public class Lib implements ILib {
     public Lib(int myPort) throws NoSuchAlgorithmException, SocketException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(myPort, digitalSignatureAuth, getProcessId());
+        startReceiveMessageThread();
     }
 
     @Override
@@ -27,4 +28,17 @@ public class Lib implements ILib {
         AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend,getProcessId());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
+
+    private void startReceiveMessageThread() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    authenticatedPerfectLink.receiveMessage();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+    }
+
 }
