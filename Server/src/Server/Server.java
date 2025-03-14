@@ -50,8 +50,9 @@ public class Server {
     }
 
     public void init() {
-        //if (isLeader)
-        //startSendMessageProcedure();
+        if (isLeader) {
+            startConsensusLeaderThread();
+        }
         startReceiveMessageThread();
     }
 
@@ -101,10 +102,14 @@ public class Server {
             while (true) {
                 try {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
-                    if (messageReceived.getMessageType().equals(MessageType.APPEND)) {
-                        processMessageFromClient((AppendMessage)messageReceived);
+
+                    if (messageReceived != null) {
+                        if (messageReceived.getMessageType().equals(MessageType.APPEND)) {
+                            processMessageFromClient((AppendMessage) messageReceived);
+                        } else {
+                            consensusBFT.processConsensusRequestMessage(messageReceived);
+                        }
                     }
-                    consensusBFT.processConsensusRequestMessage(messageReceived);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
