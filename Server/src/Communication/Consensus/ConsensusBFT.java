@@ -107,7 +107,6 @@ public class ConsensusBFT {
 
     public void sendCollectedMsg(Map<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<>(link, quorumSize);
-        System.out.println("estou a mandar um collected achando que sou o server " + this.SERVER_ID);
         CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, collectedStates, msgConsensusID);
         broadcastMessage.sendBroadcast(collectedMessage);
     }

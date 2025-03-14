@@ -20,6 +20,8 @@ public class KeyManager {
             PUBLIC_KEYS.put(2, loadPublicKey("crypto/2_public.pem"));
             PUBLIC_KEYS.put(3, loadPublicKey("crypto/3_public.pem"));
             PUBLIC_KEYS.put(4, loadPublicKey("crypto/4_public.pem"));
+            PUBLIC_KEYS.put(5, loadPublicKey("crypto/5_public.pem"));
+            PUBLIC_KEYS.put(6, loadPublicKey("crypto/6_public.pem"));
         } catch (Exception e) {
             throw new RuntimeException("Failed to load public keys", e);
         }

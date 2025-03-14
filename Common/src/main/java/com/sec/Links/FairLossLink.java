@@ -25,7 +25,6 @@ public class FairLossLink<T extends IMessage> {
         byte[] buffer = msg.serializeMessage();
         DatagramPacket packet
                 = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), portToSend);
-        System.out.println("Sending data of length: " + packet.getLength());
         socket.send(packet);
     }
 
