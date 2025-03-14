@@ -5,6 +5,7 @@ import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
 import com.sec.Messages.BaseMessage;
+import com.sec.Messages.ConsensusFinishedMessage;
 import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
@@ -33,7 +34,11 @@ public class Lib implements ILib {
         new Thread(() -> {
             while (true) {
                 try {
-                    authenticatedPerfectLink.receiveMessage();
+                    BaseMessage msg = authenticatedPerfectLink.receiveMessage();
+                    if (msg != null && msg.getMessageType() == MessageType.FINISHED){
+                        ConsensusFinishedMessage finishedMessage = (ConsensusFinishedMessage)msg;
+                        System.out.println("Message has been appended. Value appended was: " +  finishedMessage.getVal());
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

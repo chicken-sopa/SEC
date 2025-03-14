@@ -7,5 +7,6 @@ public enum MessageType {
     WRITE,
 
     ACCEPT,
-    APPEND
+    APPEND,
+    FINISHED
 }

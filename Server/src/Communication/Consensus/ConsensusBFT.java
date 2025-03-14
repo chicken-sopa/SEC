@@ -273,6 +273,7 @@ public class ConsensusBFT {
             blockchain.sendConsensusDoneToClient(this.SERVER_ID, acceptMessage.getMsgConsensusID(), valueReadyToWrite.getValTSPair().val(), acceptMessage.getSenderId());
             //TODO: send message to client saying value was correctly written, leader or not
             System.out.println("Node appendend value " + valueReadyToWrite.getValTSPair().val() + " to the blockchain");
+            System.out.println("Confirmation message sent back to client");
             if (isServerLeader()) {
                 leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Decided);
                 wakeUpConsensusLeader();

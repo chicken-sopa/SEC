@@ -28,7 +28,8 @@ public class Blockchain {
 
      void sendConsensusDoneToClient(int currentServerID, int consensusID, String val, int clientID) throws Exception {
         ConsensusFinishedMessage msg = new ConsensusFinishedMessage(currentServerID, consensusID, val);
-        link.sendMessage(msg, clientID);
+        System.out.println(clientID);
+        link.sendMessage(msg, 5553);
      }
 
 }
