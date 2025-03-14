@@ -23,6 +23,7 @@ public class Client {
     public void sendSomething(int[] portList) throws Exception {
         for(int destinationPort : portList) {
             lib.SendAppendMessage("MessageFromClient-" + counter++, destinationPort);
+            //TODO: wait for f+1 replies confirming that a value was written
         }
 
     }

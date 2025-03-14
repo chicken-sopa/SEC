@@ -107,6 +107,7 @@ public class ConsensusBFT {
 
     public void sendCollectedMsg(Map<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<>(link, quorumSize);
+        System.out.println("estou a mandar um collected achando que sou o server " + this.SERVER_ID);
         CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, collectedStates, msgConsensusID);
         broadcastMessage.sendBroadcast(collectedMessage);
     }
@@ -124,7 +125,10 @@ public class ConsensusBFT {
                 .map(StateMessage::getVal)// Extract ValTSPair from each StateMessage
                 .filter(signValTSPair -> {
                     try {
-                        return signValTSPair.verifySignature(KeyManager.getPublicKey(signValTSPair.getClientId()));
+                        if(signValTSPair != null) {
+                            return signValTSPair.verifySignature(KeyManager.getPublicKey(signValTSPair.getClientId()));
+                        }
+                        else{return true;}// this might be wrong
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -133,15 +137,23 @@ public class ConsensusBFT {
 
 
         Optional<SignedValTSPair> possibleMaxTsValue = collectedCurrentValues.stream()
-                .max(Comparator.comparing((pair) -> pair.getValTSPair().valTS()));
+                .filter(Objects::nonNull) // Filter out null pairs first (optional)
+                .max(Comparator.comparing(
+                        (SignedValTSPair pair) -> pair == null ? null : pair.getValTSPair().valTS(),
+                        Comparator.nullsFirst(Comparator.naturalOrder()) // Handle null values safely
+                ));
+
 
         if (possibleMaxTsValue.isPresent()) {
 
             int maxTsValue = possibleMaxTsValue.get().getValTSPair().valTS();
 
 
-            collectedCurrentValues = collectedCurrentValues.stream().filter((pair) ->
-                    pair.getValTSPair().valTS() == maxTsValue).toList();// != maxTsValue.get().valTS());
+            collectedCurrentValues = collectedCurrentValues.stream()
+                    .filter(pair -> pair != null && pair.getValTSPair() != null) // Ensure no null values
+                    .filter(pair -> pair.getValTSPair().valTS() == maxTsValue)  // Compare safely
+                    .toList();
+                                // != maxTsValue.get().valTS());
 
             List<SignedWriteset> collectedWriteSets = collectedStates.values()
                     .stream()
@@ -258,7 +270,8 @@ public class ConsensusBFT {
             acceptRequestsReceived.remove(valueReadyToWrite.hashCode());
 
             blockchain.writeToBlockchain(acceptMessage.getMsgConsensusID(), valueReadyToWrite.getValTSPair().val());
-
+            //TODO: send message to client saying value was correctly written, leader or not
+            System.out.println("Node appendend value " + valueReadyToWrite.getValTSPair().val() + " to the blockchain");
             if (isServerLeader()) {
                 leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Decided);
                 wakeUpConsensusLeader();

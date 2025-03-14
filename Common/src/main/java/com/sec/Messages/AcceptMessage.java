@@ -8,7 +8,7 @@ public class AcceptMessage extends BaseMessage{
     SignedValTSPair pairToProposeAccept;
 
     public AcceptMessage(int senderId, SignedValTSPair pairToProposeAccept, int consensusID ) {
-        super(MessageType.WRITE, senderId, consensusID );
+        super(MessageType.ACCEPT, senderId, consensusID );
         this.pairToProposeAccept = pairToProposeAccept;
     }
 
