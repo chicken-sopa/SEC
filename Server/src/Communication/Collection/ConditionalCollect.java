@@ -32,7 +32,7 @@ public class ConditionalCollect<T extends BaseMessage> {
      */
     public void startCollection(int currentConsensusID) throws Exception {
         T collectRequest = (T) new InitCollectMessage(getProcessId(), currentConsensusID);
-        for (int i = 0;  i <= 2  ;i++) {
+        for (int i = 0; i <= 2; i++) {
             System.out.println("A enviar para o port " + (4550 + i));
             link.sendMessage(collectRequest, 4550 + i);
         }
@@ -41,23 +41,28 @@ public class ConditionalCollect<T extends BaseMessage> {
     /**
      * Processes incoming collect responses.
      */
-    public void receiveMessages() throws Exception {
+    public void waitForStateMessages() throws Exception {
         while (collectedMessages.size() < quorumSize) {
-                BaseMessage received =  link.receiveMessage();
-            if (received == null ) continue; //signature couldnt be verified
-            //TODO: this might be incorrect, we might not be supposed to drop this
-            int sender = received.getSenderId();
-            if(received.getMessageType() == MessageType.STATE) {
-                StateMessage receivedState = (StateMessage) received;
 
-
-                // Store the valid message if it's from a new sender
-                if (receivedFrom.add(sender)) {
-                    collectedMessages.put(sender, receivedState);
-                }
-            }
         }
         System.out.println("Received quorum of replies");
+    }
+
+
+    public void processStateMessage(BaseMessage received) {
+        if (received == null) return; //signature couldn't be verified
+        //TODO: this might be incorrect, we might not be supposed to drop this
+
+        int sender = received.getSenderId();
+        if (received.getMessageType() == MessageType.STATE) {
+            StateMessage receivedState = (StateMessage) received;
+
+
+            // Store the valid message if it's from a new sender
+            if (receivedFrom.add(sender)) {
+                collectedMessages.put(sender, receivedState);
+            }
+        }
     }
 
     /**

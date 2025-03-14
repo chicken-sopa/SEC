@@ -1,3 +1,3 @@
-module Client {
+module Client.Client {
     requires Common;
 }
