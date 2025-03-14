@@ -13,6 +13,9 @@ import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
 
 import java.util.Scanner;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static Configuration.ProcessConfig.getProcessId;
 
@@ -26,6 +29,11 @@ public class Server {
     Scanner sc;
     int processId;
     SignedWriteset writeset;
+
+
+    private final Lock leaderThreadLock = new ReentrantLock();
+    private final Condition condition = leaderThreadLock.newCondition();
+
 
     Blockchain blockchain = new Blockchain();
 
@@ -56,32 +64,25 @@ public class Server {
         startReceiveMessageThread();
     }
 
-    /*private void startSendMessageProcedure() {
-//        try {
-//            conditionalCollect.startCollection();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-        try {
-            conditionalCollect.receiveMessages();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
-    }*/
-
-    private void startConsensusLeaderThread() {
-        new Thread(() -> {
+    private synchronized void startConsensusLeaderThread() {
+        Thread t = new Thread(() -> {
 
             while (true) {
                 try {
                     consensusBFT.leaderConsensusThread();
-                    wait();
+                    leaderThreadLock.lock();
+                    try {
+                        condition.await(); // Equivalent to wait()
+                    } finally {
+                        leaderThreadLock.unlock();
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
-        }).start();
+        }); //.start();
+        t.start();
 
     }
 
@@ -91,7 +92,7 @@ public class Server {
 
         consensusBFT.messagesFromClient.addLast(newPair);
         if (isLeader) {
-            notifyAll(); // wake up if leader thread is sleeping
+            wakeUpConsensusLeader(); // wake up if leader thread is sleeping
         }
 
     }
@@ -115,6 +116,16 @@ public class Server {
                 }
             }
         }).start();
+    }
+
+
+    private void wakeUpConsensusLeader() {
+        leaderThreadLock.lock();
+        try {
+            condition.signal(); // Wake up one waiting thread
+        } finally {
+            leaderThreadLock.unlock();
+        }
     }
 }
 

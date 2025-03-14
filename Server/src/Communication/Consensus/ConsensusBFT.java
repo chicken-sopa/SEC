@@ -12,9 +12,13 @@ import java.security.PublicKey;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import  com.sec.Messages.BaseMessage;
-import  com.sec.Messages.StateMessage;
-import  com.sec.Messages.WriteMessage;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import com.sec.Messages.BaseMessage;
+import com.sec.Messages.StateMessage;
+import com.sec.Messages.WriteMessage;
 
 
 import static Configuration.ProcessConfig.getProcessId;
@@ -46,6 +50,10 @@ public class ConsensusBFT {
     private final AuthenticatedPerfectLink<BaseMessage> link;
 
     private final Blockchain blockchain;
+
+
+    private final Lock leaderConsensusThreadLock = new ReentrantLock();
+    private final Condition conditionConsensus = leaderConsensusThreadLock.newCondition();
 
     //private
 
@@ -79,9 +87,6 @@ public class ConsensusBFT {
 
         return (Map<Integer, StateMessage>) conditionalCollect.getCollectedMessages();
     }
-
-
-
 
 
     public void processReadMessage(int msgConsensusID) throws Exception {
@@ -219,7 +224,7 @@ public class ConsensusBFT {
 
         if (isServerLeader() && sizeOfPossibleConflictingValues > 1) {
             leaderConsensusState.put(msgConsensusID, ConsensusState.Aborted);
-            notifyAll();
+            wakeUpConsensusLeader();
         }
 
 
@@ -255,7 +260,7 @@ public class ConsensusBFT {
 
             if (isServerLeader()) {
                 leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Decided);
-                notifyAll();
+                wakeUpConsensusLeader();
             }
 
 
@@ -265,7 +270,7 @@ public class ConsensusBFT {
 
         if (isServerLeader() && sizeOfPossibleConflictingValues > 1) {
             leaderConsensusState.put(acceptMessage.getMsgConsensusID(), ConsensusState.Aborted);
-            notifyAll();
+            wakeUpConsensusLeader();
         }
 
     }
@@ -279,7 +284,12 @@ public class ConsensusBFT {
 
             while (leaderConsensusState.getOrDefault(currentConsensusID.get(), ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
                 try {
-                    wait();  // Release lock and wait
+                    leaderConsensusThreadLock.lock();
+                    try {
+                        conditionConsensus.await(); // Equivalent to wait()
+                    } finally {
+                        leaderConsensusThreadLock.unlock();
+                    }  // Release lock and wait
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     return;
@@ -287,6 +297,7 @@ public class ConsensusBFT {
             }
             if (leaderConsensusState.get(currentConsensusID.get()) == ConsensusState.Decided) {
                 currentConsensusID.getAndIncrement();
+                System.out.println("Consensus is decided");
             } else if (leaderConsensusState.get(currentConsensusID.get()) == ConsensusState.Aborted) {
                 //currentTimestamp += 1;
                 leaderConsensusState.put(currentConsensusID.getAndIncrement(), ConsensusState.PROCESSING);
@@ -341,7 +352,7 @@ public class ConsensusBFT {
 
             case STATE -> {
                 ConditionalCollect<BaseMessage> conditionalCollect = conditionalCollectByConsensusID.get(message.getMsgConsensusID());
-                if(conditionalCollect != null){
+                if (conditionalCollect != null) {
                     conditionalCollect.processStateMessage(message);
                 }
             }
@@ -356,12 +367,21 @@ public class ConsensusBFT {
             }
 
             case ACCEPT -> {
-                 processAcceptMessage((AcceptMessage) message);}
+                processAcceptMessage((AcceptMessage) message);
+            }
 
             default -> throw new IllegalStateException("Unexpected message type: " + message.getClass().getName());
-            }
         }
-
-
     }
+
+    private void wakeUpConsensusLeader() {
+        leaderConsensusThreadLock.lock();
+        try {
+            conditionConsensus.signal(); // Wake up one waiting thread
+        } finally {
+            leaderConsensusThreadLock.unlock();
+        }
+    }
+
+}
 

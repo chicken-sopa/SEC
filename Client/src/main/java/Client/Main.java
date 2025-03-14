@@ -7,14 +7,14 @@ public class Main {
 
         // DESCOMENTAR PARA CORRER COM ARGS
         //int clientId = Integer.parseInt(args[0]);
-        int clientId = 0;
+        int clientId = 1;
 
         // Assign a unique port using 555X format
         int myPort = 5550 + clientId;
         ClientConfig.setProcessId(clientId);
 
-        int[] destinationPortList = new int[3];
-        for (int i = 0; i <= 2; i++) {
+        int[] destinationPortList = new int[1];
+        for (int i = 0; i <= 0; i++) {
             destinationPortList[i] = 4550 + i;
         }
 
