@@ -47,21 +47,26 @@ def start_node_in_terminal(command, name):
 
 # Get the correct classpath separator based on the operating system
 classpath_separator = ";" if platform.system() == "Windows" else ":"
-classpath = f"Server/target/classes{classpath_separator}Common/target/classes"
+classpath1 = f"Server/target/classes{classpath_separator}Common/target/classes"
+classpath2 =  f"Client/target/classes{classpath_separator}Common/target/classes"
 
 # Configuração dos comandos para cada nó
 nodes = [
     {
-        "command": ["java", "-cp", classpath, "Server.Main", "2"],
+        "command": ["java", "-cp", classpath1, "Server.Main", "2"],
         "name": "Node-2",
     },
     {
-        "command": ["java", "-cp", classpath, "Server.Main", "1"],
+        "command": ["java", "-cp", classpath1, "Server.Main", "1"],
         "name": "Node-1",
     },
     {
-        "command": ["java", "-cp", classpath, "Server.Main", "0", "yes"],
+        "command": ["java", "-cp", classpath1, "Server.Main", "0", "yes"],
         "name": "Node-0",
+    },
+    {
+        "command": ["java", "-cp", classpath2, "Client.Main", "3"],
+        "name": "Client1",
     },
 ]
 
