@@ -54,8 +54,10 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
 
     public T receiveMessage() throws Exception {
         MessageDeliveryTuple<ILinkMessage<T>, Integer> messageTuple = receiveLinkMessage();
-        if (messageTuple == null)
+        if (messageTuple == null) {
+            System.out.println("returned null on a message");
             return null;
+        }
         return messageTuple.getMessage().getMessageValue();
     }
 
@@ -68,6 +70,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         int processId = signedReceivedMessage.getSenderId();
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getPublicKey(processId), signedReceivedMessage.getSignature());
         if (!verified) {
+            System.out.println("Message verification failed");
             return null;
         }
             processMessageReceived(messageReceived);

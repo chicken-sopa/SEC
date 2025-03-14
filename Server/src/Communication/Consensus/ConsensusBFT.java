@@ -29,9 +29,9 @@ public class ConsensusBFT {
 
     private final ConcurrentHashMap<Integer, ConditionalCollect<BaseMessage>> conditionalCollectByConsensusID = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<SignedValTSPair, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<SignedValTSPair, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<Integer, ConsensusState> leaderConsensusState = new ConcurrentHashMap<>();
 
@@ -204,16 +204,17 @@ public class ConsensusBFT {
             return;
         }
 
-        ConcurrentHashMap<SignedValTSPair, Integer> writeRequestsReceived =
+        ValTSPair valTSPair = pairToWrite.getValTSPair();
+
+        ConcurrentHashMap<Integer, Integer> writeRequestsReceived =
                 writeRequestsReceivedByConsensusID.computeIfAbsent(msgConsensusID, k -> new ConcurrentHashMap<>());
 
-
-        writeRequestsReceived.merge(pairToWrite, 1, Integer::sum); // update number of time write request was received
-
-        if (writeRequestsReceived.get(pairToWrite) > (2 * f + 1)) {
+        writeRequestsReceived.merge(pairToWrite.hashCode(), 1, Integer::sum); // update number of time write request was received
+        System.out.println("received " + writeRequestsReceived.get(pairToWrite.hashCode()));
+        if (writeRequestsReceived.get(pairToWrite.hashCode()) >= (2 * f + 1)) {
             SignedValTSPair valueToAccept;
             valueToAccept = pairToWrite;
-            writeRequestsReceived.put(valueToAccept, -1);
+            writeRequestsReceived.put(valueToAccept.hashCode(), -1);
             sendAccepts(valueToAccept, msgConsensusID);
 
 
@@ -245,16 +246,16 @@ public class ConsensusBFT {
             return;
         }
 
-        ConcurrentHashMap<SignedValTSPair, Integer> acceptRequestsReceived =
+        ConcurrentHashMap<Integer, Integer> acceptRequestsReceived =
                 acceptRequestsReceivedByConsensusID.computeIfAbsent(acceptMessage.getMsgConsensusID(), k -> new ConcurrentHashMap<>());
 
-        acceptRequestsReceived.merge(pairToAccept, 1, Integer::sum); // update number of time write request was received
+        acceptRequestsReceived.merge(pairToAccept.hashCode(), 1, Integer::sum); // update number of time write request was received
 
-        if (acceptRequestsReceived.get(pairToAccept) > (2 * f + 1)) {
+        if (acceptRequestsReceived.get(pairToAccept.hashCode()) >= (2 * f + 1)) {
 
             SignedValTSPair valueReadyToWrite;
             valueReadyToWrite = pairToAccept;
-            acceptRequestsReceived.remove(valueReadyToWrite);
+            acceptRequestsReceived.remove(valueReadyToWrite.hashCode());
 
             blockchain.writeToBlockchain(acceptMessage.getMsgConsensusID(), valueReadyToWrite.getValTSPair().val());
 

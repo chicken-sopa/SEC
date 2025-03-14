@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.util.Base64;
+import java.util.Objects;
 
 /**
  * Represents a digitally signed (valTS, val) pair in Byzantine Epoch Consensus.
@@ -32,6 +33,18 @@ public class SignedValTSPair implements Serializable {
         return valTSPair;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(valTSPair.val(), valTSPair.valTS(), signature, clientId); // Replace with actual fields
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SignedValTSPair obj = (SignedValTSPair)o;
+        return this.hashCode() == obj.hashCode();
+    }
     /**
      * Verifies if the signature is valid using the sender's public key.
      */
