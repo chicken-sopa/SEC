@@ -17,7 +17,7 @@ public class Main {
             destinationPortList[i] = 4550 + i;
         }
 
-        Client client = new Client(myPort, clientId);
-        client.sendSomething(destinationPortList);
+        Client client = new Client(myPort, clientId, destinationPortList);
+        client.Listen();
     }
 }
