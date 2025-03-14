@@ -1,0 +1,12 @@
+Communication\Collection\ConditionalCollect.class
+Communication\Consensus\Blockchain.class
+Communication\Consensus\BroadcastMessage.class
+Server\Main.class
+module-info.class
+Communication\Collection\CollectedMessage.class
+Communication\Collection\InitCollectMessage.class
+Communication\Consensus\ConsensusBFT$1.class
+Configuration\ProcessConfig.class
+Server\Server.class
+Communication\Consensus\ConsensusBFT.class
+Communication\Consensus\ConsensusState.class

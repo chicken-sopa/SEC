@@ -1,0 +1,6 @@
+Client\Main.class
+Client\Client.class
+module-info.class
+Configuration\ClientConfig.class
+Lib\ILib.class
+Lib\Lib.class
