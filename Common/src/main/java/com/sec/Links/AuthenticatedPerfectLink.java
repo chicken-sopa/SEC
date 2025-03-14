@@ -68,6 +68,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         }
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
         int processId = signedReceivedMessage.getSenderId();
+        System.out.println("process ID = " + processId);
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getPublicKey(processId), signedReceivedMessage.getSignature());
         if (!verified) {
             System.out.println("Message verification failed, signature couldn't be verified");
