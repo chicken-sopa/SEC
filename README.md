@@ -1,6 +1,8 @@
 # SEC Project 1 tests
 This project includes a set of tests that can be executed utilizing the various python scripts described below.
 It is essential to **COMPILE** the project using Maven before running the tests.
+
+We weren't able to add byzantine behaviour due to non-deterministic behaviour in the program due to threading. 
 ---
 
 ## Steps to execute the tests
