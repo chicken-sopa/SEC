@@ -45,27 +45,27 @@ def start_node_in_terminal(command, name):
     print(f"{name} foi iniciado com sucesso.")
 
 
+# Get the correct classpath separator based on the operating system
+classpath_separator = ";" if platform.system() == "Windows" else ":"
+classpath = f"Server/target/classes{classpath_separator}Common/target/classes"
+
 # Configuração dos comandos para cada nó
 nodes = [
     {
-        "command": ["java", "-cp", "Server/target/classes", "Main", "2"],
+        "command": ["java", "-cp", classpath, "Server.Main", "2"],
         "name": "Node-2",
     },
     {
-        "command": ["java", "-cp", "Server/target/classes", "Main" , "1"],
+        "command": ["java", "-cp", classpath, "Server.Main", "1"],
         "name": "Node-1",
     },
     {
-        "command": ["java", "-cp", "Server/target/classes", "Main", "0", "yes"],
+        "command": ["java", "-cp", classpath, "Server.Main", "0", "yes"],
         "name": "Node-0",
     },
 ]
 
-# Compilar o projeto com Maven (opcional)
-# print("Compilando o projeto...")
-# subprocess.run(["mvn", "clean", "install"], check=True, cwd="Server")
-# print("Compilação concluída.")
-
+print("NOTA: Certifique-se de que o projeto já foi compilado com 'mvn clean install'")
 
 # Iniciar todos os nós nos terminais
 for node_info in nodes:
