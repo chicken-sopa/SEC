@@ -3,7 +3,7 @@ package Communication.Consensus;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Messages.BaseMessage;
 
-import com.sec.Messages.ConsensusFinished;
+import com.sec.Messages.ConsensusFinishedMessage;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +27,7 @@ public class Blockchain {
     }
 
      void sendConsensusDoneToClient(int currentServerID, int consensusID, String val, int clientID) throws Exception {
-        ConsensusFinished msg = new ConsensusFinished(currentServerID, consensusID, val);
+        ConsensusFinishedMessage msg = new ConsensusFinishedMessage(currentServerID, consensusID, val);
         link.sendMessage(msg, clientID);
      }
 
