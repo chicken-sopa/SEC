@@ -8,6 +8,7 @@ import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
 import com.sec.Messages.BaseMessage;
 import com.sec.Messages.MessageType;
+import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
 
@@ -84,8 +85,13 @@ public class Server {
     }
 
 
-    void processMessageFromClient(AppendMessage message){
-        consensusBFT.messagesFromClient.addLast(message.getMessage());
+    void processMessageFromClient(AppendMessage message) throws Exception {
+        SignedValTSPair newPair = new SignedValTSPair(0, message.getMessage(), message.getSenderId(), message.getSignature());
+
+        consensusBFT.messagesFromClient.addLast(newPair);
+        if (isLeader) {
+            notifyAll(); // wake up if leader thread is sleeping
+        }
 
     }
 
@@ -96,7 +102,7 @@ public class Server {
                 try {
                     BaseMessage messageReceived = authenticatedPerfectLink.receiveMessage();
                     if (messageReceived.getMessageType().equals(MessageType.APPEND)) {
-
+                        processMessageFromClient((AppendMessage)messageReceived);
                     }
                     consensusBFT.processConsensusRequestMessage(messageReceived);
                 } catch (Exception e) {

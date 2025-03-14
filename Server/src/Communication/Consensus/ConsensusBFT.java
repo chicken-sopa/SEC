@@ -37,7 +37,7 @@ public class ConsensusBFT {
 
     private final AtomicInteger currentConsensusID = new AtomicInteger(0);
 
-    public final Deque<String> messagesFromClient = new ArrayDeque<>();
+    public final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
 
     private final int SERVER_ID;
 

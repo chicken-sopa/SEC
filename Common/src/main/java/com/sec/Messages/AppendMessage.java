@@ -9,14 +9,18 @@ import java.util.Base64;
 public class AppendMessage extends BaseMessage{
 
     private final String message;
+
     private final String signature;
+
 
     public AppendMessage(MessageType messageType, int senderId, String stringToAppend, int consensusID) throws Exception {
         super(messageType, senderId, consensusID);
         message = stringToAppend;
         this.signature = generateSignature(KeyManager.getPrivateKey(senderId));
     }
-
+    public String getSignature() {
+        return signature;
+    }
     public String getMessage() {
         return message;
     }
