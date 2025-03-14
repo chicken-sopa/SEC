@@ -28,15 +28,13 @@ Test1 covers a normal flow. In order to execute this, simply run the following c
 ```bash
 python test1.py
 ```
-
-# TODO 
-### colocar aqui possiveis proximos passos do teste
+This test executes a normal execution of the consensus algorithm. Unfortunately
 
 > **Note:** Before executing the script make sure you give the executable permissions to open multiple terminal windows.
 
 ---
 
-## Ambiente Suportado
+## Environment
 
 This Python script was designed to be executed **Windows**, **Linux** and **macOS**. Make sure that:
 - In Linux:  **gnome-terminal** is installed.
