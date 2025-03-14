@@ -124,10 +124,11 @@ public class ConsensusBFT {
                 .map(StateMessage::getVal)// Extract ValTSPair from each StateMessage
                 .filter(signValTSPair -> {
                     try {
-                        if(signValTSPair != null) {
+                        if (signValTSPair != null) {
                             return signValTSPair.verifySignature(KeyManager.getPublicKey(signValTSPair.getClientId()));
-                        }
-                        else{return true;}// this might be wrong
+                        } else {
+                            return true;
+                        }// this might be wrong
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -152,7 +153,7 @@ public class ConsensusBFT {
                     .filter(pair -> pair != null && pair.getValTSPair() != null) // Ensure no null values
                     .filter(pair -> pair.getValTSPair().valTS() == maxTsValue)  // Compare safely
                     .toList();
-                                // != maxTsValue.get().valTS());
+            // != maxTsValue.get().valTS());
 
             List<SignedWriteset> collectedWriteSets = collectedStates.values()
                     .stream()
@@ -222,7 +223,7 @@ public class ConsensusBFT {
 
         writeRequestsReceived.merge(pairToWrite.hashCode(), 1, Integer::sum); // update number of time write request was received
         System.out.println("received " + writeRequestsReceived.get(pairToWrite.hashCode()));
-        if (writeRequestsReceived.get(pairToWrite.hashCode()) >= (2 * f + 1)) {
+        if (writeRequestsReceived.get(pairToWrite.hashCode()) >= (2 * f + 1) && writeRequestsReceived.get(pairToWrite.hashCode()) != -1) {
             SignedValTSPair valueToAccept;
             valueToAccept = pairToWrite;
             writeRequestsReceived.put(valueToAccept.hashCode(), -1);
@@ -269,6 +270,7 @@ public class ConsensusBFT {
             acceptRequestsReceived.remove(valueReadyToWrite.hashCode());
 
             blockchain.writeToBlockchain(acceptMessage.getMsgConsensusID(), valueReadyToWrite.getValTSPair().val());
+            blockchain.sendConsensusDoneToClient(this.SERVER_ID, acceptMessage.getMsgConsensusID(), valueReadyToWrite.getValTSPair().val(), acceptMessage.getSenderId());
             //TODO: send message to client saying value was correctly written, leader or not
             System.out.println("Node appendend value " + valueReadyToWrite.getValTSPair().val() + " to the blockchain");
             if (isServerLeader()) {

@@ -35,7 +35,7 @@ public class Server {
     private final Condition condition = leaderThreadLock.newCondition();
 
 
-    Blockchain blockchain = new Blockchain();
+    Blockchain blockchain;
 
 
     public Server(int port, int processId, boolean isLeader) throws Exception {
@@ -45,6 +45,8 @@ public class Server {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth, getProcessId());
         conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink, quorumSize);
+
+        blockchain = new Blockchain(authenticatedPerfectLink);
 
         sc = new Scanner(System.in);
         this.isLeader = isLeader;
