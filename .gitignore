@@ -27,3 +27,18 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/Client/target/Client-1.0-SNAPSHOT.jar
+/Common/target/Common-1.0-SNAPSHOT.jar
+/Client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/Common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/Common/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+/Server/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/Client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/Common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/Common/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+/Server/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/Common/target/test-classes/META-INF/jpms.args
+/Client/target/maven-archiver/pom.properties
+/Common/target/maven-archiver/pom.properties
+/Server/target/maven-archiver/pom.properties
+/Server/target/Server-1.0-SNAPSHOT.jar
