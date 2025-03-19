@@ -27,7 +27,8 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
         while (!MessagesAck.get(msg.getMessageUniqueId())) {
             try {
                 super.sendMessage(msg, portToSend);
-                Auxiliary.PrettyPrintUdpMessageSent(msg);
+                int processIdToReceive = (portToSend - 4550);
+                Auxiliary.PrettyPrintUdpMessageSent(msg,  processIdToReceive);
                 Thread.sleep(500);
             } catch (IOException | NoSuchAlgorithmException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -38,7 +39,8 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
     public void sendAckMessage(ILinkMessage<T> msg, Integer portToSend) throws Exception {
         try {
             super.sendMessage(msg, portToSend);
-            Auxiliary.PrettyPrintUdpMessageSent(msg);
+            int processIdToReceive = (portToSend - 4550);
+            Auxiliary.PrettyPrintUdpMessageSent(msg, processIdToReceive);
         } catch (IOException | NoSuchAlgorithmException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -54,9 +56,11 @@ public class PerfectLink<T extends IMessage> extends FairLossLink<T> {
             return receivedMsg;
         }
         else if(!isMessageDuplicate(msg)) {
+
             ReceivedMessages.put(msg.getMessageUniqueId(), msg.getMessageValue());
             return receivedMsg;
         }
+        System.out.println("THIS IS MESSAGE IS DUPLICATE SO IGNORING");
         return null;
     }
 

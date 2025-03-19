@@ -15,11 +15,12 @@ public class Auxiliary {
     }
 
     @SuppressWarnings("rawtypes")
-    public static void PrettyPrintUdpMessageSent(ILinkMessage msg){
+    public static void PrettyPrintUdpMessageSent(ILinkMessage msg, int processToReceive){
         System.out.println("message sent => senderID: " + msg.getSenderId() +
                 " || msgID: " + msg.getMessageId() +
                 " ||  msg: " + msg.getMessageValue().prettyPrint() +
-                " || LinkType: " + msg.getType()
+                " || LinkType: " + msg.getType() +
+                " || receiverID: " + processToReceive
         );
     }
 }

@@ -33,6 +33,10 @@ public class SignedValTSPair implements Serializable {
         return valTSPair;
     }
 
+    public String prettyPrint(){
+        return "(ts= "+ this.valTSPair.valTS() + " | val= " + this.valTSPair.val() +" )";
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(valTSPair.val(), valTSPair.valTS(), signature, clientId); // Replace with actual fields

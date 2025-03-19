@@ -28,4 +28,5 @@ com\sec\Links\AuthenticatedPerfectLink.class
 com\sec\Links\LinkMessages\UdpLinkMessage.class
 com\sec\Links\LinkMessages\Base\SignedLinkMessage.class
 com\sec\Links\Data\Tuple.class
+com\sec\Messages\ConsensusFinishedMessage.class
 com\sec\Messages\StateMessage.class

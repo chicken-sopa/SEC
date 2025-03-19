@@ -1,8 +1,9 @@
 package com.sec.Links;
 
+import com.sec.Links.Data.MessageDeliveryTuple;
 import com.sec.Links.LinkMessages.Base.Contracts.IMessage;
 import com.sec.Links.LinkMessages.AckMessage;
-import com.sec.Links.Data.MessageDeliveryTuple;
+
 import com.sec.Links.LinkMessages.Base.Contracts.ILinkMessage;
 import com.sec.Links.LinkMessages.Base.LinkMessageType;
 import com.sec.Links.LinkMessages.SignedUdpLinkMessage;
@@ -13,6 +14,7 @@ import com.sec.Keys.KeyManager;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -20,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T> {
 
     DigitalSignatureAuth<T> digitalSignatureAuth;
-    private  PrivateKey privateKey;
+    private final PrivateKey privateKey;
     AtomicInteger messageIdCounter = new AtomicInteger(0);
     Integer id;
 
@@ -36,7 +38,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         Thread t = new Thread(() -> {
 
             try {
-                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(id, messageIdCounter.getAndAdd(1), msg, LinkMessageType.Message);
+                UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(id, UUID.randomUUID(), msg, LinkMessageType.Message);
 
                 String signature = digitalSignatureAuth.signMessage(messageToSend, privateKey);
 
@@ -55,7 +57,6 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
     public T receiveMessage() throws Exception {
         MessageDeliveryTuple<ILinkMessage<T>, Integer> messageTuple = receiveLinkMessage();
         if (messageTuple == null) {
-
             return null;
         }
         return messageTuple.getMessage().getMessageValue();
@@ -72,7 +73,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getPublicKey(processId), signedReceivedMessage.getSignature());
         if (!verified) {
             System.out.println("Message verification failed, signature couldn't be verified");
-            return null;
+            //return null;
         }
             processMessageReceived(messageReceived);
 
@@ -92,7 +93,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             case Message -> {
                 /// send echo response to sender
                 AckMessage ackMsg = new AckMessage(msg.getMessageUniqueId());
-                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(id, messageIdCounter.getAndAdd(1), (T) ackMsg, LinkMessageType.Ack);
+                UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(id, UUID.randomUUID(), (T) ackMsg, LinkMessageType.Ack);
                 String signature = digitalSignatureAuth.signMessage(ackMessage,privateKey);
 
                 SignedUdpLinkMessage<T> signedAckMessage = new SignedUdpLinkMessage<>(ackMessage, signature);

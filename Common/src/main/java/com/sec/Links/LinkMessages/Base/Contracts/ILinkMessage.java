@@ -4,6 +4,7 @@ import com.sec.Links.LinkMessages.Base.LinkMessageType;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.UUID;
 
 public interface ILinkMessage<T extends IMessage> extends Serializable {
 
@@ -11,7 +12,7 @@ public interface ILinkMessage<T extends IMessage> extends Serializable {
     byte[] serializeMessage() throws IOException;
 
     int getSenderId();
-    int getMessageId();
+    UUID getMessageId();
     T getMessageValue();
     LinkMessageType getType();
 }

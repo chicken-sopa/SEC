@@ -14,8 +14,6 @@ public class BroadcastMessage<T extends BaseMessage> {
     public BroadcastMessage(AuthenticatedPerfectLink<T> link, int quorumSize) throws SocketException, NoSuchAlgorithmException {
         this.link = (AuthenticatedPerfectLink<T>) link;
         this.quorumSize = quorumSize;
-
-
     }
 
 

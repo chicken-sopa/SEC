@@ -8,6 +8,7 @@ import com.sec.Links.LinkMessages.Base.Contracts.IMessage;
 import com.sec.Links.LinkMessages.Base.Contracts.ISignedLinkMessage;
 
 import java.io.*;
+import java.util.UUID;
 
 public abstract class SignedLinkMessage<T extends IMessage> implements ISignedLinkMessage<T> {
 
@@ -50,7 +51,7 @@ public abstract class SignedLinkMessage<T extends IMessage> implements ISignedLi
     }
 
     @Override
-    public int getMessageId() {
+    public UUID getMessageId() {
         return message.getMessageId();
     }
 

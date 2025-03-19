@@ -42,7 +42,7 @@ public class ConditionalCollect<T extends BaseMessage> {
      * Processes incoming collect responses.
      */
     public void waitForStateMessages() throws Exception {
-        while (collectedMessages.size() < quorumSize) {
+        while (collectedMessages.size() < quorumSize && collectedMessages.get(0) != null) {
 
         }
         System.out.println("Received quorum of replies");

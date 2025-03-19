@@ -45,7 +45,7 @@ public class ConsensusBFT {
 
     private final int SERVER_ID;
 
-    private final int f = 1;
+    private final int f = 1; // TODO THIS IS WRONG // F NEEDS TO BE CALCULATED
     private final int quorumSize;
     private final AuthenticatedPerfectLink<BaseMessage> link;
 
@@ -85,12 +85,17 @@ public class ConsensusBFT {
         conditionalCollect.waitForStateMessages();
 
 
+        //This ensures that leader always send is state message even if other process are quicker to send it
+        if(conditionalCollect.getCollectedMessages().get(this.SERVER_ID) == null){
+            StateMessage leaderStateMessage = createStateMessage(currentConsensusID);
+            conditionalCollect.getCollectedMessages().put(this.SERVER_ID, leaderStateMessage);
+        }
+
         return (Map<Integer, StateMessage>) conditionalCollect.getCollectedMessages();
     }
 
 
-    public void processReadMessage(int msgConsensusID) throws Exception {
-
+    public StateMessage createStateMessage(int msgConsensusID) throws Exception {
         SignedWriteset currentWriteset = writesetByConsensusID.get(msgConsensusID);
 
         if (currentWriteset == null) {
@@ -100,7 +105,11 @@ public class ConsensusBFT {
 
         SignedValTSPair currentValTsPair = currentValTSPairByConsensusID.get(msgConsensusID);
 
-        StateMessage stateMessage = new StateMessage(this.SERVER_ID, currentValTsPair, currentWriteset, msgConsensusID);
+        return new StateMessage(this.SERVER_ID, currentValTsPair, currentWriteset, msgConsensusID);
+    }
+
+    public void processReadMessage(int msgConsensusID) throws Exception {
+        StateMessage stateMessage = createStateMessage(msgConsensusID);
         link.sendMessage(stateMessage, 4550);
     }
 
@@ -115,6 +124,11 @@ public class ConsensusBFT {
     public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage, int senderID) {
         //1º value of the most recent ts in byzantine quorum and if value is in writeset f+1
         //3º if none then value of the leader
+
+        System.out.println("IM PROCESSING THE COLLECTED STATES");
+        System.out.println("LEADER WRITESET  = " + collectedMessage.getCollectedStates().get(0).getWriteset().getWriteset().size());
+
+
         Map<Integer, StateMessage> collectedStates = collectedMessage.getCollectedStates();
 
         PublicKey nodePublicKey = KeyManager.getPublicKey(senderID);
@@ -164,7 +178,7 @@ public class ConsensusBFT {
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                    })// Extract ValTSPair from each StateMessage
+                    })  // Extract ValTSPair from each StateMessage
                     .toList();
 
 
@@ -174,13 +188,25 @@ public class ConsensusBFT {
                         .filter(val -> val.equals(pair)) // Count occurrences of firstValue
                         .count();
                 if (numberTimesPairInWriteSet > (quorumSize + 1)) {
+                    System.out.println("THE VALUE CHOOSEN IN PROCESS STATSS = " + pair);
                     return pair;
                 }
             }
         }
 
+        if(collectedStates.get(0) == null){
+            System.out.println("ERROR");
+            System.out.println("THE VALUE PROPOSED IN LEADER PROCESS STATUS = NULL");
+            collectedMessage.getCollectedStates().forEach((key, value) ->{
+                value.getWriteset().getWriteset().forEach((signedValTSPair -> {
+                    System.out.print(signedValTSPair.prettyPrint());
+                }));
+            });
 
-        return collectedStates.get(0).getVal(); // when we have nothing always value that leader has
+            //return null;
+        }
+        //System.out.println("THE VALUE CHOOSEN IN PROCESS STATSS = " + collectedMessage.getCollectedStates().get(0).getVal().prettyPrint());
+        return collectedMessage.getCollectedStates().get(0).getVal();//collectedStates.get(0).getVal(); // when we have nothing always value that leader has
 
 
     }
@@ -208,9 +234,17 @@ public class ConsensusBFT {
 
 
     public void processWriteRequestAndSendAccept(WriteMessage writeMessage, int msgConsensusID) throws Exception {
-        //TODO CECK IF -1! THEN DONT SEND MORE
+
 
         SignedValTSPair pairToWrite = writeMessage.getPairToProposeWrite();
+
+        if(pairToWrite == null){
+
+            System.out.println("ERROORRR --> leader got a null to write  --> consensus aborted");
+            leaderConsensusState.put(msgConsensusID, ConsensusState.Aborted);
+            wakeUpConsensusLeader();
+            return;
+        }
 
         if (!pairToWrite.verifySignature(KeyManager.getPublicKey(pairToWrite.getClientId()))) {
             return;
@@ -348,7 +382,7 @@ public class ConsensusBFT {
             //SignedValTSPair newPair = new SignedValTSPair();
             currentValTSPairByConsensusID.put(consensusID, messagesFromClient.pollFirst());
 
-            System.out.println("Value to propose chosen from client = " + currentValTSPairByConsensusID);
+            System.out.println("Value to propose chosen from client = " + currentValTSPairByConsensusID.get(consensusID).prettyPrint());
         }
 
 

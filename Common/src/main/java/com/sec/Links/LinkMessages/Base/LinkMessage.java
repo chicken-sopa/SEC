@@ -6,15 +6,16 @@ import com.sec.Links.LinkMessages.UdpLinkMessage;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.UUID;
 
 public abstract class LinkMessage<T extends IMessage> implements ILinkMessage<T>{
 
-    private final int senderId;
-    private final int messageId;
+    private final Integer senderId;
+    private final UUID messageId;
     private final T message;
     private final LinkMessageType type;
 
-    public LinkMessage(int senderId, int messageId, T message, LinkMessageType type){
+    public LinkMessage(int senderId, UUID messageId, T message, LinkMessageType type){
         this.senderId = senderId;
         this.messageId = messageId;
         this.message = message;
@@ -43,14 +44,15 @@ public abstract class LinkMessage<T extends IMessage> implements ILinkMessage<T>
 
     @Override
     public int getMessageUniqueId() {
-        Integer[] messageUniqueIds = new Integer[2];
-        messageUniqueIds[0] = senderId;
-        messageUniqueIds[1] = messageId;
+        String[] messageUniqueIds = new String[2];
+        messageUniqueIds[0] = senderId.toString();
+        messageUniqueIds[1] = messageId.toString();
+
         return Arrays.hashCode(messageUniqueIds);
     }
 
     @Override
-    public int getMessageId() {
+    public UUID getMessageId() {
         return messageId;
     }
 
