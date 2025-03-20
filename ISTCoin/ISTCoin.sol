@@ -27,9 +27,6 @@ contract ISTCoin is ERC20, Ownable {
         if (from != address(0)) {
             require(!blacklist.isBlacklisted(from), "ISTCoin: Sender is blacklisted");
         }
-        if (to != address(0)) {
-            require(!blacklist.isBlacklisted(to), "ISTCoin: Recipient is blacklisted");
-        }
         super._update(from, to, value);
     }
 }
