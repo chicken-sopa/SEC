@@ -23,6 +23,7 @@ public class KeyLoader {
      * @throws Exception If an error occurs while reading or parsing the key.
      */
     public static PublicKey loadPublicKey(String filePath) throws Exception {
+
         String keyContent = readKeyFile(filePath);
         keyContent = keyContent.replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
@@ -33,6 +34,21 @@ public class KeyLoader {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePublic(spec);
     }
+
+    public static PublicKey loadPublicKeyById(int id) throws Exception {
+
+        String filePath = "crypto/" + id + "_public.pem";
+        String keyContent = readKeyFile(filePath);
+        keyContent = keyContent.replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("-----END PUBLIC KEY-----", "")
+                .replaceAll("\\s", ""); // Remove new lines and spaces
+
+        byte[] keyBytes = Base64.getDecoder().decode(keyContent);
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePublic(spec);
+    }
+
 
     /**
      * Loads a private key from a PEM file.
