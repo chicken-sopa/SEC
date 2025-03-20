@@ -12,9 +12,10 @@ contract ISTCoin is ERC20, Ownable {
         ERC20("IST Coin", "IST") 
         Ownable(initialOwner) 
     {
+        // Store reference to already deployed Blacklist contract
         blacklist = Blacklist(blacklistAddress);
         
-        // Mint the entire supply to the contract deployer/owner at initialization
+        // Mint the entire supply to the initial owner
         _mint(initialOwner, INITIAL_SUPPLY);
     }
 
@@ -22,12 +23,11 @@ contract ISTCoin is ERC20, Ownable {
         return 2;
     }
 
-    // Override _update to check blacklist before transfers
     function _update(address from, address to, uint256 value) internal override {
-        if (from != address(0)) { // Skip blacklist check during initial minting
+        if (from != address(0)) {
             require(!blacklist.isBlacklisted(from), "ISTCoin: Sender is blacklisted");
         }
-        if (to != address(0)) { // Skip blacklist check during burns
+        if (to != address(0)) {
             require(!blacklist.isBlacklisted(to), "ISTCoin: Recipient is blacklisted");
         }
         super._update(from, to, value);

@@ -9,11 +9,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "blacklistAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
 						"name": "initialOwner",
 						"type": "address"
 					}
@@ -623,11 +618,11 @@
 			]
 		},
 		"ISTCoin/ISTCoin.sol": {
-			"keccak256": "0xe07893851d92f2b0e7d88a3d4a7d9fdfd3c6a080bf1cf0580c995256e307c218",
+			"keccak256": "0xf8749f2e94d777a09e8a7f2431cb7dcc589fac405aaed452e101f98735db5936",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://10573951673f422009cddfbe25e14905d25a9c152a64dd7f01b8270766b89e35",
-				"dweb:/ipfs/QmNxdnp6ms61cqF68o3QwDKCucqGszj1uBT6ZVyctqfw2r"
+				"bzz-raw://c3e717b11532cda620646a8589961d1f9a128105cca6379bdd4bcb02aa7c0c39",
+				"dweb:/ipfs/QmaxssdDvAvhnALH1FhoVPsv1rqMU3ygaFuT8twK96CRrE"
 			]
 		}
 	},
