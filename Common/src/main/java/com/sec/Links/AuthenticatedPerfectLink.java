@@ -1,5 +1,6 @@
 package com.sec.Links;
 
+import com.sec.Keys.KeyLoader;
 import com.sec.Links.Data.MessageDeliveryTuple;
 import com.sec.Links.LinkMessages.Base.Contracts.IMessage;
 import com.sec.Links.LinkMessages.AckMessage;
@@ -70,10 +71,10 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
         int processId = signedReceivedMessage.getSenderId();
         System.out.println("process ID = " + processId);
-        boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyManager.getPublicKey(processId), signedReceivedMessage.getSignature());
+        boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyLoader.loadPublicKeyById(processId), signedReceivedMessage.getSignature());
         if (!verified) {
             System.out.println("Message verification failed, signature couldn't be verified");
-            //return null;
+            return null;
         }
             processMessageReceived(messageReceived);
 
