@@ -45,7 +45,7 @@ public class ConditionalCollect<T extends BaseMessage> {
         while (collectedMessages.size() < quorumSize && collectedMessages.get(0) != null) {
 
         }
-        System.out.println("Received quorum of replies");
+        System.out.println("Received quorum of replies STATE MSG");
     }
 
 

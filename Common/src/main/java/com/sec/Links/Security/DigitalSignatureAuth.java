@@ -31,7 +31,7 @@ public class DigitalSignatureAuth<T extends IMessage> {
     }
 
     public boolean verifySignature(ILinkMessage<T> msg, PublicKey pubKey, String signatureStr) throws Exception{
-        System.out.println("THIS IS VERIFICATION  MESSAGE ID =  " + msg.getMessageId() + " || type: " + msg.getType() );
+        //System.out.println("THIS IS VERIFICATION  MESSAGE ID =  " + msg.getMessageId() + " || type: " + msg.getType() );
         Signature signature = Signature.getInstance(Constants.getAlgorithm());
         signature.initVerify(pubKey);
         signature.update(msg.serializeMessage());

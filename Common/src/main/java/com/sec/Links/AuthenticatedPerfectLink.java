@@ -11,13 +11,13 @@ import com.sec.Links.LinkMessages.SignedUdpLinkMessage;
 import com.sec.Links.LinkMessages.UdpLinkMessage;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Keys.KeyManager;
+import com.sec.Messages.StateMessage;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 
 public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T> {
@@ -30,7 +30,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
     public AuthenticatedPerfectLink(int port, DigitalSignatureAuth<T> digitalSignatureAuth, Integer id) throws SocketException, NoSuchAlgorithmException {
         super(port);
         this.digitalSignatureAuth = digitalSignatureAuth;
-        this.id=id;
+        this.id = id;
         privateKey = KeyManager.getPrivateKey(id);
     }
 
@@ -70,13 +70,24 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
         }
         var signedReceivedMessage = (SignedUdpLinkMessage<T>) messageReceived.getMessage();
         int processId = signedReceivedMessage.getSenderId();
-        System.out.println("process ID = " + processId);
+
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyLoader.loadPublicKeyById(processId), signedReceivedMessage.getSignature());
         if (!verified) {
-            System.out.println("Message verification failed, signature couldn't be verified");
+            System.out.println("Message verification failed, signature couldn't be verified || senderID "+ signedReceivedMessage.getSenderId()
+                    + " msg = " + signedReceivedMessage.getMessage().getMessageValue().prettyPrint());
+
+            if (signedReceivedMessage.getMessage().getMessageValue() instanceof StateMessage stateMessage) {
+                System.out.println(stateMessage.message().toString());
+                System.out.println("IN ERRROR STATE MSG");
+                //StateMessage msg = (StateMessage) signedReceivedMessage.getMessage();
+                System.out.println("COLLECTED RECEIVED WITH ERROR == " + stateMessage.prettyPrint() + " || senderID = " + stateMessage.getSenderId());
+                if (!stateMessage.getWriteset().getWriteset().isEmpty()) {
+                   System.out.println("WRITESET ISNT NULLLLL = " + stateMessage.getWriteset().getWriteset().get(0).prettyPrint());
+                }
+            }
             return null;
         }
-            processMessageReceived(messageReceived);
+        processMessageReceived(messageReceived);
 
 
         if (messageReceived.getMessage().getType() == LinkMessageType.Ack)
@@ -95,7 +106,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
                 /// send echo response to sender
                 AckMessage ackMsg = new AckMessage(msg.getMessageUniqueId());
                 UdpLinkMessage<T> ackMessage = new UdpLinkMessage<>(id, UUID.randomUUID(), (T) ackMsg, LinkMessageType.Ack);
-                String signature = digitalSignatureAuth.signMessage(ackMessage,privateKey);
+                String signature = digitalSignatureAuth.signMessage(ackMessage, privateKey);
 
                 SignedUdpLinkMessage<T> signedAckMessage = new SignedUdpLinkMessage<>(ackMessage, signature);
                 super.sendAckMessage(signedAckMessage, portToSend);

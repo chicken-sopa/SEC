@@ -380,7 +380,14 @@ public class ConsensusBFT {
         if (writesetByConsensusID.get(consensusID) == null && currentValTSPairByConsensusID.get(consensusID) == null) {
 
             //SignedValTSPair newPair = new SignedValTSPair();
-            currentValTSPairByConsensusID.put(consensusID, messagesFromClient.pollFirst());
+            SignedValTSPair msg = messagesFromClient.pollFirst();
+
+            if(msg == null){
+
+                System.out.println("---------------INIT MSG FOR CONSENSUS IS NULL ERROR---------------------");
+            }
+
+            currentValTSPairByConsensusID.put(consensusID, msg);
 
             System.out.println("Value to propose chosen from client = " + currentValTSPairByConsensusID.get(consensusID).prettyPrint());
         }
@@ -401,13 +408,19 @@ public class ConsensusBFT {
             }
 
             case STATE -> {
+                StateMessage msg = (StateMessage) message;
+                System.out.println("COLLECTED RECEIVED == " + msg.prettyPrint() + " || senderID = " + msg.getSenderId());
+                if(!msg.getWriteset().getWriteset().isEmpty()){
+                    System.out.println("WRITESET ISNT NULLLLL = " + msg.getWriteset().getWriteset().get(0).prettyPrint());
+                }
+
                 ConditionalCollect<BaseMessage> conditionalCollect = conditionalCollectByConsensusID.get(message.getMsgConsensusID());
                 if (conditionalCollect != null) {
                     conditionalCollect.processStateMessage(message);
                 }
             }
 
-            case COLLECTED -> { // CollectedMessage collectedMessage -> {
+            case COLLECTED -> {
                 SignedValTSPair pairToProposeWrite = processCollectedStatesMessage((CollectedMessage) message, message.getSenderId());
                 sendWriteRequest(pairToProposeWrite, message.getMsgConsensusID());
             }
