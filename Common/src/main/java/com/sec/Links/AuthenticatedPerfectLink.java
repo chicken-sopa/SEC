@@ -41,6 +41,18 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             try {
                 UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(id, UUID.randomUUID(), msg, LinkMessageType.Message);
 
+                if (messageToSend.getMessageValue() instanceof StateMessage stateMessage) {
+                    System.out.println(stateMessage.message().toString());
+                    System.out.println("SENDING STATE MSG");
+                    //StateMessage msg = (StateMessage) signedReceivedMessage.getMessage();
+
+                    if (!stateMessage.getWriteset().getWriteset().isEmpty()) {
+                        System.out.println("SENDING STATE WITH WITH ERROR == " + stateMessage.prettyPrint() + " || senderID = " + stateMessage.getSenderId());
+                        System.out.println("WRITESET ISNT NULLLLL = " + stateMessage.getWriteset().getWriteset().get(0).prettyPrint());
+                    }
+                }
+
+
                 String signature = digitalSignatureAuth.signMessage(messageToSend, privateKey);
 
                 SignedUdpLinkMessage<T> authenticatedMessage = new SignedUdpLinkMessage<>(messageToSend, signature);

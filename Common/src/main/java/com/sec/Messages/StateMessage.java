@@ -26,7 +26,7 @@ public class StateMessage extends BaseMessage implements Serializable {
     @Override
     public String prettyPrint() {
         return super.prettyPrint() +
-                "Val -> "+ (getVal() != null ? getVal().toString() : "null") +
-                " Write -> "+ getWriteset().getWriteset().size();
+                "Val -> "+ (getVal() != null ? getVal().prettyPrint() : "null") +
+                "|| Write SIZE -> "+ getWriteset().getWriteset().size();
     }
 }

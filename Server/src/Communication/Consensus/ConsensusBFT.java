@@ -105,11 +105,17 @@ public class ConsensusBFT {
 
         SignedValTSPair currentValTsPair = currentValTSPairByConsensusID.get(msgConsensusID);
 
-        return new StateMessage(this.SERVER_ID, currentValTsPair, currentWriteset, msgConsensusID);
+        System.out.println("SENDING STATUS WITH WRITESET SIZE = " + currentWriteset.getWriteset().size());
+
+        StateMessage stateMessageToSend = new StateMessage(this.SERVER_ID, currentValTsPair, currentWriteset, msgConsensusID);
+
+        System.out.println("CREATING STATUS WITH == " + stateMessageToSend.prettyPrint());
+        return stateMessageToSend;
     }
 
     public void processReadMessage(int msgConsensusID) throws Exception {
         StateMessage stateMessage = createStateMessage(msgConsensusID);
+        System.out.println("SENDING STATUS RESPONSE WITH == " + stateMessage.prettyPrint());
         link.sendMessage(stateMessage, 4550);
     }
 
