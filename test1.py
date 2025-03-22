@@ -66,7 +66,7 @@ nodes = [
     },
     {
         "command": ["java", "-cp", classpath1, "Server.Main", "3"],
-        "name": "Node-2",
+        "name": "Node-3",
     },
     {
         "command": ["java", "-cp", classpath2, "Client.Main", "4"],
