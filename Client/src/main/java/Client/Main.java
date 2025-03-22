@@ -12,8 +12,8 @@ public class Main {
         int myPort = 5550 + clientId;
         ClientConfig.setProcessId(clientId);
         System.out.println("Running client on port: " + myPort);
-        int[] destinationPortList = new int[3];
-        for (int i = 0; i <= 2; i++) {
+        int[] destinationPortList = new int[4];
+        for (int i = 0; i <= 3; i++) {
             destinationPortList[i] = 4550 + i;
         }
 
