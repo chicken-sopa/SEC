@@ -7,4 +7,5 @@ module Common {
     exports com.sec.Messages.Types.Writeset;
     exports com.sec.Messages.Types.ValTSPair;
     exports com.sec.Helpers;
+    exports com.sec.BlockChain;
 }
