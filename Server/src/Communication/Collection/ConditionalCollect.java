@@ -32,7 +32,7 @@ public class ConditionalCollect<T extends BaseMessage> {
      */
     public void startCollection(int currentConsensusID) throws Exception {
         T collectRequest = (T) new InitCollectMessage(getProcessId(), currentConsensusID);
-        for (int i = 0; i <= 2; i++) {
+        for (int i = 0; i <= 3; i++) {
             System.out.println("A enviar para o port " + (4550 + i));
             link.sendMessage(collectRequest, 4550 + i);
         }
