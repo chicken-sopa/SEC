@@ -20,7 +20,7 @@ public class BroadcastMessage<T extends BaseMessage> {
 
 
     public void sendBroadcast(T msgRequest) throws Exception {
-        for (int i = 0;  i <= 2 ;i++) {
+        for (int i = 0;  i <= 3 ;i++) {
             link.sendMessage(msgRequest, 4550 + i);
         }
     }
