@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-contract Blacklist {
+contract BlacklistTest {
     mapping(address => bool) private _blacklisted;
     address private constant OWNER = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB; // Hardcoded owner address
 
