@@ -12,14 +12,12 @@ contract Blacklist is Ownable {
     constructor(address initialOwner) Ownable(initialOwner) {}
 
     function addToBlacklist(address account) external onlyOwner returns (bool) {
-        require(!_blacklisted[account], "Blacklist: Address already blacklisted");
         _blacklisted[account] = true;
         emit AddedToBlacklist(account);
         return true;
     }
 
     function removeFromBlacklist(address account) external onlyOwner returns (bool) {
-        require(_blacklisted[account], "Blacklist: Address not blacklisted");
         _blacklisted[account] = false;
         emit RemovedFromBlacklist(account);
         return true;

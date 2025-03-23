@@ -240,11 +240,11 @@
 			]
 		},
 		"ISTCoin/Blacklist.sol": {
-			"keccak256": "0x7dcd3595ea5e8f88c75a5294186a09537f0f7bc5cb2f710aa843535f55eb40c3",
+			"keccak256": "0x92c28b95dad4922a4aad4604c703f097309b1337af433927369d50541de3cf0f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://058a6da82247e7aabaa31a28cd0225d160fe1a16609f3a97ebb69501b3d15c1f",
-				"dweb:/ipfs/QmUNHbvJo4CQmdqhwCKFb4Do55BXCeN1qUhqnWg7d3S21F"
+				"bzz-raw://2eca9f9b52d9ae522ce87c32d2d578770c545a6c0fef305d75e715ffb4195cdc",
+				"dweb:/ipfs/QmdK1EU8H8XMs7dMCtUFkPhyvDrr7wjXPM8bfMcMZyqiMV"
 			]
 		}
 	},
