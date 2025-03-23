@@ -4,7 +4,6 @@ import Communication.Collection.*;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Messages.AcceptMessage;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
-import com.sec.Messages.Types.ValTSPair.ValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
 
@@ -23,31 +22,36 @@ import com.sec.Messages.WriteMessage;
 
 import static Configuration.ProcessConfig.getProcessId;
 
+
+
 public class ConsensusBFT {
     //TODO PERVEBER QUANDO TEMOS CURRENT_VAL_TS
-    private final ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
+    final int LEADER_ID = 0;
+    final int CLIENT_ID = 0;
+     final ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, ConditionalCollect<BaseMessage>> conditionalCollectByConsensusID = new ConcurrentHashMap<>();
+     final ConcurrentHashMap<Integer, ConditionalCollect<BaseMessage>> conditionalCollectByConsensusID = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
+     final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
+     final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, ConsensusState> leaderConsensusState = new ConcurrentHashMap<>();
+     final ConcurrentHashMap<Integer, ConsensusState> leaderConsensusState = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new ConcurrentHashMap<>();
+     final ConcurrentHashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new ConcurrentHashMap<>();
 
-    //private final int currentTS = 0;
+     //final int currentTS = 0;
 
-    private final AtomicInteger currentConsensusID = new AtomicInteger(0);
+     final AtomicInteger currentConsensusID = new AtomicInteger(0);
 
-    public final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
+     public final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
 
-    private final int SERVER_ID;
+     final int SERVER_ID;
 
-    private final int f = 1; // TODO THIS IS WRONG // F NEEDS TO BE CALCULATED
-    private final int quorumSize;
-    private final AuthenticatedPerfectLink<BaseMessage> link;
+     final int f = 1; // TODO THIS IS WRONG // F NEEDS TO BE CALCULATED
+
+    final int quorumSize;
+    final AuthenticatedPerfectLink<BaseMessage> link;
 
     private final Blockchain blockchain;
 
@@ -107,14 +111,21 @@ public class ConsensusBFT {
 
         System.out.println("SENDING STATUS WITH WRITESET SIZE = " + currentWriteset.getWriteset().size());
 
-        StateMessage stateMessageToSend = new StateMessage(this.SERVER_ID, currentValTsPair, currentWriteset, msgConsensusID);
+        SignedWriteset currentWritesetClone  = new SignedWriteset(currentWriteset); // to garantee that this is an inmutable copy we do clone of this writeset
+
+        StateMessage stateMessageToSend = new StateMessage(this.SERVER_ID, currentValTsPair, currentWritesetClone, msgConsensusID);
 
         System.out.println("CREATING STATUS WITH == " + stateMessageToSend.prettyPrint());
         return stateMessageToSend;
     }
 
-    public void processReadMessage(int msgConsensusID) throws Exception {
-        StateMessage stateMessage = createStateMessage(msgConsensusID);
+    public void processReadMessage(ReadMessage msg) throws Exception {
+
+        if(msg.getSenderId() != LEADER_ID ){ // IF
+            return;
+        }
+
+        BaseMessage stateMessage = createStateMessage(msg.getMsgConsensusID()).toBaseMessage(); // SEND IT HAS BASE MSG AND TRY MANUAL TRANSFORM IN RECEIVER
         System.out.println("SENDING STATUS RESPONSE WITH == " + stateMessage.prettyPrint());
         link.sendMessage(stateMessage, 4550);
     }
@@ -137,7 +148,6 @@ public class ConsensusBFT {
 
         Map<Integer, StateMessage> collectedStates = collectedMessage.getCollectedStates();
 
-        PublicKey nodePublicKey = KeyManager.getPublicKey(senderID);
 
         List<SignedValTSPair> collectedCurrentValues = collectedStates.values()
                 .stream()
@@ -228,6 +238,8 @@ public class ConsensusBFT {
             writesetByConsensusID.put(msgConsensusID, currentWriteset);
         }
 
+        System.out.println("--------------------------------UPDATING WRITESET VALUE val = " + pairToWrite.prettyPrint() +  " ----------------------------------------------");
+
         // update writeSet and current Value to Write in specific consensusID
         currentWriteset.appendToWriteset(pairToWrite);
         currentValTSPairByConsensusID.put(msgConsensusID, pairToWrite);
@@ -256,10 +268,10 @@ public class ConsensusBFT {
             return;
         }
 
-        ValTSPair valTSPair = pairToWrite.getValTSPair();
 
         ConcurrentHashMap<Integer, Integer> writeRequestsReceived =
                 writeRequestsReceivedByConsensusID.computeIfAbsent(msgConsensusID, k -> new ConcurrentHashMap<>());
+
 
         writeRequestsReceived.merge(pairToWrite.hashCode(), 1, Integer::sum); // update number of time write request was received
         System.out.println("received " + writeRequestsReceived.get(pairToWrite.hashCode()));
@@ -391,6 +403,7 @@ public class ConsensusBFT {
             if(msg == null){
 
                 System.out.println("---------------INIT MSG FOR CONSENSUS IS NULL ERROR---------------------");
+                return;
             }
 
             currentValTSPairByConsensusID.put(consensusID, msg);
@@ -409,12 +422,12 @@ public class ConsensusBFT {
     public void processConsensusRequestMessage(BaseMessage message) throws Exception {
 
         switch (message.getMessageType()) {
-            case INIT_COLLECT -> {
-                processReadMessage(message.getMsgConsensusID());
+            case READ -> {
+                processReadMessage((ReadMessage) message);
             }
 
             case STATE -> {
-                StateMessage msg = (StateMessage) message;
+                StateMessage msg = (StateMessage) message.toStateMessage();
                 System.out.println("COLLECTED RECEIVED == " + msg.prettyPrint() + " || senderID = " + msg.getSenderId());
                 if(!msg.getWriteset().getWriteset().isEmpty()){
                     System.out.println("WRITESET ISNT NULLLLL = " + msg.getWriteset().getWriteset().get(0).prettyPrint());
@@ -451,6 +464,7 @@ public class ConsensusBFT {
             leaderConsensusThreadLock.unlock();
         }
     }
+
 
 }
 

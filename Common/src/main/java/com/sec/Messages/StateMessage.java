@@ -29,4 +29,10 @@ public class StateMessage extends BaseMessage implements Serializable {
                 "Val -> "+ (getVal() != null ? getVal().prettyPrint() : "null") +
                 "|| Write SIZE -> "+ getWriteset().getWriteset().size();
     }
+
+
+    //HACK TO TRY NOT HAVE CASTING ERRORS
+    public BaseMessage toBaseMessage(){
+        return new BaseMessage(MessageType.STATE, this.getSenderId(), this.getMsgConsensusID(), val, writeset);
+    }
 }

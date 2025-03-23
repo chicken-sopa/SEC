@@ -41,4 +41,13 @@ public class DigitalSignatureAuth<T extends IMessage> {
         return signature.verify(signatureBytes);
     }
 
+    public String signMessageVal(String msg, PrivateKey pKey) throws Exception{
+        Signature signature = Signature.getInstance(Constants.getAlgorithm());
+        signature.initSign(pKey);
+        signature.update(msg.getBytes());
+
+        byte[] signedBytes = signature.sign();
+        return Base64.getEncoder().encodeToString(signedBytes);
+    }
+
 }

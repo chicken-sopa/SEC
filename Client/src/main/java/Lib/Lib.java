@@ -27,6 +27,7 @@ public class Lib implements ILib {
     @Override
     public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
         AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend,getProcessId());
+        System.out.println("CHECK VALUE IN APPENDED MSG = " + message.getMessage());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 

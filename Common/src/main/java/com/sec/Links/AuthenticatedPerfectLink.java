@@ -11,6 +11,8 @@ import com.sec.Links.LinkMessages.SignedUdpLinkMessage;
 import com.sec.Links.LinkMessages.UdpLinkMessage;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Keys.KeyManager;
+import com.sec.Messages.BaseMessage;
+import com.sec.Messages.MessageType;
 import com.sec.Messages.StateMessage;
 
 import java.net.SocketException;
@@ -41,14 +43,21 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             try {
                 UdpLinkMessage<T> messageToSend = new UdpLinkMessage<>(id, UUID.randomUUID(), msg, LinkMessageType.Message);
 
-                if (messageToSend.getMessageValue() instanceof StateMessage stateMessage) {
-                    System.out.println(stateMessage.message().toString());
-                    System.out.println("SENDING STATE MSG");
-                    //StateMessage msg = (StateMessage) signedReceivedMessage.getMessage();
+                System.out.println(msg.message().toString());
 
-                    if (!stateMessage.getWriteset().getWriteset().isEmpty()) {
-                        System.out.println("SENDING STATE WITH WITH ERROR == " + stateMessage.prettyPrint() + " || senderID = " + stateMessage.getSenderId());
-                        System.out.println("WRITESET ISNT NULLLLL = " + stateMessage.getWriteset().getWriteset().get(0).prettyPrint());
+                if (messageToSend.getMessageValue() instanceof BaseMessage baseMessage) {
+
+                    if (baseMessage.getMessageType() == MessageType.STATE) {
+                        StateMessage stateMessage = baseMessage.toStateMessage();
+                        System.out.println("SENDING STATE MSG");
+                        if (stateMessage.getWriteset() == null) {
+                            System.out.println("--- ERROR --- SENDING STATE HIS NULL");
+                        } else if (!stateMessage.getWriteset().getWriteset().isEmpty()) {
+                            System.out.println("SENDING STATE WITH WITH ERROR == " + stateMessage.prettyPrint() + " || senderID = " + stateMessage.getSenderId());
+                            //System.out.println("WRITESET ISNT NULLLLL = " + stateMessage.getWriteset().getWriteset().get(0).prettyPrint());
+                        }else{
+                            System.out.println("SENDING STATE WITH WRITESET SIZE = " + stateMessage.getWriteset().getWriteset().size());
+                        }
                     }
                 }
 
@@ -85,16 +94,22 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
 
         boolean verified = digitalSignatureAuth.verifySignature(signedReceivedMessage.getMessage(), KeyLoader.loadPublicKeyById(processId), signedReceivedMessage.getSignature());
         if (!verified) {
-            System.out.println("Message verification failed, signature couldn't be verified || senderID "+ signedReceivedMessage.getSenderId()
+            System.out.println("Message verification failed, signature couldn't be verified || senderID " + signedReceivedMessage.getSenderId()
                     + " msg = " + signedReceivedMessage.getMessage().getMessageValue().prettyPrint());
 
-            if (signedReceivedMessage.getMessage().getMessageValue() instanceof StateMessage stateMessage) {
-                System.out.println(stateMessage.message().toString());
-                System.out.println("IN ERRROR STATE MSG");
-                //StateMessage msg = (StateMessage) signedReceivedMessage.getMessage();
-                System.out.println("COLLECTED RECEIVED WITH ERROR == " + stateMessage.prettyPrint() + " || senderID = " + stateMessage.getSenderId());
-                if (!stateMessage.getWriteset().getWriteset().isEmpty()) {
-                   System.out.println("WRITESET ISNT NULLLLL = " + stateMessage.getWriteset().getWriteset().get(0).prettyPrint());
+            if (signedReceivedMessage.getMessage().getMessageValue() instanceof BaseMessage baseMessage) {
+
+                if (baseMessage.getMessageType() == MessageType.STATE) {
+                    StateMessage stateMessage = baseMessage.toStateMessage();
+                    System.out.println("RECEIVING STATE MSG");
+                    if (stateMessage.getWriteset() == null) {
+                        System.out.println("--- ERROR --- RECEIVING STATE HIS NULL");
+                    } else if (!stateMessage.getWriteset().getWriteset().isEmpty()) {
+                        System.out.println("RECEIVING STATE WITH WITH ERROR == " + stateMessage.prettyPrint() + " || senderID = " + stateMessage.getSenderId());
+                        //System.out.println("WRITESET ISNT NULLLLL = " + stateMessage.getWriteset().getWriteset().get(0).prettyPrint());
+                    }else{
+                        System.out.println("RECEIVING STATE WITH WRITESET SIZE = " + stateMessage.getWriteset().getWriteset().size());
+                    }
                 }
             }
             return null;
@@ -106,7 +121,7 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
             return null;
         return messageReceived;
     }
-
+    
 
     @SuppressWarnings("unchecked")
     public void processMessageReceived(MessageDeliveryTuple<ILinkMessage<T>, Integer> receivedMsg) throws Exception {

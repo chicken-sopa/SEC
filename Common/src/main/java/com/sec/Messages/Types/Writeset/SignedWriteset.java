@@ -99,4 +99,12 @@ public class SignedWriteset extends Writeset implements Serializable {
         sign.update(dataToVerify.toString().getBytes());
         return sign.verify(Base64.getDecoder().decode(signature));
     }
+
+    //clone  WRITSET to not have problems with other threads changing values while sending
+    public SignedWriteset(SignedWriteset other) throws Exception {
+        super(other); // Calls Writeset copy constructor
+        this.serverId = other.serverId;
+        this.signature = other.signature; // Strings are immutable, so direct copy is fine
+    }
+
 }

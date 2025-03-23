@@ -1,7 +1,7 @@
 package com.sec.Messages;
 
 public enum MessageType {
-    INIT_COLLECT,
+    READ,
     STATE,
     COLLECTED,
     WRITE,

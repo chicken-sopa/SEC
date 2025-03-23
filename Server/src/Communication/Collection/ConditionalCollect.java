@@ -31,7 +31,7 @@ public class ConditionalCollect<T extends BaseMessage> {
      * Initiates the Conditional Collect by sending a request to all processes.
      */
     public void startCollection(int currentConsensusID) throws Exception {
-        T collectRequest = (T) new InitCollectMessage(getProcessId(), currentConsensusID);
+        T collectRequest = (T) new ReadMessage(getProcessId(), currentConsensusID);
         for (int i = 0; i <= 2; i++) {
             System.out.println("A enviar para o port " + (4550 + i));
             link.sendMessage(collectRequest, 4550 + i);
@@ -55,7 +55,7 @@ public class ConditionalCollect<T extends BaseMessage> {
 
         int sender = received.getSenderId();
         if (received.getMessageType() == MessageType.STATE) {
-            StateMessage receivedState = (StateMessage) received;
+            StateMessage receivedState = (StateMessage) received.toStateMessage();
 
 
             // Store the valid message if it's from a new sender

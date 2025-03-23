@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Represents a digitally signed (valTS, val) pair in Byzantine Epoch Consensus.
  */
-public class SignedValTSPair implements Serializable {
+public final class SignedValTSPair implements Serializable {
     private final ValTSPair valTSPair;
     private final String signature;
     private final int clientId;
@@ -57,5 +57,9 @@ public class SignedValTSPair implements Serializable {
         sign.initVerify(publicKey);
         sign.update(valTSPair.val().getBytes());
         return sign.verify(Base64.getDecoder().decode(signature));
+    }
+
+    public SignedValTSPair(SignedValTSPair other) throws Exception {
+        this(other.valTSPair.valTS(), other.valTSPair.val(), other.clientId, other.signature);
     }
 }

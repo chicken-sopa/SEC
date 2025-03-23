@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Client {
 
     ILib lib;
-    int counter = 1;
+    //int counter = 1;
     int Id;
     Scanner sc;
     int[] destPorts;
@@ -24,7 +24,8 @@ public class Client {
 
     private void sendMessage(String message) throws Exception {
         for (int destinationPort : destPorts) {
-            lib.SendAppendMessage(message + counter++, destinationPort);
+            System.out.println("CHECK VALUE TO SEND == " + message);
+            lib.SendAppendMessage(message, destinationPort);
             //TODO: wait for f+1 replies confirming that a value was written
         }
 

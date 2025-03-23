@@ -23,4 +23,11 @@ public class Writeset implements Serializable {
     }
 
 
+    public Writeset(Writeset other) throws Exception {
+        this.writeset = new ArrayList<>();
+        for (SignedValTSPair pair : other.writeset) {
+            this.writeset.add(new SignedValTSPair(pair)); // Deep copy each SignedValTSPair
+        }
+    }
+
 }
