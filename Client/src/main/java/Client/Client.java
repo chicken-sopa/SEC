@@ -30,7 +30,7 @@ public class Client {
     }
 
     private void sendMessage(String message) throws Exception {
-        CountDownLatch latch = new CountDownLatch(fPlusOne);
+        /*CountDownLatch latch = new CountDownLatch(fPlusOne);
         boolean[] aborted = {false};
 
         lib.addMessageListener(msg -> {
@@ -58,13 +58,13 @@ public class Client {
 //                latch.countDown(); // Ensure we stop waiting
 //            }
             }
-        });
+        });*/
 
         for (int destinationPort : destPorts) {
-            lib.SendAppendMessage(message + counter++, destinationPort);
+            lib.SendAppendMessage(message, destinationPort);
         }
 
-        boolean consensusReached = latch.await(10, TimeUnit.SECONDS);
+        /*boolean consensusReached = latch.await(10, TimeUnit.SECONDS);
 
         if (aborted[0]) {
             System.out.println("Consensus aborted.");
@@ -72,7 +72,7 @@ public class Client {
             System.out.println("Consensus reached! Value '" + message + "' confirmed.");
         } else {
             System.out.println("Consensus could not be reached within the timeout.");
-        }
+        }*/
     }
 
     public void Listen() throws Exception {
