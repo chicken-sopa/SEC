@@ -1,22 +1,24 @@
 package Lib;
 
-import Configuration.ClientConfig;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
 import com.sec.Messages.BaseMessage;
 import com.sec.Messages.ConsensusFinishedMessage;
+//import com.sec.Messages.AbortMessage;
 import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import static Configuration.ClientConfig.getProcessId;
 
 public class Lib implements ILib {
-
-    AuthenticatedPerfectLink<BaseMessage> authenticatedPerfectLink;
-    DigitalSignatureAuth<BaseMessage>  digitalSignatureAuth;
+    private final AuthenticatedPerfectLink<BaseMessage> authenticatedPerfectLink;
+    private final DigitalSignatureAuth<BaseMessage> digitalSignatureAuth;
+    private final CopyOnWriteArrayList<Consumer<BaseMessage>> listeners = new CopyOnWriteArrayList<>();
 
     public Lib(int myPort) throws NoSuchAlgorithmException, SocketException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
@@ -26,8 +28,7 @@ public class Lib implements ILib {
 
     @Override
     public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend,getProcessId());
-        System.out.println("CHECK VALUE IN APPENDED MSG = " + message.getMessage());
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend, getProcessId());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
@@ -36,9 +37,10 @@ public class Lib implements ILib {
             while (true) {
                 try {
                     BaseMessage msg = authenticatedPerfectLink.receiveMessage();
-                    if (msg != null && msg.getMessageType() == MessageType.FINISHED){
-                        ConsensusFinishedMessage finishedMessage = (ConsensusFinishedMessage)msg;
-                        System.out.println("Message has been appended. Value appended was: " +  finishedMessage.getVal());
+                    if (msg != null && msg instanceof ConsensusFinishedMessage) {
+                        System.out.println("-------------------- VIM DAR NOTIFY AO SLIETERNS ---------------------");
+                        System.out.println("MESSAGE RECEBIDA Da lib e" + msg.getMessageType());
+                        notifyListeners(msg);
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -47,4 +49,13 @@ public class Lib implements ILib {
         }).start();
     }
 
+    public void addMessageListener(Consumer<BaseMessage> listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListeners(BaseMessage message) {
+        for (Consumer<BaseMessage> listener : listeners) {
+            listener.accept(message);
+        }
+    }
 }
