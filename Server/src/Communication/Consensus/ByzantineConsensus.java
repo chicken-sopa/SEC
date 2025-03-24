@@ -62,10 +62,7 @@ public class ByzantineConsensus extends ConsensusBFT {
 
         BaseMessage stateMessage = createStateMessage(msg.getMsgConsensusID()).toBaseMessage(); // SEND IT HAS BASE MSG AND TRY MANUAL TRANSFORM IN RECEIVER
         System.out.println("SENDING STATUS RESPONSE WITH == " + stateMessage.prettyPrint());
-        link.sendMessage(stateMessage, 4550);
-
-
-        wait(5000);
+        link.sendMessage(stateMessage, 4550);;
 
 
     }
@@ -94,6 +91,10 @@ public class ByzantineConsensus extends ConsensusBFT {
 
     @Override
     public void sendWriteRequest(SignedValTSPair pairToWrite, int msgConsensusID) throws Exception {
+
+
+
+
         super.sendWriteRequest(pairToWrite, msgConsensusID);
     }
 }
