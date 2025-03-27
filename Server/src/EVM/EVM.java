@@ -2,11 +2,11 @@ package EVM;
 
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
-import org.hyperledger.besu.evm.fluent.EVMExecutor;
+//import org.hyperledger.besu.evm.fluent.EVMExecutor;
 
 public class EVM implements IEVM {
 
-    public EVMExecutor executor;
+    //public EVMExecutor executor;
 
     public EVM() {
         /// TODO

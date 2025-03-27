@@ -1,5 +1,7 @@
 package com.sec.Messages.Types.ValTSPair;
 
+import com.sec.BlockChain.Transaction;
+
 import java.io.Serializable;
 
 import java.security.PublicKey;
@@ -15,7 +17,7 @@ public final class SignedValTSPair implements Serializable {
     private final String signature;
     private final int clientId;
 
-    public SignedValTSPair(int valTS, String val, int clientId, String signature) throws Exception {
+    public SignedValTSPair(int valTS, Transaction val, int clientId, String signature) throws Exception {
         this.valTSPair = new ValTSPair(val, valTS);
         this.clientId = clientId;
         this.signature = signature;

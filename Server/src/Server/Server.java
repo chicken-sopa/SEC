@@ -3,6 +3,7 @@ package Server;
 import Communication.Collection.*;
 import Communication.Consensus.Blockchain;
 import Communication.Consensus.ConsensusBFT;
+import EVM.EVM;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
@@ -35,6 +36,7 @@ public class Server {
     private final Condition condition = leaderThreadLock.newCondition();
 
 
+    EVM evm;
     Blockchain blockchain;
 
 
@@ -46,7 +48,9 @@ public class Server {
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(port, digitalSignatureAuth, getProcessId());
         conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink, quorumSize);
 
-        blockchain = new Blockchain(authenticatedPerfectLink);
+        evm = new EVM();
+
+        blockchain = new Blockchain(authenticatedPerfectLink, evm);
 
         sc = new Scanner(System.in);
         this.isLeader = isLeader;
