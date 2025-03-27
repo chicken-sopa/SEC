@@ -21,4 +21,16 @@ public final class Constants {
     public static String getRsa() {
         return Rsa;
     }
+
+    // BlockChain
+    public static String BlackListContractAddress = "";
+    public static String ISTCoinContractAddress = "";
+        // BlackList
+    public static String addToBlacklistFunctionSignature = "addToBlacklist(address)";
+    public static String removeFromBlacklistFunctionSignature = "removeFromBlacklist(address)";
+    public static String isBlackListedFunctionSignature = "isBlacklisted(address)";
+        // IST Coin
+    public static String myBalanceFunctionSignature = "myBalance()";
+    public static String transferFunctionSignature = "transfer(address,address,uint256)";
+
 }
