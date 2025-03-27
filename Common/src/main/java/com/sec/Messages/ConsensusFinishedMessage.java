@@ -1,14 +1,16 @@
 package com.sec.Messages;
 
-public class ConsensusFinishedMessage extends BaseMessage {
-    String val;
+import com.sec.BlockChain.Transaction;
 
-    public ConsensusFinishedMessage(int senderID, int consensusID, String val) {
+public class ConsensusFinishedMessage extends BaseMessage {
+    Transaction val;
+
+    public ConsensusFinishedMessage(int senderID, int consensusID, Transaction val) {
         super(MessageType.FINISHED, senderID, consensusID);
         this.val = val;
     }
 
-    public String getVal() {
+    public Transaction getVal() {
         return val;
     }
 }

@@ -15,32 +15,23 @@ public class Blockchain {
 
     EVM evm;
     final int SIZE_TRANSACTIONS_IN_BLOCK = 5;
-
-    ConcurrentHashMap<Integer, String> blockchainOfStrings = new ConcurrentHashMap<>();
     private final AuthenticatedPerfectLink<BaseMessage> link;
+
+    LinkedList<Block> blockchain = new LinkedList<Block>();
+    ArrayDeque<Transaction> transactionsToAddToBlockchain = new ArrayDeque<Transaction>();
 
     public Blockchain(AuthenticatedPerfectLink<BaseMessage> link, EVM evm) {
         this.link = link;
         this.evm = evm;
     }
 
-    void writeToBlockchain(Integer consensusID, String valueToAppend) {
-        this.blockchainOfStrings.put(consensusID, valueToAppend);
-    }
-
-
-    List<String> readValue() {
-        return blockchainOfStrings.values().stream().toList();
-    }
-
-    void sendConsensusDoneToClient(int currentServerID, int consensusID, String val, int clientID) throws Exception {
+    void sendConsensusDoneToClient(int currentServerID, int consensusID, Transaction val, int clientID) throws Exception {
         ConsensusFinishedMessage msg = new ConsensusFinishedMessage(currentServerID, consensusID, val);
         System.out.println("------SENDING DONE TO CLIENT---------------- " + clientID + " on port" + 5550 + clientID);
         link.sendMessage(msg, 5550 + clientID);
     }
 
-    LinkedList<Block> blockchain = new LinkedList<Block>();
-    ArrayDeque<Transaction> transactionsToAddToBlockchain = new ArrayDeque<Transaction>();
+
 
     void writeNewBlockToBlockChain() {
         // get N transactions to add to new block
