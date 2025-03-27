@@ -1,34 +1,48 @@
 package com.sec.Messages;
 
+import com.sec.BlockChain.Transaction;
 import com.sec.Keys.KeyManager;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.Base64;
 
 public class AppendMessage extends BaseMessage{
 
-    private final String message;
+    private final Transaction message;
 
     private final String signature;
 
 
-    public AppendMessage(MessageType messageType, int senderId, String stringToAppend, int consensusID) throws Exception {
+    public AppendMessage(MessageType messageType, int senderId, Transaction transaction, int consensusID) throws Exception {
         super(messageType, senderId, consensusID);
-        message = stringToAppend;
+        message = transaction;
         this.signature = generateSignature(KeyManager.getPrivateKey(senderId));
     }
     public String getSignature() {
         return signature;
     }
-    public String getMessage() {
+    public Transaction getMessage() {
         return message;
     }
 
     private String generateSignature(PrivateKey privateKey) throws Exception {
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initSign(privateKey);
-        sign.update(message.getBytes());
+        sign.update(getMessageBytes());
         return Base64.getEncoder().encodeToString(sign.sign());
+    }
+
+    private byte[] getMessageBytes() throws IOException {
+        try (
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos)
+        ) {
+            oos.writeObject(message);
+            return bos.toByteArray();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package Lib;
 
+import com.sec.BlockChain.Transaction;
+import com.sec.Helpers.Constants;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
@@ -26,10 +28,54 @@ public class Lib implements ILib {
         startReceiveMessageThread();
     }
 
+//    @Override
+//    public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
+//        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend, getProcessId());
+//        authenticatedPerfectLink.sendMessage(message, destinationPort);
+//    }
+
     @Override
-    public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend, getProcessId());
+    public void AddToBlackList(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
+        // TODO -> Add signature
+        String[] funcAndArgs = new String[]{Constants.addToBlacklistFunctionSignature, blackListAddress};
+        Transaction transaction = new Transaction(Constants.BlackListContractAddress, fromAddress, funcAndArgs , "");
+        AppendMessage message = new AppendMessage(MessageType.STATE, getProcessId(), transaction, getProcessId());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
+    }
+
+    @Override
+    public void RemoveToBlackList(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
+
+    }
+
+    @Override
+    public void IsBlackListed(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
+
+    }
+
+    @Override
+    public void Transfer(String fromAddress, String toAddress, int value, int destinationPort) throws Exception {
+
+    }
+
+    @Override
+    public void IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue, int destinationPort) throws Exception {
+
+    }
+
+    @Override
+    public void DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue, int destinationPort) throws Exception {
+
+    }
+
+    @Override
+    public void Approve(String fromAddress, String spenderAddress, int amount, int destinationPort) throws Exception {
+
+    }
+
+    @Override
+    public void MyBalance(String fromAddress, int destinationPort) throws Exception {
+
     }
 
     private void startReceiveMessageThread() {
