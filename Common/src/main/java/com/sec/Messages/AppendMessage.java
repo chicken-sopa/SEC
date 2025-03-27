@@ -3,9 +3,6 @@ package com.sec.Messages;
 import com.sec.BlockChain.Transaction;
 import com.sec.Keys.KeyManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.Base64;
@@ -32,17 +29,7 @@ public class AppendMessage extends BaseMessage{
     private String generateSignature(PrivateKey privateKey) throws Exception {
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initSign(privateKey);
-        sign.update(getMessageBytes());
+        sign.update(message.getBytes());
         return Base64.getEncoder().encodeToString(sign.sign());
-    }
-
-    private byte[] getMessageBytes() throws IOException {
-        try (
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos)
-        ) {
-            oos.writeObject(message);
-            return bos.toByteArray();
-        }
     }
 }
