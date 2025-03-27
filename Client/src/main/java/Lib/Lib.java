@@ -30,78 +30,68 @@ public class Lib implements ILib {
         startReceiveMessageThread();
     }
 
+    public void SendAppendMessage(Transaction messageToAppend, int destinationPort) throws Exception {
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
+    }
+
     // Region BlackListCalls
     @Override
-    public void AddToBlackList(String fromAddress, String addressToAdd, int destinationPort) throws Exception {
+    public Transaction AddToBlackList(String fromAddress, String addressToAdd) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", Constants.addToBlacklistFunctionSignature, addressToAdd);
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
+        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+                Constants.addToBlacklistFunctionSignature, addressToAdd);
     }
 
     @Override
-    public void RemoveToBlackList(String fromAddress, String addressToRemove, int destinationPort) throws Exception {
+    public Transaction RemoveFromBlackList(String fromAddress, String addressToRemove) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
                 Constants.removeFromBlacklistFunctionSignature, addressToRemove);
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
-    public void IsBlackListed(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
+    public Transaction IsBlackListed(String fromAddress, String blackListAddress) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
                 Constants.isBlackListedFunctionSignature, blackListAddress);
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
     // End of BlackListCalls
 
     // Region ISTCoin Calls
     @Override
-    public void Transfer(String fromAddress, String toAddress, int value, int destinationPort) throws Exception {
+    public Transaction Transfer(String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
                 Constants.addToBlacklistFunctionSignature, fromAddress, toAddress, String.valueOf(value));
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
-    public void IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue, int destinationPort) throws Exception {
+    public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
                 Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(addedValue));
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
-    public void DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue, int destinationPort) throws Exception {
+    public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
                 Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(subtractedValue));
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
-    public void Approve(String fromAddress, String spenderAddress, int amount, int destinationPort) throws Exception {
+    public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
                 Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(amount));
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
-    public void MyBalance(String fromAddress, int destinationPort) throws Exception {
+    public Transaction MyBalance(String fromAddress) throws Exception {
         // TODO -> Add signature
-        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
                 Constants.myBalanceFunctionSignature);
-        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
-        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
     // End of ISTCoin Calls
 

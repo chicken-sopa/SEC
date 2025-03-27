@@ -1,16 +1,20 @@
 package Lib;
 
+import com.sec.BlockChain.Transaction;
+
 public interface ILib {
 
+    public void SendAppendMessage(Transaction messageToAppend, int destinationPort) throws Exception;
+
     // BlackList contract functions
-    public void AddToBlackList(String fromAddress, String blackListAddress, int destinationPort) throws Exception;
-    public void RemoveToBlackList(String fromAddress, String blackListAddress, int destinationPort) throws Exception;
-    public void IsBlackListed(String fromAddress, String blackListAddress, int destinationPort) throws Exception;
+    public Transaction AddToBlackList(String fromAddress, String blackListAddress) throws Exception;
+    public Transaction RemoveFromBlackList(String fromAddress, String blackListAddress) throws Exception;
+    public Transaction IsBlackListed(String fromAddress, String blackListAddress) throws Exception;
 
     // IST Coin contract functions
-    public void Transfer(String fromAddress, String toAddress, int value, int destinationPort) throws Exception;
-    public void IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue, int destinationPort) throws Exception;
-    public void DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue, int destinationPort) throws Exception;
-    public void Approve(String fromAddress, String spenderAddress, int amount, int destinationPort) throws Exception;
-    public void MyBalance(String fromAddress, int destinationPort) throws Exception;
+    public Transaction Transfer(String fromAddress, String toAddress, int value) throws Exception;
+    public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception;
+    public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception;
+    public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception;
+    public Transaction MyBalance(String fromAddress) throws Exception;
 }
