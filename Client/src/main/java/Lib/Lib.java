@@ -12,6 +12,8 @@ import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
@@ -28,54 +30,83 @@ public class Lib implements ILib {
         startReceiveMessageThread();
     }
 
-//    @Override
-//    public void SendAppendMessage(String messageToAppend, int destinationPort) throws Exception {
-//        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend, getProcessId());
-//        authenticatedPerfectLink.sendMessage(message, destinationPort);
-//    }
-
+    // Region BlackListCalls
     @Override
-    public void AddToBlackList(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
+    public void AddToBlackList(String fromAddress, String addressToAdd, int destinationPort) throws Exception {
         // TODO -> Add signature
-        String[] funcAndArgs = new String[]{Constants.addToBlacklistFunctionSignature, blackListAddress};
-        Transaction transaction = new Transaction(Constants.BlackListContractAddress, fromAddress, funcAndArgs , "");
-        AppendMessage message = new AppendMessage(MessageType.STATE, getProcessId(), transaction, getProcessId());
+        Transaction transaction = CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", Constants.addToBlacklistFunctionSignature, addressToAdd);
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
-    public void RemoveToBlackList(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
-
+    public void RemoveToBlackList(String fromAddress, String addressToRemove, int destinationPort) throws Exception {
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+                Constants.removeFromBlacklistFunctionSignature, addressToRemove);
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
     public void IsBlackListed(String fromAddress, String blackListAddress, int destinationPort) throws Exception {
-
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+                Constants.isBlackListedFunctionSignature, blackListAddress);
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
+    // End of BlackListCalls
 
+    // Region ISTCoin Calls
     @Override
     public void Transfer(String fromAddress, String toAddress, int value, int destinationPort) throws Exception {
-
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+                Constants.addToBlacklistFunctionSignature, fromAddress, toAddress, String.valueOf(value));
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
     public void IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue, int destinationPort) throws Exception {
-
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+                Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(addedValue));
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
     public void DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue, int destinationPort) throws Exception {
-
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+                Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(subtractedValue));
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
     public void Approve(String fromAddress, String spenderAddress, int amount, int destinationPort) throws Exception {
-
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+                Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(amount));
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
     }
 
     @Override
     public void MyBalance(String fromAddress, int destinationPort) throws Exception {
+        // TODO -> Add signature
+        Transaction transaction = CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+                Constants.myBalanceFunctionSignature);
+        AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), transaction, getProcessId());
+        authenticatedPerfectLink.sendMessage(message, destinationPort);
+    }
+    // End of ISTCoin Calls
 
+    private Transaction CreateTransaction(String destinationContract, String fromAddress, String signature, String... args) throws Exception {
+        return new Transaction(destinationContract, fromAddress, args , signature);
     }
 
     private void startReceiveMessageThread() {

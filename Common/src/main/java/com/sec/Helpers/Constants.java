@@ -30,7 +30,10 @@ public final class Constants {
     public static String removeFromBlacklistFunctionSignature = "removeFromBlacklist(address)";
     public static String isBlackListedFunctionSignature = "isBlacklisted(address)";
         // IST Coin
-    public static String myBalanceFunctionSignature = "myBalance()";
     public static String transferFunctionSignature = "transfer(address,address,uint256)";
+    public static String increaseAllowanceFunctionSignature = "increaseAllowance(address,uint256)";
+    public static String decreaseAllowanceFunctionSignature = "decreaseAllowance(address,uint256)";
+    public static String approveFunctionSignature = "approve(address,uint256)";
+    public static String myBalanceFunctionSignature = "myBalance()";
 
 }

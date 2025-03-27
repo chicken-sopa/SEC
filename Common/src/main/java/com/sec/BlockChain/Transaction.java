@@ -11,7 +11,6 @@ public record Transaction(
         String signature
 ) {
 
-
     public byte[] getBytes() throws IOException {
         try (
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
