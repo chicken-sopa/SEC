@@ -1,6 +1,6 @@
 package EVM;
 
-public interface EVMClientResponse {
+public interface IEVMClientResponse {
 
     public void sendEVMAnswerToClient(String answerFromEVM);
 

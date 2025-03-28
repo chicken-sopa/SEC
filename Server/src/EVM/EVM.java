@@ -1,6 +1,6 @@
 package EVM;
 
-import EVM.Constants.EVMConstants;
+import EVM.Genesis.*;
 import com.sec.BlockChain.AuxFunctions;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
@@ -27,65 +27,62 @@ public class EVM implements IEVM {
 
     public EVM() {
 
+
         // World creation
         world = new SimpleWorld();
-
-        // Account creation
-        for(String addressString : Constants.allAddressStrings){
-            Address address = Address.fromHexString(addressString);
-            world.createAccount(address, 0, Wei.fromEth(0));
-        }
 
         // Streams
         byteArrayOutputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayOutputStream);
         tracer = new StandardJsonTracer(printStream, true, true, true, true);
 
-        // Evm Setup
+        // Genesis
+        GenesisBlock genesisblock = GenesisBlock.readGenesisBlockFromJson();
         evmExecutor = EVMExecutor.evm(EvmSpecVersion.CANCUN);
 
-            // Deploy byteCode
-        Address ownerAddress = Address.fromHexString(Constants.owner);
-        Address contractAddress = Address.fromHexString(Constants.IstCoin);
-        // TODO - Check constructor args after contract refactor
-        evmExecutor
-            .tracer(tracer)
-            .code(Bytes.fromHexString(EVMConstants.DeployByteCode + AuxFunctions.padHexStringTo256Bit(ownerAddress.toUnprefixedHexString())))
-            .sender(ownerAddress)
-            .receiver(contractAddress)
-            .contract(contractAddress)
-            .messageFrameType(MessageFrame.Type.CONTRACT_CREATION)
-            .worldUpdater(world.updater())
-            .commitWorldState();
-        System.out.println("Contract deploy code loaded to EVM");
 
-        evmExecutor.callData(Bytes.EMPTY);
-        evmExecutor.execute();
-        System.out.println("Contract constructor ran");
+        genesisblock.getState().forEach((addressString, accountState) -> {
+            Address address = Address.fromHexString(addressString);
+            world.createAccount(address,0, Wei.fromEth(accountState.getBalance()));
 
-            // RunTime byteCode
-        evmExecutor.code(Bytes.fromHexString(EVMConstants.RunTimeByteCode))
-                .sender(ownerAddress)
-                .receiver(contractAddress)
-                .messageFrameType(MessageFrame.Type.MESSAGE_CALL)
-                .worldUpdater(world.updater())
-                .commitWorldState();
-        System.out.println("Contract runtime code loaded to EVM");
+            if (accountState.getCode() != null){
+                // This is the contract
+                Address ownerAddress = Address.fromHexString(genesisblock.blockChainOwnerAddress);
+                evmExecutor
+                        .tracer(tracer)
+                        .code(Bytes.fromHexString(accountState.getCode() + AuxFunctions.padHexStringTo256Bit(ownerAddress.toUnprefixedHexString())))
+                        .sender(ownerAddress)
+                        .receiver(address)
+                        .contract(address)
+                        .messageFrameType(MessageFrame.Type.CONTRACT_CREATION)
+                        .worldUpdater(world.updater())
+                        .commitWorldState();
+                System.out.println("Contract deploy code loaded to EVM");
 
-        /// TODO
-        /// CREATE GENESIS BLOCK AND PROCESS IT
+                evmExecutor.callData(Bytes.EMPTY);
+                evmExecutor.execute();
+                System.out.println("Contract constructor ran");
 
+                String runtimeCode = AuxFunctions.extractWordFromReturnData(byteArrayOutputStream);
+                evmExecutor.code(Bytes.fromHexString(runtimeCode))
+                        .messageFrameType(MessageFrame.Type.MESSAGE_CALL)
+                        .worldUpdater(world.updater())
+                        .commitWorldState();
+                System.out.println("Contract runtime code loaded to EVM");
+            }
+
+        });
     }
 
     @Override
-    public void processBlock(Block block, EVMClientResponse respondingToClientMethod) {
+    public void processBlock(Block block, IEVMClientResponse respondingToClientMethod) {
         Transaction[] transactions = block.getTransactions();
         for(Transaction transaction : transactions){
             processTransaction(transaction, respondingToClientMethod);
         }
     }
 
-    private void processTransaction(Transaction transaction, EVMClientResponse respondingToClientMethod) {
+    private void processTransaction(Transaction transaction, IEVMClientResponse respondingToClientMethod) {
         Address senderAddress = Address.fromHexString(transaction.sourceAccount());
         Address contractAddress = Address.fromHexString(transaction.destinationContract());
 
