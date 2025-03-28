@@ -7,13 +7,10 @@ import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
 import com.sec.Messages.BaseMessage;
 import com.sec.Messages.ConsensusFinishedMessage;
-//import com.sec.Messages.AbortMessage;
 import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
@@ -63,28 +60,28 @@ public class Lib implements ILib {
     public Transaction Transfer(String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
-                Constants.addToBlacklistFunctionSignature, fromAddress, toAddress, String.valueOf(value));
+                Constants.transferFunctionSignature, fromAddress, toAddress, String.valueOf(value));
     }
 
     @Override
     public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
-                Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(addedValue));
+                Constants.increaseAllowanceFunctionSignature, spenderAddress, String.valueOf(addedValue));
     }
 
     @Override
     public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
-                Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(subtractedValue));
+                Constants.decreaseAllowanceFunctionSignature, spenderAddress, String.valueOf(subtractedValue));
     }
 
     @Override
     public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
-                Constants.addToBlacklistFunctionSignature, spenderAddress, String.valueOf(amount));
+                Constants.approveFunctionSignature, spenderAddress, String.valueOf(amount));
     }
 
     @Override
