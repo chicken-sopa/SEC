@@ -5,6 +5,7 @@ import com.sec.BlockChain.AuxFunctions;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Helpers.Constants;
+import org.apache.tuweni.bytes.Bytes;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.evm.EvmSpecVersion;
@@ -30,7 +31,8 @@ public class EVM implements IEVM {
 
         // Account creation
         for(String addressString : Constants.allAddressStrings){
-            world.createAccount(addressString, 0, Wei.fromEth(0));
+            Address address = Address.fromHexString(addressString);
+            world.createAccount(address, 0, Wei.fromEth(0));
         }
 
         // Streams
@@ -65,7 +67,7 @@ public class EVM implements IEVM {
                 .sender(ownerAddress)
                 .receiver(contractAddress)
                 .messageFrameType(MessageFrame.Type.MESSAGE_CALL)
-                .worldUpdater(blockChain.updater())
+                .worldUpdater(world.updater())
                 .commitWorldState();
         System.out.println("Contract runtime code loaded to EVM");
 
@@ -108,7 +110,7 @@ public class EVM implements IEVM {
         evmExecutor
             .sender(senderAddress)
             .receiver(contractAddress)
-            .worldUpdater(blockChain.updater())
+            .worldUpdater(world.updater())
             .commitWorldState();
 
 

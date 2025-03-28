@@ -3,13 +3,14 @@ package com.sec.BlockChain;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 public record Transaction(
         String destinationContract,
         String sourceAccount,
         String[] functionAndArgs,
         String signature
-) {
+) implements Serializable {
 
     public byte[] getBytes() throws IOException {
         try (

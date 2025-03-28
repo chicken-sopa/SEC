@@ -71,7 +71,6 @@ public class Server {
         startReceiveMessageThread();
     }
 
-
     private synchronized void startConsensusLeaderThread() {
         Thread t = new Thread(() -> {
 
@@ -93,8 +92,7 @@ public class Server {
 
     }
 
-
-    void processMessageFromClient(AppendMessage message) throws Exception {
+    private void processMessageFromClient(AppendMessage message) throws Exception {
         SignedValTSPair newPair = new SignedValTSPair(0, message.getMessage(), message.getSenderId(), message.getSignature());
 
         consensusBFT.messagesFromClient.addLast(newPair);
@@ -103,7 +101,6 @@ public class Server {
         }
 
     }
-
 
     private void startReceiveMessageThread() {
         new Thread(() -> {
@@ -124,7 +121,6 @@ public class Server {
             }
         }).start();
     }
-
 
     private void wakeUpConsensusLeader() {
         leaderThreadLock.lock();
