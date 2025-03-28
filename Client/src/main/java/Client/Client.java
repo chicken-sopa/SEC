@@ -88,7 +88,8 @@ public class Client {
                 "OPERATION 6  : DecreaseAllowance(<SPENDER ADDRESS>, <AMOUNT TO DECREASE>)\n" +
                 "OPERATION 7  : Approve(<SPENDER ADDRESS>, <AMOUNT TO APPROVE>)\n" +
                 "OPERATION 8  : FetchMyBalance()\n" +
-                "Type what to send in format: \"<OPERATION-NUMBER> <ARG 1> <ARG 2> <ARG 3> ...\"");
+                "Type what to send in format: \"<OPERATION-NUMBER> <ARG 1> <ARG 2> <ARG 3> ...\"" +
+                "Please type addresses WITHOUT the hex prefix \"0x\"");
         String input = sc.nextLine();
         String[] inputValues = input.split(" ");
         Transaction trans;
