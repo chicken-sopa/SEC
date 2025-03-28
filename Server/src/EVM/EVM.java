@@ -20,23 +20,26 @@ public class EVM implements IEVM {
     private EVMExecutor evmExecutor;
 
     public EVM() {
-        // Instantiation
+        // World creation
         world = new SimpleWorld();
-        byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        tracer = new StandardJsonTracer(printStream, true, true, true, true);
 
+        // Account creation
         for(String addressString : Constants.allAddressStrings){
             world.createAccount(addressString, 0, Wei.fromEth(0));
         }
 
+        // Streams
+        byteArrayOutputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        tracer = new StandardJsonTracer(printStream, true, true, true, true);
+
+        // Evm Setup
         evmExecutor = EVMExecutor.evm(EvmSpecVersion.CANCUN);
 
+            // Deploy byteCode
         Address ownerAddress = Address.fromHexString(Constants.owner);
         Address contractAddress = Address.fromHexString(Constants.IstCoin);
-        // Setup
         // TODO - Check constructor args after contract refactor
-            // Deploy byteCode
         evmExecutor
             .tracer(tracer)
             .code(Bytes.fromHexString(EVMConstants.DeployByteCode + AuxFunctions.padHexStringTo256Bit(ownerAddress.toUnprefixedHexString())))
