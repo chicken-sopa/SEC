@@ -2,6 +2,7 @@ module Common {
     requires com.sun.jna;
     requires com.google.gson;
     requires web3j.utils;
+    requires org.hyperledger.besu.evm;
     exports com.sec.Links;
     exports com.sec.Messages;
     exports com.sec.Links.Security;
