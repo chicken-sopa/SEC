@@ -13,6 +13,7 @@ import org.hyperledger.besu.evm.fluent.EVMExecutor;
 import org.hyperledger.besu.evm.fluent.SimpleWorld;
 import org.hyperledger.besu.evm.frame.MessageFrame;
 import org.hyperledger.besu.evm.tracing.StandardJsonTracer;
+import org.apache.tuweni.bytes.Bytes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

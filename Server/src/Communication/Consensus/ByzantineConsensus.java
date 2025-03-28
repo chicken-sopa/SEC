@@ -3,6 +3,7 @@ package Communication.Consensus;
 import Communication.Collection.CollectedMessage;
 import Communication.Collection.ConditionalCollect;
 import Communication.Collection.ReadMessage;
+import com.sec.BlockChain.Transaction;
 import com.sec.Keys.KeyManager;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
@@ -68,9 +69,9 @@ public class ByzantineConsensus extends ConsensusBFT {
     }
 
     public SignedValTSPair createByzantineVal() throws Exception {
-        String fakeMsg = "FAKE MSG";
-        String fakeSignature = digitalSignatureAuth.signMessageVal(fakeMsg, KeyManager.getPrivateKey(this.SERVER_ID));
-        return new SignedValTSPair(0, "FAKE MSG", this.CLIENT_ID, fakeSignature);
+        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "fakeSignature");
+        String fakeSignature = digitalSignatureAuth.signMessageVal(String.valueOf(fakeMsg), KeyManager.getPrivateKey(this.SERVER_ID));
+        return new SignedValTSPair(0, fakeMsg, this.CLIENT_ID, fakeSignature);
     }
 
     public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage, int senderID) {
