@@ -11,7 +11,6 @@ import com.sec.Messages.ConsensusFinishedMessage;
 import java.util.*;
 
 public class Blockchain {
-
     IEVM evm;
     final int SIZE_TRANSACTIONS_IN_BLOCK = 5;
     private final AuthenticatedPerfectLink<BaseMessage> link;
@@ -41,6 +40,8 @@ public class Blockchain {
         blockchain.add(newBlock);
 
         //CALL EVM TO RUN ALL THE TRANSACTIONS
+
+        evm.processBlock(newBlock, );
     }
 
     void addTransactionToProcessAfterConsensus(Transaction transaction) {

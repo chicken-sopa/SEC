@@ -4,19 +4,16 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./Blacklist.sol";
 
-contract ISTCoin is ERC20 {
-    Blacklist public blacklist;
+contract ISTCoin is ERC20, Blacklist {
     uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10 ** 2; // 100 million with 2 decimals
 
     // Add to track if direct approve calls should be allowed
     bool public directApproveEnabled = false;
 
-    constructor(address blacklistAddress, address initialOwner)
+    constructor(address initialOwner)
     ERC20("IST Coin", "IST")
+    Blacklist(initialOwner)
     {
-        // Store reference to already deployed Blacklist contract
-        blacklist = Blacklist(blacklistAddress);
-
         // Mint the entire supply to the initial owner
         _mint(initialOwner, INITIAL_SUPPLY);
     }
@@ -32,7 +29,7 @@ contract ISTCoin is ERC20 {
 
     function _update(address from, address to, uint256 value) internal override {
         if (from != address(0)) {
-            // require(!blacklist.isBlacklisted(from), "ISTCoin: Sender is blacklisted");
+            require(!isBlacklisted(from), "ISTCoin: Sender is blacklisted");
         }
         super._update(from, to, value);
     }
@@ -43,7 +40,7 @@ contract ISTCoin is ERC20 {
      * the potential race condition in the ERC20 standard.
      */
     function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
-        require(!blacklist.isBlacklisted(spender), "ISTCoin: Spender is blacklisted");
+        require(!isBlacklisted(spender), "ISTCoin: Spender is blacklisted");
 
         address owner = _msgSender();
         _approve(owner, spender, allowance(owner, spender) + addedValue);
@@ -56,7 +53,7 @@ contract ISTCoin is ERC20 {
      * the potential race condition in the ERC20 standard.
      */
     function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
-        require(!blacklist.isBlacklisted(spender), "ISTCoin: Spender is blacklisted");
+        require(!isBlacklisted(spender), "ISTCoin: Spender is blacklisted");
 
         address owner = _msgSender();
         uint256 currentAllowance = allowance(owner, spender);
@@ -83,4 +80,5 @@ contract ISTCoin is ERC20 {
     function myBalance() public view returns (uint256) {
         return balanceOf(msg.sender);
     }
+
 }

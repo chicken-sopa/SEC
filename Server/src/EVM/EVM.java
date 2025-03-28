@@ -27,6 +27,7 @@ public class EVM implements IEVM {
     private EVMExecutor evmExecutor;
 
     public EVM() {
+
         // World creation
         world = new SimpleWorld();
 
@@ -78,14 +79,14 @@ public class EVM implements IEVM {
     }
 
     @Override
-    public void processBlock(Block block) {
+    public void processBlock(Block block, EVMClientResponse respondingToClientMethod) {
         Transaction[] transactions = block.getTransactions();
         for(Transaction transaction : transactions){
-            processTransaction(transaction);
+            processTransaction(transaction, respondingToClientMethod);
         }
     }
 
-    private void processTransaction(Transaction transaction) {
+    private void processTransaction(Transaction transaction, EVMClientResponse respondingToClientMethod) {
         Address senderAddress = Address.fromHexString(transaction.sourceAccount());
         Address contractAddress = Address.fromHexString(transaction.destinationContract());
 
@@ -118,7 +119,10 @@ public class EVM implements IEVM {
         evmExecutor.callData(Bytes.fromHexString(hexStringBuilder.toString()));
         evmExecutor.execute();
         System.out.println("Transaction processed");
-        // TODO - what do we do to catch responses?
+
+        // TODO - GET RESPONSE FROM EVM
+        String answer =  "";
+        respondingToClientMethod.sendEVMAnswerToClient(answer);
     }
 
 
