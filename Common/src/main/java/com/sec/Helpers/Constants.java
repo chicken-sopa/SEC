@@ -26,15 +26,15 @@ public final class Constants {
     public static String BlackListContractAddress = "";
     public static String ISTCoinContractAddress = "";
         // BlackList
-    public static String addToBlacklistFunctionSignature = "addToBlacklist(address)";
-    public static String removeFromBlacklistFunctionSignature = "removeFromBlacklist(address)";
-    public static String isBlackListedFunctionSignature = "isBlacklisted(address)";
+    public static final String addToBlacklistFunctionSignature = "addToBlacklist(address)";
+    public static final String removeFromBlacklistFunctionSignature = "removeFromBlacklist(address)";
+    public static final String isBlackListedFunctionSignature = "isBlacklisted(address)";
         // IST Coin
-    public static String transferFunctionSignature = "transfer(address,address,uint256)";
-    public static String increaseAllowanceFunctionSignature = "increaseAllowance(address,uint256)";
-    public static String decreaseAllowanceFunctionSignature = "decreaseAllowance(address,uint256)";
-    public static String approveFunctionSignature = "approve(address,uint256)";
-    public static String myBalanceFunctionSignature = "myBalance()";
+    public static final String transferFunctionSignature = "transfer(address,address,uint256)";
+    public static final String increaseAllowanceFunctionSignature = "increaseAllowance(address,uint256)";
+    public static final String decreaseAllowanceFunctionSignature = "decreaseAllowance(address,uint256)";
+    public static final String approveFunctionSignature = "approve(address,uint256)";
+    public static final String myBalanceFunctionSignature = "myBalance()";
         // Account addresses
     public static String owner = "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB";
     public static String IstCoin = "0x17F6AD8Ef982297579C203069C1DbfFE4348c372";

@@ -13,10 +13,9 @@ import org.hyperledger.besu.evm.fluent.EVMExecutor;
 import org.hyperledger.besu.evm.fluent.SimpleWorld;
 import org.hyperledger.besu.evm.frame.MessageFrame;
 import org.hyperledger.besu.evm.tracing.StandardJsonTracer;
-import org.apache.tuweni.bytes.Bytes;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.math.BigInteger;
 
 public class EVM implements IEVM {
 
@@ -120,8 +119,18 @@ public class EVM implements IEVM {
         evmExecutor.execute();
         System.out.println("Transaction processed");
 
-        // TODO - GET RESPONSE FROM EVM
-        String answer =  "";
+
+        String answer;
+        if (transaction.functionAndArgs()[0].equals(Constants.myBalanceFunctionSignature)){
+            // Returns an integer
+            BigInteger myBalance = AuxFunctions.extractBigIntegerFromReturnData(byteArrayOutputStream);
+            answer = myBalance.toString();
+        }
+        else{
+            // Returns a boolean
+            boolean response = AuxFunctions.extractBooleanFromReturnData(byteArrayOutputStream);
+            answer = String.valueOf(response);
+        }
         respondingToClientMethod.sendEVMAnswerToClient(answer);
     }
 
