@@ -1,6 +1,6 @@
 package Communication.Consensus;
 
-import EVM.EVM;
+import EVM.IEVM;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Links.AuthenticatedPerfectLink;
@@ -9,18 +9,17 @@ import com.sec.Messages.BaseMessage;
 import com.sec.Messages.ConsensusFinishedMessage;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Blockchain {
 
-    EVM evm;
+    IEVM evm;
     final int SIZE_TRANSACTIONS_IN_BLOCK = 5;
     private final AuthenticatedPerfectLink<BaseMessage> link;
 
     LinkedList<Block> blockchain = new LinkedList<Block>();
     ArrayDeque<Transaction> transactionsToAddToBlockchain = new ArrayDeque<Transaction>();
 
-    public Blockchain(AuthenticatedPerfectLink<BaseMessage> link, EVM evm) {
+    public Blockchain(AuthenticatedPerfectLink<BaseMessage> link, IEVM evm) {
         this.link = link;
         this.evm = evm;
     }
@@ -30,8 +29,6 @@ public class Blockchain {
         System.out.println("------SENDING DONE TO CLIENT---------------- " + clientID + " on port" + 5550 + clientID);
         link.sendMessage(msg, 5550 + clientID);
     }
-
-
 
     void writeNewBlockToBlockChain() {
         // get N transactions to add to new block
@@ -68,10 +65,6 @@ public class Blockchain {
             }
 
         }
-
         ).start();
-
     }
-
-
 }

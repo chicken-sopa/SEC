@@ -3,6 +3,7 @@ package Server;
 import Communication.Collection.*;
 import Communication.Consensus.Blockchain;
 import Communication.Consensus.ConsensusBFT;
+import EVM.IEVM;
 import EVM.EVM;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
@@ -36,7 +37,7 @@ public class Server {
     private final Condition condition = leaderThreadLock.newCondition();
 
 
-    EVM evm;
+    IEVM evm;
     Blockchain blockchain;
 
 
@@ -87,7 +88,7 @@ public class Server {
                     throw new RuntimeException(e);
                 }
             }
-        }); //.start();
+        });
         t.start();
 
     }
