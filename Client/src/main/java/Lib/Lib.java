@@ -6,7 +6,6 @@ import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.AppendMessage;
 import com.sec.Messages.BaseMessage;
-import com.sec.Messages.ConsensusFinishedMessage;
 import com.sec.Messages.MessageType;
 
 import java.net.SocketException;
@@ -24,12 +23,15 @@ public class Lib implements ILib {
     public Lib(int myPort) throws NoSuchAlgorithmException, SocketException {
         digitalSignatureAuth = new DigitalSignatureAuth<>();
         authenticatedPerfectLink = new AuthenticatedPerfectLink<>(myPort, digitalSignatureAuth, getProcessId());
-        startReceiveMessageThread();
     }
 
     public void SendAppendMessage(Transaction messageToAppend, int destinationPort) throws Exception {
         AppendMessage message = new AppendMessage(MessageType.APPEND, getProcessId(), messageToAppend, getProcessId());
         authenticatedPerfectLink.sendMessage(message, destinationPort);
+    }
+
+    public BaseMessage ReceiveMessage() throws Exception{
+        return  authenticatedPerfectLink.receiveMessage();
     }
 
     // Region BlackListCalls
@@ -96,23 +98,7 @@ public class Lib implements ILib {
         return new Transaction(destinationContract, fromAddress, args , signature);
     }
 
-    private void startReceiveMessageThread() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    BaseMessage msg = authenticatedPerfectLink.receiveMessage();
-                    if (msg != null && msg instanceof ConsensusFinishedMessage) {
-                        System.out.println("-------------------- VIM DAR NOTIFY AO SLIETERNS ---------------------");
-                        System.out.println("MESSAGE RECEBIDA Da lib e" + msg.getMessageType());
-                        //notifyListeners(msg);
-                        //TODO INCREMENT COUNT OF ANSWERS RECEIVED
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
-    }
+
 
     public void addMessageListener(Consumer<BaseMessage> listener) {
         listeners.add(listener);

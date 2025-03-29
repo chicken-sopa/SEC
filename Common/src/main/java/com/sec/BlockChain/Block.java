@@ -1,14 +1,19 @@
 package com.sec.BlockChain;
 
-public class Block {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Block implements Serializable {
 
     private final Transaction[] transactions;
     private int prevBlockHash;
+
 
     public Block(int blockSize, int prevBlockHash, Transaction... transactions) {
         this.transactions = new Transaction[blockSize];
         System.arraycopy(transactions, 0, this.transactions, 0, transactions.length);
         this.prevBlockHash = prevBlockHash;
+
     }
 
     public Transaction[] getTransactions() {
@@ -18,4 +23,7 @@ public class Block {
     public int getPrevBlockHash() {
         return prevBlockHash;
     }
+
+
+
 }

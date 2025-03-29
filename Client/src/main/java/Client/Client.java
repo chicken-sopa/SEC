@@ -4,6 +4,10 @@ import Lib.ILib;
 import Lib.Lib;
 import com.sec.BlockChain.Transaction;
 import Lib.ClientRequestManager;
+import com.sec.Messages.BaseMessage;
+import com.sec.Messages.ConsensusFinishedMessage;
+import com.sec.Messages.EvmResultMessage;
+
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
@@ -16,6 +20,9 @@ public class Client {
     private final int[] destPorts;
     private final int fPlusOne = 2; // f+1 = 2 confirmations required
     private final String myAddress;
+    ClientRequestManager clientRequests;
+
+
 
     public Client(int myPort, int myId, int[] destinationPorts, String myAddress) throws SocketException, NoSuchAlgorithmException {
         lib = new Lib(myPort);
@@ -23,62 +30,40 @@ public class Client {
         sc = new Scanner(System.in);
         destPorts = destinationPorts;
         this.myAddress = myAddress;
-    }
-
-    private void sendMessage(Transaction message) throws Exception {
-        /*CountDownLatch latch = new CountDownLatch(fPlusOne);
-        boolean[] aborted = {false};
-
-        lib.addMessageListener(msg -> {
-            System.out.println("--------------------Listener correu------------------------------");
-            BaseMessage msg2 = null;
-            System.out.println("condicao =" + (msg.getMessageType() == MessageType.FINISHED));
-
-            if (msg.getMessageType() == MessageType.FINISHED) {
-                 msg2 = (ConsensusFinishedMessage) msg;
-            }//else if(msg.getMessageType() == MessageType.ABORT){ //TODO uncomment this when abort
-//                AbortMessage msg2 = (AbortMessage) msg;
-//            }
-            if(msg2 != null) {
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Enterei no if");
-                System.out.println("value enviado DO LADO DO LISTENER e" + message + "value recebido e " +((ConsensusFinishedMessage) msg2).getVal());
-
-                if (((ConsensusFinishedMessage) msg2).getVal().equals(message)) {
-                    System.out.println("Received one confirmation from " + msg2.getSenderId() + ": " + ((ConsensusFinishedMessage) msg2).getVal());
-                    latch.countDown();
-
-                }//TODO uncoment this for abort logic
-//            else if (msg instanceof AbortMessage) {
-//                System.out.println("Consensus aborted.");
-//                aborted[0] = true;
-//                latch.countDown(); // Ensure we stop waiting
-//            }
-            }
-        });*/
-
-        for (int destinationPort : destPorts) {
-            lib.SendAppendMessage(message, destinationPort);
-        }
-
-        /*boolean consensusReached = latch.await(10, TimeUnit.SECONDS);
-
-        if (aborted[0]) {
-            System.out.println("Consensus aborted.");
-        } else if (consensusReached) {
-            System.out.println("Consensus reached! Value '" + message + "' confirmed.");
-        } else {
-            System.out.println("Consensus could not be reached within the timeout.");
-        }*/
+        clientRequests = new ClientRequestManager(lib, destPorts);
     }
 
     public void SendRequestToConsensus() throws Exception {
         while (true) {
-            ClientRequestManager clientRequests = new ClientRequestManager(lib, destPorts);
             Transaction message = ProcessCommands();
             clientRequests.sendMessage(message);
             clientRequests.waitForResponses();
         }
     }
+
+    private void startReceiveMessageThread() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    BaseMessage msg = lib.ReceiveMessage();
+                    if (msg != null && msg instanceof ConsensusFinishedMessage) {
+                        System.out.println("-------------------- VIM DAR NOTIFY AO SLIETERNS ---------------------");
+                        System.out.println("MESSAGE RECEBIDA Da lib e" + msg.getMessageType());
+                        //notifyListeners(msg);
+                        //TODO INCREMENT COUNT OF ANSWERS RECEIVED
+                        Transaction transaction= ((ConsensusFinishedMessage) msg).getVal();
+                        clientRequests.updateOnMessageCountReceivedMessage(transaction);
+
+                    } else if (msg != null && msg instanceof EvmResultMessage) {
+                        System.out.println("EVM Response Reveived ==> " + ((EvmResultMessage) msg).getVal());
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+    }
+
 
     private Transaction ProcessCommands() {
         System.out.println("OPERATION 1  : AddToBlackList(<ACCOUNT ADDRESS>)\n" +

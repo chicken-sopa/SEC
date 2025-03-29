@@ -1,10 +1,12 @@
 package Lib;
 
 import com.sec.BlockChain.Transaction;
+import com.sec.Messages.BaseMessage;
 
 public interface ILib {
 
     public void SendAppendMessage(Transaction messageToAppend, int destinationPort) throws Exception;
+    public BaseMessage ReceiveMessage() throws Exception;
 
     // BlackList contract functions
     public Transaction AddToBlackList(String fromAddress, String blackListAddress) throws Exception;
