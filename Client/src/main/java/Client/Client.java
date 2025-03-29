@@ -69,11 +69,12 @@ public class Client {
         System.out.println("OPERATION 1  : AddToBlackList(<ACCOUNT ADDRESS>)\n" +
                 "OPERATION 2  : RemoveToBlackList(<ACCOUNT ADDRESS>)\n" +
                 "OPERATION 3  : IsBlackListed(<ACCOUNT ADDRESS>)\n" +
-                "OPERATION 4  : Transfer(<FROM ACCOUNT ADDRESS>, <TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
+                "OPERATION 4  : TransferISTCoins(<FROM ACCOUNT ADDRESS>, <TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
                 "OPERATION 5  : IncreaseAllowance(<SPENDER ADDRESS>, <AMOUNT TO ADD>)\n" +
                 "OPERATION 6  : DecreaseAllowance(<SPENDER ADDRESS>, <AMOUNT TO DECREASE>)\n" +
                 "OPERATION 7  : Approve(<SPENDER ADDRESS>, <AMOUNT TO APPROVE>)\n" +
                 "OPERATION 8  : FetchMyBalance()\n" +
+                "OPERATION 9  : TransferDEPCoins(<FROM ACCOUNT ADDRESS>, <TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
                 "Type what to send in format: \"<OPERATION-NUMBER> <ARG 1> <ARG 2> <ARG 3> ...\"" +
                 "Please type addresses WITHOUT the hex prefix \"0x\"");
         String input = sc.nextLine();
@@ -92,7 +93,7 @@ public class Client {
                     trans = lib.IsBlackListed(myAddress, inputValues[1]);
                     break;
                 case 4:
-                    trans = lib.Transfer(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
+                    trans = lib.TransferISTCoin(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
                     break;
                 case 5:
                     trans = lib.IncreaseAllowance(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
@@ -105,6 +106,9 @@ public class Client {
                     break;
                 case 8:
                     trans = lib.MyBalance(myAddress);
+                    break;
+                case 9:
+                    trans = lib.TransferDepCoin(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
                     break;
                 default:
                     System.out.println("Value out of range (1-8)");

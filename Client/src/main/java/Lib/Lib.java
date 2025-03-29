@@ -38,64 +38,70 @@ public class Lib implements ILib {
     @Override
     public Transaction AddToBlackList(String fromAddress, String addressToAdd) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", "",
                 Constants.addToBlacklistFunctionSignature, addressToAdd);
     }
 
     @Override
     public Transaction RemoveFromBlackList(String fromAddress, String addressToRemove) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", "",
                 Constants.removeFromBlacklistFunctionSignature, addressToRemove);
     }
 
     @Override
     public Transaction IsBlackListed(String fromAddress, String blackListAddress) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", "",
                 Constants.isBlackListedFunctionSignature, blackListAddress);
     }
     // End of BlackListCalls
 
     // Region ISTCoin Calls
     @Override
-    public Transaction Transfer(String fromAddress, String toAddress, int value) throws Exception {
+    public Transaction TransferISTCoin(String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.transferFunctionSignature, fromAddress, toAddress, String.valueOf(value));
     }
 
     @Override
     public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.increaseAllowanceFunctionSignature, spenderAddress, String.valueOf(addedValue));
     }
 
     @Override
     public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.decreaseAllowanceFunctionSignature, spenderAddress, String.valueOf(subtractedValue));
     }
 
     @Override
     public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.approveFunctionSignature, spenderAddress, String.valueOf(amount));
     }
 
     @Override
     public Transaction MyBalance(String fromAddress) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.myBalanceFunctionSignature);
+    }
+
+    @Override
+    public Transaction TransferDepCoin(String fromAddress, String toAddress, int value) throws Exception {
+        CreateTransaction(toAddress, fromAddress, String.valueOf(value), "");
+        return null;
     }
     // End of ISTCoin Calls
 
-    private Transaction CreateTransaction(String destinationContract, String fromAddress, String signature, String... args) throws Exception {
-        return new Transaction(destinationContract, fromAddress, args , signature);
+    private Transaction CreateTransaction(String destinationAddress, String fromAddress, String amount, String signature, String... args) throws Exception {
+        return new Transaction(destinationAddress, fromAddress, args, amount, signature);
     }
 
 
