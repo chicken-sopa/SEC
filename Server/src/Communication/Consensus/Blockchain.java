@@ -1,6 +1,8 @@
 package Communication.Consensus;
 
+import EVM.EVM;
 import EVM.EVMClientResponse;
+import EVM.Genesis.GenesisBlock;
 import EVM.IEVM;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,7 +33,20 @@ public class Blockchain {
         this.link = link;
         this.evm = evm;
         this.evmClientResponse = evmClientResponse;
+
+        addInitBlock(); // ALWAYS ADD GENESIS AS INIT BLOCK
     }
+
+    private void addInitBlock(){
+        Block initBlock = getGenesisBlock();
+        blockchain.add(initBlock);
+    }
+
+    private Block getGenesisBlock(){
+        GenesisBlock initBlock =  GenesisBlock.readGenesisBlockFromJson();
+        return initBlock.toBlock();
+    }
+
 
     void sendConsensusDoneToClient(int currentServerID, int consensusID, Transaction val, int clientID) throws Exception {
         ConsensusFinishedMessage msg = new ConsensusFinishedMessage(currentServerID, consensusID, val);
@@ -98,8 +113,19 @@ public class Blockchain {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        GenesisBlock genesisBlock = GenesisBlock.readGenesisBlockFromJson();
+        int genesisHash = Objects.hashCode(genesisBlock);
+        System.out.println("genesis hash = " + genesisBlock);
+
+        var x = readBlocksFromFile("Blockchain.json");
+
+        System.out.println("blockREad = " + x.get(0));
+
         LinkedList<Block> blockchain = new LinkedList<Block>();
+
+        EVM evm = new EVM();
+
         Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100","fakeSignature");
 
         Transaction[] blockOfTransactions = new Transaction[SIZE_TRANSACTIONS_IN_BLOCK];

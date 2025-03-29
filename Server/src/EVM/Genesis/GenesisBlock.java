@@ -1,12 +1,16 @@
 package EVM.Genesis;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Helpers.Constants;
 
-import java.io.InputStream;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -17,7 +21,8 @@ public class GenesisBlock {
     private Transaction[] transactions;
     private Map<String, AccountState> state;
 
-    private GenesisBlock() {}
+    private GenesisBlock() {
+    }
 
     public String getBlockHash() {
         return blockHash;
@@ -39,33 +44,22 @@ public class GenesisBlock {
         return state;
     }
 
-    public Block toBlock(){
+    public Block toBlock() {
         return new Block(5, Integer.getInteger(getBlockHash()), getTransactions());
     }
 
-    public static GenesisBlock readGenesisBlockFromJson(){
-        String json = FetchJson();
-        Gson mapper =  new Gson();
-        try {
-            return mapper.fromJson(json, GenesisBlock.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Genesis block written in incorrect format, null returned");
-            return null;
+
+
+    public static GenesisBlock readGenesisBlockFromJson() {
+        try (Reader reader = new FileReader(Constants.genesisLocation)) {
+
+            final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Type genesisType = new TypeToken<GenesisBlock>() {}.getType();
+            return gson.fromJson(reader, genesisType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private static String FetchJson(){
-
-        InputStream inputStream = GenesisBlock.class
-                .getClassLoader()
-                .getResourceAsStream(Constants.genesisLocation);
-        if (inputStream == null) {
-            throw new RuntimeException("File not found: Genesis.json");
-        }
-
-        return new Scanner(inputStream, StandardCharsets.UTF_8)
-                .useDelimiter("\\A")
-                .next();
-    }
 }

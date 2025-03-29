@@ -43,7 +43,7 @@ public final class Constants {
     public static final String UserC = "0x583031D1113aD414F02576BD6afaBfb302140225";
     public static final String[] allAddressStrings = {owner, IstCoin, UserA, UserB, UserC};
         // Genesis
-    public static final String genesisLocation = "EVM/Genesis/Genesis.json";
+    public static final String genesisLocation = "Server/src/EVM/Genesis/Genesis.json";
 
 
 }
