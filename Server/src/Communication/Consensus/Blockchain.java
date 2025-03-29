@@ -1,7 +1,7 @@
 package Communication.Consensus;
 
+import EVM.EVMClientResponse;
 import EVM.IEVM;
-import EVM.IEVMClientResponse;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Links.AuthenticatedPerfectLink;
@@ -16,14 +16,15 @@ public class Blockchain {
     final int SIZE_TRANSACTIONS_IN_BLOCK = 5;
     private final AuthenticatedPerfectLink<BaseMessage> link;
 
-    IEVMClientResponse ievmClientResponse;
+    final EVMClientResponse evmClientResponse;
 
     LinkedList<Block> blockchain = new LinkedList<Block>();
     ArrayDeque<Transaction> transactionsToAddToBlockchain = new ArrayDeque<Transaction>();
 
-    public Blockchain(AuthenticatedPerfectLink<BaseMessage> link, IEVM evm) {
+    public Blockchain(AuthenticatedPerfectLink<BaseMessage> link, IEVM evm, EVMClientResponse evmClientResponse) {
         this.link = link;
         this.evm = evm;
+        this.evmClientResponse = evmClientResponse;
     }
 
     void sendConsensusDoneToClient(int currentServerID, int consensusID, Transaction val, int clientID) throws Exception {
@@ -44,7 +45,7 @@ public class Blockchain {
 
         //CALL EVM TO RUN ALL THE TRANSACTIONS
 
-        evm.processBlock(newBlock, ievmClientResponse);
+        evm.processBlock(newBlock, evmClientResponse);
     }
 
 

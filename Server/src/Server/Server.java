@@ -13,6 +13,7 @@ import com.sec.Messages.MessageType;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
+import EVM.EVMClientResponse;
 
 import java.util.Scanner;
 import java.util.concurrent.locks.Condition;
@@ -38,6 +39,7 @@ public class Server {
 
 
     IEVM evm;
+    EVMClientResponse evmClientResponse;
     Blockchain blockchain;
 
 
@@ -50,8 +52,8 @@ public class Server {
         conditionalCollect = new ConditionalCollect<>(authenticatedPerfectLink, quorumSize);
 
         evm = new EVM();
-
-        blockchain = new Blockchain(authenticatedPerfectLink, evm);
+        evmClientResponse = new EVMClientResponse(processId, authenticatedPerfectLink);
+        blockchain = new Blockchain(authenticatedPerfectLink, evm, evmClientResponse);
 
         sc = new Scanner(System.in);
         this.isLeader = isLeader;
