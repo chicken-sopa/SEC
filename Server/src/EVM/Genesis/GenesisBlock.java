@@ -1,6 +1,7 @@
 package EVM.Genesis;
 
 import com.google.gson.Gson;
+import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Helpers.Constants;
 
@@ -10,11 +11,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class GenesisBlock {
-    public String blockHash;
-    public String previousBlockHash;
-    public String blockChainOwnerAddress;
-    public Transaction[] transactions;
-    public Map<String, AccountState> state;
+    private String blockHash;
+    private String previousBlockHash;
+    private String blockChainOwnerAddress;
+    private Transaction[] transactions;
+    private Map<String, AccountState> state;
 
     private GenesisBlock() {}
 
@@ -36,6 +37,10 @@ public class GenesisBlock {
 
     public Map<String, AccountState> getState() {
         return state;
+    }
+
+    public Block toBlock(){
+        return new Block(5, Integer.getInteger(getBlockHash()), getTransactions());
     }
 
     public static GenesisBlock readGenesisBlockFromJson(){
