@@ -9,9 +9,10 @@ public record Transaction(
         // TODO -> Change to destrinationAddress to support DEPCoin transferences
         // Add value -> represents depCoin
         // logic - if value != 0/null, use logic to remove from one account, add to another
-        String destinationContract,
+        String destinationAddress,
         String sourceAccount,
         String[] functionAndArgs,
+        String amount,
         String signature
 ) implements Serializable {
 
