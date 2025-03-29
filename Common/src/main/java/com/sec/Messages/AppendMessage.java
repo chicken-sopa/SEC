@@ -35,6 +35,6 @@ public class AppendMessage extends BaseMessage{
 
     @Override
     public String toString(){
-        return message.toPrettyPrint();
+        return message.prettyPrint();
     }
 }

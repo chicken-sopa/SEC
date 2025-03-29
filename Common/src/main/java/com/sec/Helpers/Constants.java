@@ -24,7 +24,7 @@ public final class Constants {
 
     // BlockChain
     public static final String BlackListContractAddress = "";
-    public static final String ISTCoinContractAddress = "";
+    public static final String ISTCoinContractAddress = "0x17F6AD8Ef982297579C203069C1DbfFE4348c372";
         // BlackList
     public static final String addToBlacklistFunctionSignature = "addToBlacklist(address)";
     public static final String removeFromBlacklistFunctionSignature = "removeFromBlacklist(address)";

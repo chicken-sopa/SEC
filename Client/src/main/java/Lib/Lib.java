@@ -38,21 +38,21 @@ public class Lib implements ILib {
     @Override
     public Transaction AddToBlackList(String fromAddress, String addressToAdd) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.addToBlacklistFunctionSignature, addressToAdd);
     }
 
     @Override
     public Transaction RemoveFromBlackList(String fromAddress, String addressToRemove) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.removeFromBlacklistFunctionSignature, addressToRemove);
     }
 
     @Override
     public Transaction IsBlackListed(String fromAddress, String blackListAddress) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.BlackListContractAddress, fromAddress, "", "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.isBlackListedFunctionSignature, blackListAddress);
     }
     // End of BlackListCalls

@@ -26,4 +26,14 @@ public record Transaction(
         }
     }
 
+    public String prettyPrint(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Destination Address: ").append(destinationAddress).append("\n");
+        sb.append("Source Account: ").append(sourceAccount).append("\n");
+        sb.append("Function And Arguments: ").append(functionAndArgs).append("\n");
+        sb.append("Amount: ").append(amount).append("\n");
+        sb.append("Signature: ").append(signature).append("\n");
+        return sb.toString();
+    }
+
 }
