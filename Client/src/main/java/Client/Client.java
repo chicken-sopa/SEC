@@ -52,10 +52,7 @@ public class Client {
                 try {
                     BaseMessage msg = lib.ReceiveMessage();
                     if (msg != null && msg instanceof ConsensusFinishedMessage) {
-                        System.out.println("-------------------- VIM DAR NOTIFY AO SLIETERNS ---------------------");
-                        System.out.println("MESSAGE RECEBIDA Da lib e" + msg.getMessageType());
-                        //notifyListeners(msg);
-                        //TODO INCREMENT COUNT OF ANSWERS RECEIVED
+
                         Transaction transaction = ((ConsensusFinishedMessage) msg).getVal();
                         clientRequests.updateOnMessageCountReceivedMessage(transaction);
 
