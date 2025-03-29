@@ -23,7 +23,6 @@ public class Client {
     ClientRequestManager clientRequests;
 
 
-
     public Client(int myPort, int myId, int[] destinationPorts, String myAddress) throws SocketException, NoSuchAlgorithmException {
         lib = new Lib(myPort);
         id = myId;
@@ -33,15 +32,21 @@ public class Client {
         clientRequests = new ClientRequestManager(lib, destPorts);
     }
 
-    public void SendRequestToConsensus() throws Exception {
-        while (true) {
-            Transaction message = ProcessCommands();
-            clientRequests.sendMessage(message);
-            clientRequests.waitForResponses();
-        }
+    public void SendRequestToConsensusThread() throws Exception {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Transaction message = ProcessCommands();
+                    clientRequests.sendMessage(message);
+                    clientRequests.waitForResponses();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 
-    private void startReceiveMessageThread() {
+    public void startReceiveMessageThread() {
         new Thread(() -> {
             while (true) {
                 try {
@@ -51,7 +56,7 @@ public class Client {
                         System.out.println("MESSAGE RECEBIDA Da lib e" + msg.getMessageType());
                         //notifyListeners(msg);
                         //TODO INCREMENT COUNT OF ANSWERS RECEIVED
-                        Transaction transaction= ((ConsensusFinishedMessage) msg).getVal();
+                        Transaction transaction = ((ConsensusFinishedMessage) msg).getVal();
                         clientRequests.updateOnMessageCountReceivedMessage(transaction);
 
                     } else if (msg != null && msg instanceof EvmResultMessage) {
@@ -80,9 +85,9 @@ public class Client {
         String input = sc.nextLine();
         String[] inputValues = input.split(" ");
         Transaction trans;
-        try{
+        try {
 
-            switch (Integer.parseInt(inputValues[0])){
+            switch (Integer.parseInt(inputValues[0])) {
                 case 1:
                     trans = lib.AddToBlackList(myAddress, inputValues[1]);
                     break;
@@ -99,7 +104,7 @@ public class Client {
                     trans = lib.IncreaseAllowance(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
                     break;
                 case 6:
-                    trans = lib.DecreaseAllowance(myAddress,  inputValues[1], Integer.parseInt(inputValues[2]));
+                    trans = lib.DecreaseAllowance(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
                     break;
                 case 7:
                     trans = lib.Approve(myAddress, inputValues[1], Integer.parseInt(inputValues[2]));
@@ -115,8 +120,7 @@ public class Client {
                     return null;
             }
             return trans;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Provided arguments are incorrect.");
             return null;
         }

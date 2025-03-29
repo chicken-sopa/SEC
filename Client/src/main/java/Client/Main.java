@@ -18,6 +18,7 @@ public class Main {
         }
 
         Client client = new Client(myPort, clientId, destinationPortList, "MYTESTADDRESS");
-        client.SendRequestToConsensus();
+        client.SendRequestToConsensusThread();
+        client.startReceiveMessageThread();
     }
 }

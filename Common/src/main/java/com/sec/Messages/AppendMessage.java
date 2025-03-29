@@ -32,4 +32,9 @@ public class AppendMessage extends BaseMessage{
         sign.update(message.getBytes());
         return Base64.getEncoder().encodeToString(sign.sign());
     }
+
+    @Override
+    public String toString(){
+        return message.toPrettyPrint();
+    }
 }

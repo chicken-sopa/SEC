@@ -81,7 +81,7 @@ public class Blockchain {
     }
 
 
-    public static void writeBlocksToFile(Block[] blocks, String filename) {
+    public static void writeBlocksToFile(LinkedList<Block> blocks, String filename) {
         try (Writer writer = new FileWriter(filename)) {
             // Convert blocks array to JSON and write to file
             gson.toJson(blocks, writer);
@@ -108,10 +108,19 @@ public class Blockchain {
         }
 
         int prevHah = 1234561;
-        Block block = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevHah, blockOfTransactions);
-        blockchain.add(block);
+        Block block1 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevHah, blockOfTransactions);
+        blockchain.add(block1);
 
-        writeBlocksToFile(blockchain.toArray(Block[]::new), "Blockchain.json");
+        System.out.println("writing BlockChain");
+        writeBlocksToFile(blockchain, "Blockchain.json");
+
+        Scanner sc = new Scanner(System.in);
+         String input = sc.nextLine();
+
+        Block bLock2 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, Objects.hashCode(block1), blockOfTransactions);
+        blockchain.add(bLock2);
+
+        writeBlocksToFile(blockchain, "Blockchain.json");
 
     }
 
