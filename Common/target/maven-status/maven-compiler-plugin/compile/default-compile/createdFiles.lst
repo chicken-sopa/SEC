@@ -8,11 +8,12 @@ com\sec\Messages\BaseMessage.class
 com\sec\Links\FairLossLink.class
 com\sec\Messages\Types\ValTSPair\ValTSPair.class
 com\sec\Links\LinkMessages\Base\Contracts\ILinkMessage.class
+com\sec\BlockChain\Transaction.class
 com\sec\Helpers\Auxiliary.class
+com\sec\BlockChain\AuxFunctions.class
 com\sec\Helpers\Constants.class
 com\sec\Links\LinkMessages\Base\Contracts\ISignedLinkMessage.class
 com\sec\Messages\Types\Writeset\Writeset.class
-module-info.class
 com\sec\Links\LinkMessages\Base\Contracts\IMessage.class
 com\sec\Links\LinkMessages\Base\LinkMessage.class
 com\sec\Links\LinkMessages\SignedUdpLinkMessage.class
@@ -21,6 +22,8 @@ com\sec\Messages\MessageType.class
 com\sec\Messages\Types\Writeset\SignedWriteset.class
 com\sec\Links\PerfectLink.class
 com\sec\Links\LinkMessages\Base\LinkMessageType.class
+com\sec\Messages\EvmResultMessage.class
+com\sec\BlockChain\Block.class
 com\sec\Keys\KeyManager.class
 com\sec\Links\Data\MessageDeliveryTuple.class
 com\sec\Links\Security\DigitalSignatureAuth.class
