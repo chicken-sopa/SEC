@@ -69,7 +69,7 @@ public class ByzantineConsensus extends ConsensusBFT {
     }
 
     public SignedValTSPair createByzantineVal() throws Exception {
-        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "fakeSignature");
+        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100", "fakeSignature");
         String fakeSignature = digitalSignatureAuth.signMessageVal(String.valueOf(fakeMsg), KeyManager.getPrivateKey(this.SERVER_ID));
         return new SignedValTSPair(0, fakeMsg, this.CLIENT_ID, fakeSignature);
     }

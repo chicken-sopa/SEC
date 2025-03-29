@@ -100,7 +100,7 @@ public class Blockchain {
 
     public static void main(String[] args) {
         LinkedList<Block> blockchain = new LinkedList<Block>();
-        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "fakeSignature");
+        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100","fakeSignature");
 
         Transaction[] blockOfTransactions = new Transaction[SIZE_TRANSACTIONS_IN_BLOCK];
         for (int i = 0; i < SIZE_TRANSACTIONS_IN_BLOCK; i++) {
