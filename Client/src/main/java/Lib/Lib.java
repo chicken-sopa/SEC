@@ -104,7 +104,8 @@ public class Lib implements ILib {
                     if (msg != null && msg instanceof ConsensusFinishedMessage) {
                         System.out.println("-------------------- VIM DAR NOTIFY AO SLIETERNS ---------------------");
                         System.out.println("MESSAGE RECEBIDA Da lib e" + msg.getMessageType());
-                        notifyListeners(msg);
+                        //notifyListeners(msg);
+                        //TODO INCREMENT COUNT OF ANSWERS RECEIVED
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);

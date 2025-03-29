@@ -15,7 +15,7 @@ public class BaseMessage implements IMessage, Serializable {
     private SignedValTSPair val = null;
     private SignedWriteset writeset = null;
 
-    public BaseMessage(MessageType messageType, int senderId, int consensusID) {
+    public BaseMessage(MessageType messageType, int senderId, Integer consensusID) {
         this.messageType = messageType;
         this.senderId = senderId;
         this.consensusID = consensusID;

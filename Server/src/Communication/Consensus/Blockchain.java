@@ -1,6 +1,7 @@
 package Communication.Consensus;
 
 import EVM.IEVM;
+import EVM.IEVMClientResponse;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Links.AuthenticatedPerfectLink;
@@ -14,6 +15,8 @@ public class Blockchain {
     IEVM evm;
     final int SIZE_TRANSACTIONS_IN_BLOCK = 5;
     private final AuthenticatedPerfectLink<BaseMessage> link;
+
+    IEVMClientResponse ievmClientResponse;
 
     LinkedList<Block> blockchain = new LinkedList<Block>();
     ArrayDeque<Transaction> transactionsToAddToBlockchain = new ArrayDeque<Transaction>();
@@ -41,8 +44,9 @@ public class Blockchain {
 
         //CALL EVM TO RUN ALL THE TRANSACTIONS
 
-        evm.processBlock(newBlock, );
+        evm.processBlock(newBlock, ievmClientResponse);
     }
+
 
     void addTransactionToProcessAfterConsensus(Transaction transaction) {
         transactionsToAddToBlockchain.add(transaction);

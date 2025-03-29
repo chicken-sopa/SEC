@@ -3,7 +3,7 @@ package Client;
 import Lib.ILib;
 import Lib.Lib;
 import com.sec.BlockChain.Transaction;
-
+import Lib.ClientRequestManager;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
@@ -71,10 +71,12 @@ public class Client {
         }*/
     }
 
-    public void Listen() throws Exception {
+    public void SendRequestToConsensus() throws Exception {
         while (true) {
+            ClientRequestManager clientRequests = new ClientRequestManager(lib, destPorts);
             Transaction message = ProcessCommands();
-            sendMessage(message);
+            clientRequests.sendMessage(message);
+            clientRequests.waitForResponses();
         }
     }
 
