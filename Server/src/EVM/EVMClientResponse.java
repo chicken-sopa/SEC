@@ -19,7 +19,7 @@ public class EVMClientResponse implements IEVMClientResponse {
     public void sendEVMAnswerToClient(String answerFromEVM) {
         try {
             EvmResultMessage message = new EvmResultMessage(this.SENDER_ID, answerFromEVM);
-            link.sendMessage(message, 4550);
+            link.sendMessage(message, 5554);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

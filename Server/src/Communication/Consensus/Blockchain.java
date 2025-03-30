@@ -17,6 +17,9 @@ import com.sec.Messages.ConsensusFinishedMessage;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Blockchain {
     IEVM evm;
@@ -25,9 +28,13 @@ public class Blockchain {
     final EVMClientResponse evmClientResponse;
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Type BLOCK_LIST_TYPE = new TypeToken<LinkedList<Block>>() {}.getType();
+    private static final Type BLOCK_LIST_TYPE = new TypeToken<LinkedList<Block>>() {
+    }.getType();
     LinkedList<Block> blockchain = new LinkedList<Block>();
     ArrayDeque<Transaction> transactionsToAddToBlockchain = new ArrayDeque<Transaction>();
+
+    ReentrantLock processBlockchainLock = new ReentrantLock();
+    Condition processBlockCondition = processBlockchainLock.newCondition();
 
     public Blockchain(AuthenticatedPerfectLink<BaseMessage> link, IEVM evm, EVMClientResponse evmClientResponse) {
         this.link = link;
@@ -37,13 +44,13 @@ public class Blockchain {
         addInitBlock(); // ALWAYS ADD GENESIS AS INIT BLOCK
     }
 
-    private void addInitBlock(){
+    private void addInitBlock() {
         Block initBlock = getGenesisBlock();
         blockchain.add(initBlock);
     }
 
-    private Block getGenesisBlock(){
-        GenesisBlock initBlock =  GenesisBlock.readGenesisBlockFromJson();
+    private Block getGenesisBlock() {
+        GenesisBlock initBlock = GenesisBlock.readGenesisBlockFromJson();
         return initBlock.toBlock();
     }
 
@@ -61,7 +68,7 @@ public class Blockchain {
             blockOfTransactions[i] = transactionsToAddToBlockchain.poll();
         }
         int prevBlockHash = Objects.hashCode(blockchain.peek());
-        Block newBlock = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevBlockHash,blockOfTransactions);
+        Block newBlock = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevBlockHash, blockOfTransactions);
         blockchain.add(newBlock);
 
         //CALL EVM TO RUN ALL THE TRANSACTIONS
@@ -72,23 +79,28 @@ public class Blockchain {
 
     void addTransactionToProcessAfterConsensus(Transaction transaction) {
         transactionsToAddToBlockchain.add(transaction);
+        if(transactionsToAddToBlockchain.size() >= SIZE_TRANSACTIONS_IN_BLOCK){
+            processBlockCondition.signal();
+        }
     }
 
-    void ThreadToProcessBlockchain() {
+    public void ThreadToProcessBlockchain() {
         new Thread(() -> {
-
-            while (true) {
-                try {
-                    wait(5000);
-                    if (!transactionsToAddToBlockchain.isEmpty()) {
-                         writeNewBlockToBlockChain();
+            processBlockchainLock.lock();
+            try {
+                while (true) {
+                    try {
+                        processBlockCondition.await(5000L, TimeUnit.MILLISECONDS );
+                        if (!transactionsToAddToBlockchain.isEmpty()) {
+                            writeNewBlockToBlockChain();
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-
-
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
 
+            } finally {
+                processBlockchainLock.unlock();
             }
 
         }
@@ -126,7 +138,7 @@ public class Blockchain {
 
         EVM evm = new EVM();
 
-        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100","fakeSignature");
+        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100", "fakeSignature");
 
         Transaction[] blockOfTransactions = new Transaction[SIZE_TRANSACTIONS_IN_BLOCK];
         for (int i = 0; i < SIZE_TRANSACTIONS_IN_BLOCK; i++) {
@@ -141,7 +153,7 @@ public class Blockchain {
         writeBlocksToFile(blockchain, "Blockchain.json");
 
         Scanner sc = new Scanner(System.in);
-         String input = sc.nextLine();
+        String input = sc.nextLine();
 
         Block bLock2 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, Objects.hashCode(block1), blockOfTransactions);
         blockchain.add(bLock2);

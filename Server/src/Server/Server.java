@@ -71,6 +71,7 @@ public class Server {
             startConsensusLeaderThread();
         }
         startReceiveMessageThread();
+        blockchain.ThreadToProcessBlockchain();
     }
 
     private synchronized void startConsensusLeaderThread() {

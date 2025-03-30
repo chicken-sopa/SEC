@@ -453,6 +453,10 @@ public class ConsensusBFT {
             case ACCEPT -> {
                 processAcceptMessage((AcceptMessage) message);
             }
+            case EVMRESULT -> {
+                System.out.println("GOT EVM suppose to BE FOR CLIENT ");
+                return;
+            }
 
             default -> throw new IllegalStateException("Unexpected message type: " + message.getClass().getName());
         }

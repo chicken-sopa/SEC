@@ -6,7 +6,7 @@ public class EvmResultMessage extends BaseMessage {
     String val;
 
     public EvmResultMessage(int senderID, String val) {
-        super(MessageType.FINISHED, senderID, null);
+        super(MessageType.EVMRESULT, senderID, 0);
         this.val = val;
     }
 

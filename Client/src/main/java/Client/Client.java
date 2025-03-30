@@ -51,12 +51,12 @@ public class Client {
             while (true) {
                 try {
                     BaseMessage msg = lib.ReceiveMessage();
-                    if (msg != null && msg instanceof ConsensusFinishedMessage) {
+                    if (msg instanceof ConsensusFinishedMessage) {
 
                         Transaction transaction = ((ConsensusFinishedMessage) msg).getVal();
                         clientRequests.updateOnMessageCountReceivedMessage(transaction);
 
-                    } else if (msg != null && msg instanceof EvmResultMessage) {
+                    } else if (msg instanceof EvmResultMessage) {
                         System.out.println("EVM Response Reveived ==> " + ((EvmResultMessage) msg).getVal());
                     }
                 } catch (Exception e) {

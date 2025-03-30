@@ -17,7 +17,7 @@ public class Main {
             destinationPortList[i] = 4550 + i;
         }
 
-        Client client = new Client(myPort, clientId, destinationPortList, "MYTESTADDRESS");
+        Client client = new Client(myPort, clientId, destinationPortList, "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB");
         client.SendRequestToConsensusThread();
         client.startReceiveMessageThread();
     }
