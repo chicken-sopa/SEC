@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 public record Transaction(
         // TODO -> Change to destrinationAddress to support DEPCoin transferences
@@ -34,6 +36,11 @@ public record Transaction(
         sb.append("Amount: ").append(amount).append("\n");
         sb.append("Signature: ").append(signature).append("\n");
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(destinationAddress(), sourceAccount(), signature(), amount(), Arrays.hashCode(functionAndArgs()));
     }
 
 }

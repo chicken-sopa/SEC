@@ -78,6 +78,7 @@ print("NOTA: Certifique-se de que o projeto já foi compilado com 'mvn clean ins
 
 # Iniciar todos os nós nos terminais
 for node_info in nodes:
+    print(node_info["command"])
     start_node_in_terminal(
         command=node_info["command"],
         name=node_info["name"],

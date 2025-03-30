@@ -24,7 +24,7 @@ public class ClientRequestManager {
     }
 
     public void resetManagerForNewMessage(Transaction newMessage){
-        currentTransaction = Objects.hashCode(newMessage);
+        currentTransaction = newMessage.hashCode();
         numberAnswersReceived.set(0);
     }
 
@@ -43,6 +43,8 @@ public class ClientRequestManager {
             lock.wait();
             lock.no*/
         }
+        System.out.println("RECEIVED ALL THE VALUES");
+
     }
 
 

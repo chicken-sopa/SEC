@@ -25,7 +25,6 @@ import static Configuration.ProcessConfig.getProcessId;
 
 
 public class ConsensusBFT {
-    //TODO PERVEBER QUANDO TEMOS CURRENT_VAL_TS
     final int LEADER_ID = 0;
     final int CLIENT_ID = 0;
      final ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
@@ -89,7 +88,7 @@ public class ConsensusBFT {
         conditionalCollect.waitForStateMessages();
 
 
-        //This ensures that leader always send is state message even if other process are quicker to send it
+        //This ensures that leader always send its state message even if other process are quicker to send it
         if(conditionalCollect.getCollectedMessages().get(this.SERVER_ID) == null){
             StateMessage leaderStateMessage = createStateMessage(currentConsensusID);
             conditionalCollect.getCollectedMessages().put(this.SERVER_ID, leaderStateMessage);
@@ -121,7 +120,7 @@ public class ConsensusBFT {
 
     public void processReadMessage(ReadMessage msg) throws Exception {
 
-        if(msg.getSenderId() != LEADER_ID ){ // IF
+        if(msg.getSenderId() != LEADER_ID ){
             return;
         }
 
@@ -252,6 +251,7 @@ public class ConsensusBFT {
 
 
     public void processWriteRequestAndSendAccept(WriteMessage writeMessage, int msgConsensusID) throws Exception {
+        System.out.println("-------------------------------------PROCESSING WRITE MESSAGES --------------------------------------------");
 
 
         SignedValTSPair pairToWrite = writeMessage.getPairToProposeWrite();
@@ -265,6 +265,7 @@ public class ConsensusBFT {
         }
 
         if (!pairToWrite.verifySignature(KeyManager.getPublicKey(pairToWrite.getClientId()))) {
+            System.out.println("---------WRITE MESSAGE INVALID VERIFICATION----------------------------------");
             return;
         }
 
@@ -280,8 +281,6 @@ public class ConsensusBFT {
             valueToAccept = pairToWrite;
             writeRequestsReceived.put(valueToAccept.hashCode(), -1);
             sendAccepts(valueToAccept, msgConsensusID);
-
-
         }
 
 
@@ -304,9 +303,12 @@ public class ConsensusBFT {
 
 
     public void processAcceptMessage(AcceptMessage acceptMessage) throws Exception {
+
+        System.out.println("-------------------------------------PROCESSING ACCEPT MESSAGES --------------------------------------------");
         SignedValTSPair pairToAccept = acceptMessage.getPairToProposeAccept();
 
         if (!pairToAccept.verifySignature(KeyManager.getPublicKey(pairToAccept.getClientId()))) {
+            System.out.println("---------ACCEPT MESSAGE INVALID VERIFICATION----------------------------------");
             return;
         }
 

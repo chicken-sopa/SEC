@@ -41,7 +41,7 @@ public final class SignedValTSPair implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(valTSPair.val(), valTSPair.valTS(), signature, clientId); // Replace with actual fields
+        return Objects.hash(valTSPair.val().hashCode(), valTSPair.valTS(), signature, clientId); // Replace with actual fields
     }
     @Override
     public boolean equals(Object o) {
