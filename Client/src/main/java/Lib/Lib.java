@@ -95,8 +95,12 @@ public class Lib implements ILib {
 
     @Override
     public Transaction TransferDepCoin(String fromAddress, String toAddress, int value) throws Exception {
-        CreateTransaction(toAddress, fromAddress, String.valueOf(value), "");
-        return null;
+        return CreateTransaction(toAddress, fromAddress, String.valueOf(value), "");
+    }
+
+    @Override
+    public Transaction MyDepCoinBalance(String fromAddress) throws Exception {
+        return CreateTransaction("",  fromAddress, "", "");
     }
     // End of ISTCoin Calls
 
