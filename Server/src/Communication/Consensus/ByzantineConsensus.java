@@ -94,8 +94,6 @@ public class ByzantineConsensus extends ConsensusBFT {
     public void sendWriteRequest(SignedValTSPair pairToWrite, int msgConsensusID) throws Exception {
 
 
-
-
         super.sendWriteRequest(pairToWrite, msgConsensusID);
     }
 }
