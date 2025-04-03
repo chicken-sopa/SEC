@@ -109,7 +109,7 @@ public class EVM implements IEVM {
                     .append(transaction.sourceAccount())
                     .append("> to <")
                     .append(transaction.destinationAddress())
-                    .append("> the amount <")
+                    .append("> the amount of <")
                     .append(transaction.amount())
                     .append(">");
 
@@ -168,6 +168,9 @@ public class EVM implements IEVM {
                 // Returns a boolean
                 boolean response = AuxFunctions.extractBooleanFromReturnData(byteArrayOutputStream);
                 answer = String.valueOf(response);
+                if (!response){
+                    answer += AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
+                }
             }
         }
         respondingToClientMethod.sendEVMAnswerToClient(answer);
