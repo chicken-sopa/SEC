@@ -87,7 +87,8 @@ public class Client {
                 "OPERATION 6  : DecreaseAllowance(<SPENDER ADDRESS>, <AMOUNT TO DECREASE>)\n" +
                 "OPERATION 7  : FetchMyISTCoinBalance()\n" +
                 "OPERATION 8  : TransferDEPCoins(<TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
-                "OPERATION 9 : FetchMyDEPCoinBalance()\n" +
+                "OPERATION 9  : FetchMyDEPCoinBalance()\n" +
+                "OPERATION 10 : TransferISTCoinsFrom(<FROM ACCOUNT ADDRESS>, <TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
                 "Type what to send in format: \"<OPERATION-NUMBER> <ARG 1> <ARG 2> <ARG 3> ...\"\n" +
                 "When an address is to be inputted, please use numbers 0-3 according to the provided list of addresses");
         String input = sc.nextLine();
@@ -117,7 +118,7 @@ public class Client {
                         address = ParseAddressArgument(inputValues[1]);
                         if (address == null) return null;
                         int value =  Integer.parseInt(inputValues[2]);
-                        trans = lib.TransferISTCoin(myAddress, address, value);
+                        trans = lib.TransferISTCoin(myAddress, myAddress, address, value);
                     }catch (Exception e){
                         System.out.println("Inserted value is not valid");
                     }
@@ -158,8 +159,19 @@ public class Client {
                 case 9:
                     trans = lib.MyDepCoinBalance(myAddress);
                     break;
+                case 10:
+                    try{
+                        var addressFrom = ParseAddressArgument(inputValues[1]);
+                        var addressTo = ParseAddressArgument(inputValues[2]);
+                        if (addressFrom == null || addressTo == null) return null;
+                        int value =  Integer.parseInt(inputValues[2]);
+                        trans = lib.TransferISTCoin(myAddress, addressFrom, addressTo, value);
+                    }catch (Exception e){
+                        System.out.println("Inserted value is not valid");
+                    }
+                    break;
                 default:
-                    System.out.println("Value out of range (1-9)");
+                    System.out.println("Value out of range (1-10)");
                     return null;
             }
             return trans;

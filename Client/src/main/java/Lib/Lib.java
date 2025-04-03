@@ -59,9 +59,9 @@ public class Lib implements ILib {
 
     // Region ISTCoin Calls
     @Override
-    public Transaction TransferISTCoin(String fromAddress, String toAddress, int value) throws Exception {
+    public Transaction TransferISTCoin(String senderAddress, String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
+        return CreateTransaction(Constants.ISTCoinContractAddress, senderAddress, "", "",
                 Constants.transferFunctionSignature, fromAddress, toAddress, String.valueOf(value));
     }
 
