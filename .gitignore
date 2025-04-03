@@ -46,3 +46,7 @@ bin/
 /Server/target/Server-1.0-SNAPSHOT.jar
 
 /Client/target
+/Common/target/classes/com/sec/BlockChain/AuxFunctions.class
+/Common/target/classes/com/sec/BlockChain/Block.class
+/Server/target/classes/META-INF/jpms.args
+/Common/target/classes/com/sec/BlockChain/Transaction.class

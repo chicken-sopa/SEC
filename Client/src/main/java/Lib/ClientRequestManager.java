@@ -16,6 +16,9 @@ public class ClientRequestManager {
 
     private AtomicInteger numberAnswersReceived = new AtomicInteger(0);
 
+    private AtomicInteger numberEVMAnwsers = new AtomicInteger(0);
+
+
 
 
     public ClientRequestManager(ILib lib, int[] destPorts) {
@@ -26,6 +29,7 @@ public class ClientRequestManager {
     public void resetManagerForNewMessage(Transaction newMessage){
         currentTransaction = newMessage.hashCode();
         numberAnswersReceived.set(0);
+        numberEVMAnwsers.set(0);
     }
 
     public void sendMessage(Transaction message) throws Exception {
@@ -43,7 +47,7 @@ public class ClientRequestManager {
             lock.wait();
             lock.no*/
         }
-        System.out.println("RECEIVED ALL THE VALUES");
+        System.out.println("Received confirmation that transaction has beena agreed upon from f+1 processes.");
 
     }
 
@@ -52,5 +56,9 @@ public class ClientRequestManager {
         if(Objects.hashCode(message) == currentTransaction){
             numberAnswersReceived.incrementAndGet();
         }
+    }
+    public int updateEvmReceivedMessage(){
+        return numberEVMAnwsers.incrementAndGet();
+
     }
 }

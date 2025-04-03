@@ -59,7 +59,8 @@ public class Client {
                         clientRequests.updateOnMessageCountReceivedMessage(transaction);
 
                     } else if (msg instanceof EvmResultMessage) {
-                        System.out.println("EVM Response Reveived ==> " + ((EvmResultMessage) msg).getVal());
+                        if(clientRequests.updateEvmReceivedMessage() == fPlusOne)
+                            System.out.println("F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -76,10 +77,9 @@ public class Client {
                 "OPERATION 4  : TransferISTCoins(<TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
                 "OPERATION 5  : IncreaseAllowance(<SPENDER ADDRESS>, <AMOUNT TO ADD>)\n" +
                 "OPERATION 6  : DecreaseAllowance(<SPENDER ADDRESS>, <AMOUNT TO DECREASE>)\n" +
-                "OPERATION 7  : Approve(<SPENDER ADDRESS>, <AMOUNT TO APPROVE>)\n" +
-                "OPERATION 8  : FetchMyISTCoinBalance()\n" +
-                "OPERATION 9  : TransferDEPCoins(<TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
-                "OPERATION 10 : FetchMyDEPCoinBalance()\n" +
+                "OPERATION 7  : FetchMyISTCoinBalance()\n" +
+                "OPERATION 8  : TransferDEPCoins(<TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
+                "OPERATION 9 : FetchMyDEPCoinBalance()\n" +
                 "Type what to send in format: \"<OPERATION-NUMBER> <ARG 1> <ARG 2> <ARG 3> ...\"" +
                 "Please type addresses WITHOUT the hex prefix \"0x\"");
         String input = sc.nextLine();
@@ -122,17 +122,9 @@ public class Client {
                     }
                     break;
                 case 7:
-                    try{
-                        int value =  Integer.parseInt(inputValues[2]);
-                        trans = lib.Approve(myAddress, inputValues[1], value);
-                    }catch (Exception e){
-                        System.out.println("Inserted value is not valid");
-                    }
-                    break;
-                case 8:
                     trans = lib.MyBalance(myAddress);
                     break;
-                case 9:
+                case 8:
                     try{
                         int value =  Integer.parseInt(inputValues[2]);
                         trans = lib.TransferDepCoin(myAddress, inputValues[1], value);
@@ -140,7 +132,7 @@ public class Client {
                         System.out.println("Inserted value is not valid");
                     }
                     break;
-                case 10:
+                case 9:
                     trans = lib.MyDepCoinBalance(myAddress);
                     break;
                 default:
