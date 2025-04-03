@@ -27,11 +27,9 @@ To ensure all modules have access to the necessary dependencies, you need to add
 Once dependencies are set up, you can run the tests using the built-in test runner.
 
 ### Steps to Run Tests:
-1. Open **IntelliJ IDEA** and navigate to the `test` directory.
-2. Right-click the test class or package you want to run.
-3. Select **Run 'TestClassName'**.
-4. Alternatively, you can run all tests by opening the **Run** menu and selecting **Run All Tests**.
-5. View the test results in the **Run** or **Test Results** window.
+1. Click next to the Run symbol to open Run Configurations
+2. Open "All Configurations"
+3. Select the Run type specified in each test and follow the steps
 
 
 When running the tests, client 4 will always be considered to be the owner of ISTCoin, and therefore the owner of the Blacklist.
@@ -39,7 +37,7 @@ When running the tests, client 4 will always be considered to be the owner of IS
 This tests aims to show a regular execution of both the consensus and EVM, with no Byzantine Behaviour.
 
 ### Steps:
-1. Run the Normal Run configuration.
+1. Run the **Normal Run** configuration.
 2.  Go to Client with Id 4.
 3. Check your own balance by running ``7``.
 4. Verify that consensus runs correctly on the servers, client waits for f+1 consensus replies, as well as f+1 EVM replies.
