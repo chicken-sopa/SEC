@@ -91,6 +91,10 @@ public class EVM implements IEVM {
         Address senderAddress = Address.fromHexString(transaction.sourceAccount());
         Address destinationAddress = Address.fromHexString(transaction.destinationAddress());
 
+        // TODO
+        // Check Transaction signature against who the transaction says it came from
+        // Client needs to be modified to produce said signature
+
         StringBuilder hexStringBuilder = new StringBuilder();
         StringBuilder humanReadableStringBuilder = new StringBuilder();
         String answer;
