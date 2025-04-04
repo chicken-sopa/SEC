@@ -50,10 +50,12 @@ public class EVM implements IEVM {
 
             if (accountState.getCode() != null) {
                 // This is the contract
-                Address ownerAddress = Address.fromHexString(genesisblock.getBlockChainOwnerAddress());
+                String code =  accountState.getCode();
+                String owner = "0x" + code.substring(code.length()-40);
+                Address ownerAddress = Address.fromHexString(owner);
                 evmExecutor
                         .tracer(tracer)
-                        .code(Bytes.fromHexString(accountState.getCode() + AuxFunctions.padHexStringTo256Bit(ownerAddress.toUnprefixedHexString())))
+                        .code(Bytes.fromHexString(accountState.getCode()))
                         .sender(ownerAddress)
                         .receiver(address)
                         .contract(address)
