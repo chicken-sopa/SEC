@@ -17,7 +17,6 @@ import java.util.Scanner;
 public class GenesisBlock {
     private String blockHash;
     private String previousBlockHash;
-    private String blockChainOwnerAddress;
     private Transaction[] transactions;
     private Map<String, AccountState> state;
 
@@ -32,9 +31,6 @@ public class GenesisBlock {
         return previousBlockHash;
     }
 
-    public String getBlockChainOwnerAddress() {
-        return blockChainOwnerAddress;
-    }
 
     public Transaction[] getTransactions() {
         return transactions;
