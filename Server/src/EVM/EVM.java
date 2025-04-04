@@ -95,23 +95,34 @@ public class EVM implements IEVM {
         StringBuilder humanReadableStringBuilder = new StringBuilder();
         String answer;
 
-        if (!Objects.equals(transaction.amount(), "")) {
+
+        if (transaction.destinationAddress().isEmpty()){
+            humanReadableStringBuilder.append("received transaction for DC balance from <")
+                    .append(transaction.sourceAccount())
+                    .append(">");
+            MutableAccount senderAccount = world.getAccount(senderAddress);
+            System.out.println("Sender account current funds -> " + senderAccount.getBalance().getValue().toString());
+            answer = String.valueOf(true);
+
+        } else if (!Objects.equals(transaction.amount(), "")) {
             humanReadableStringBuilder.append("received transaction for DC transfer from <")
                     .append(transaction.sourceAccount())
                     .append("> to <")
                     .append(transaction.destinationAddress())
-                    .append("> the amount <")
+                    .append("> the amount of <")
                     .append(transaction.amount())
                     .append(">");
 
             int transferAmount = Integer.parseInt(transaction.amount());
             MutableAccount senderAccount = world.getAccount(senderAddress);
+            System.out.println("Sender account current funds -> " + senderAccount.getBalance().getValue().toString());
             if (transferAmount > 0 &&
                     new BigDecimal(senderAccount.getBalance().getValue().toString())
                             .compareTo(new BigDecimal((Wei.fromEth(transferAmount).getValue().toString()))) > 0) {
                 // Sender wallet has enough to perform transfer
                 senderAccount.decrementBalance(Wei.fromEth(transferAmount));
                 world.getAccount(destinationAddress).incrementBalance(Wei.fromEth(transferAmount));
+                System.out.println("Sender account current funds -> " + senderAccount.getBalance().getValue().toString());
                 System.out.println("Transaction finished");
                 answer = String.valueOf(true);
             } else {
@@ -157,6 +168,9 @@ public class EVM implements IEVM {
                 // Returns a boolean
                 boolean response = AuxFunctions.extractBooleanFromReturnData(byteArrayOutputStream);
                 answer = String.valueOf(response);
+                if (!response){
+                    answer += AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
+                }
             }
         }
         respondingToClientMethod.sendEVMAnswerToClient(answer);

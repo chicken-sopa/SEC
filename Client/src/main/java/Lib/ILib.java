@@ -14,7 +14,7 @@ public interface ILib {
     public Transaction IsBlackListed(String fromAddress, String blackListAddress) throws Exception;
 
     // IST Coin contract functions
-    public Transaction TransferISTCoin(String fromAddress, String toAddress, int value) throws Exception;
+    public Transaction TransferISTCoin(String senderAddress,String fromAddress, String toAddress, int value) throws Exception;
     public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception;
     public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception;
     public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception;
@@ -22,4 +22,5 @@ public interface ILib {
 
     // DEP Coin functions
     public Transaction TransferDepCoin(String fromAddress, String toAddress, int value) throws Exception;
+    public Transaction MyDepCoinBalance(String fromAddress) throws Exception;
 }

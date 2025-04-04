@@ -76,4 +76,32 @@ public class AuxFunctions {
 
         return String.format("%064x", bigInt);
     }
+
+
+    public static String extractErrorFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
+        String returnData = extractWordFromReturnData(byteArrayOutputStream);
+        // Check if the return data starts with the Solidity Error function selector
+        if (!returnData.startsWith("08c379a0")) {
+            return "";
+        }
+
+        // Extract the offset (should always be 32)
+        int offset = Integer.decode("0x" + returnData.substring(8, 8 + 64));
+        int stringLength = Integer.decode("0x" + returnData.substring(offset * 2 + 8, offset * 2 + 64 + 8));
+        String hexString = returnData.substring(offset * 2 + 64 + 8, offset * 2 + 64 + stringLength * 2 + 8);
+
+        return new String(hexStringToByteArray(hexString), StandardCharsets.UTF_8);
+    }
+
+    public static byte[] hexStringToByteArray(String hexString) {
+        int length = hexString.length();
+        byte[] byteArray = new byte[length / 2];
+
+        for (int i = 0; i < length; i += 2) {
+            int value = Integer.parseInt(hexString.substring(i, i + 2), 16);
+            byteArray[i / 2] = (byte) value;
+        }
+
+        return byteArray;
+    }
 }

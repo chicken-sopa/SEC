@@ -32,7 +32,8 @@ public class Server {
     Scanner sc;
     int processId;
     SignedWriteset writeset;
-
+    boolean isByzantine;
+    int typeOfByzantine;
 
     private final Lock leaderThreadLock = new ReentrantLock();
     private final Condition condition = leaderThreadLock.newCondition();
@@ -43,7 +44,7 @@ public class Server {
     Blockchain blockchain;
 
 
-    public Server(int port, int processId, boolean isLeader) throws Exception {
+    public Server(int port, int processId, boolean isLeader, boolean isByzantine, int typeOfByzantine) throws Exception {
 
         int quorumSize = 2;
 
@@ -54,7 +55,8 @@ public class Server {
         evm = new EVM();
         evmClientResponse = new EVMClientResponse(processId, authenticatedPerfectLink);
         blockchain = new Blockchain(authenticatedPerfectLink, evm, evmClientResponse);
-
+        this.isByzantine = isByzantine;
+        this.typeOfByzantine = typeOfByzantine;
         sc = new Scanner(System.in);
         this.isLeader = isLeader;
         this.processId = processId;
