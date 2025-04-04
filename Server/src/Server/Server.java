@@ -2,6 +2,7 @@ package Server;
 
 import Communication.Collection.*;
 import Communication.Consensus.Blockchain;
+import Communication.Consensus.ByzantineConsensus;
 import Communication.Consensus.ConsensusBFT;
 import EVM.IEVM;
 import EVM.EVM;
@@ -62,7 +63,11 @@ public class Server {
         this.processId = processId;
         try {
             writeset = new SignedWriteset(getProcessId(), KeyManager.getPrivateKey(processId));
-            consensusBFT = new ConsensusBFT(quorumSize, authenticatedPerfectLink, processId, blockchain);
+            if (isByzantine) {
+                consensusBFT = new ByzantineConsensus(quorumSize, authenticatedPerfectLink, processId, blockchain, digitalSignatureAuth, typeOfByzantine);
+            } else {
+                consensusBFT = new ConsensusBFT(quorumSize, authenticatedPerfectLink, processId, blockchain);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -8,7 +8,6 @@ import com.sec.Keys.KeyManager;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Messages.BaseMessage;
-import com.sec.Messages.StateMessage;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 
@@ -19,32 +18,37 @@ public class ByzantineConsensus extends ConsensusBFT {
 
     int consensusByzantineActionID;
 
-    public ByzantineConsensus(int quorumSize, AuthenticatedPerfectLink<BaseMessage> link, int serverID, Blockchain blockchain, DigitalSignatureAuth<BaseMessage> digitalSignatureAuth) throws Exception {
+    public ByzantineConsensus(int quorumSize, AuthenticatedPerfectLink<BaseMessage> link, int serverID, Blockchain blockchain, DigitalSignatureAuth<BaseMessage> digitalSignatureAuth, int typeByzantineAction) throws Exception {
         super(quorumSize, link, serverID, blockchain);
+        consensusByzantineActionID = typeByzantineAction;
+        this.digitalSignatureAuth = digitalSignatureAuth;
+
+        tryStartFakeByzantineConsensus();
     }
 
 
-    public boolean tryStartFakeByzantineConsensus() throws Exception {
 
-        int currentConsensusID = 0;
+    public void tryStartFakeByzantineConsensus() throws Exception {
+        if (consensusByzantineActionID == 0) {
+            int currentConsensusID = 0;
 
-        //check if proposed has clientId and sign corrected
-        ConditionalCollect<BaseMessage> conditionalCollect = new ConditionalCollect<BaseMessage>(link, quorumSize);
+            //check if proposed has clientId and sign corrected
+            ConditionalCollect<BaseMessage> conditionalCollect = new ConditionalCollect<BaseMessage>(link, quorumSize);
 
-        // we save the conditional collect object to be able to update msg received when receiving msg state
-        conditionalCollectByConsensusID.put(currentConsensusID, conditionalCollect);
+            // we save the conditional collect object to be able to update msg received when receiving msg state
+            conditionalCollectByConsensusID.put(currentConsensusID, conditionalCollect);
 
-        conditionalCollect.startCollection(currentConsensusID);
+            conditionalCollect.startCollection(currentConsensusID);
 
-        //WAIT 5 SEC TO GET MESSAGES
-        wait(5000);
+            //WAIT 5 SEC TO GET MESSAGES
+            wait(5000);
 
-        if (conditionalCollect.getCollectedMessages().size() >= this.quorumSize) {
-            System.out.println("BYZANTINE PROCESS STARTED CONSENSUS WHEN NOT LEADER");
-            return true;
+            if (conditionalCollect.getCollectedMessages().size() >= this.quorumSize) {
+                System.out.println("BYZANTINE PROCESS STARTED CONSENSUS WHEN NOT LEADER");
+            }else {
+                System.out.println("BYZANTINE PROCESS COULDN'T START CONSENSUS WHEN NOT LEADER");
+            }
         }
-
-        return false;
 
 
     }
