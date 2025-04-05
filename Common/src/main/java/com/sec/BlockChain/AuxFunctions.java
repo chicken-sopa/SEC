@@ -81,16 +81,24 @@ public class AuxFunctions {
     public static String extractErrorFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
         String returnData = extractWordFromReturnData(byteArrayOutputStream);
         // Check if the return data starts with the Solidity Error function selector
-        if (!returnData.startsWith("08c379a0")) {
-            return "";
+        if (returnData.startsWith("08c379a0")){
+
+            // Extract the offset (should always be 32)
+            int offset = Integer.decode("0x" + returnData.substring(8, 8 + 64));
+            int stringLength = Integer.decode("0x" + returnData.substring(offset * 2 + 8, offset * 2 + 64 + 8));
+            String hexString = returnData.substring(offset * 2 + 64 + 8, offset * 2 + 64 + stringLength * 2 + 8);
+
+            return new String(hexStringToByteArray(hexString), StandardCharsets.UTF_8);
         }
+        else if(returnData.startsWith("fb8f41b2")){
+            String hexAddressString = returnData.substring(8, 8 + 64).replaceFirst("^0+(?!$)", "");
+            int addressAllowance = Integer.decode("0x" + returnData.substring(8 + 64, 8 + 64 * 2));
+            int neededAllowance = Integer.decode("0x" + returnData.substring(8 + 64 * 2));
 
-        // Extract the offset (should always be 32)
-        int offset = Integer.decode("0x" + returnData.substring(8, 8 + 64));
-        int stringLength = Integer.decode("0x" + returnData.substring(offset * 2 + 8, offset * 2 + 64 + 8));
-        String hexString = returnData.substring(offset * 2 + 64 + 8, offset * 2 + 64 + stringLength * 2 + 8);
+            return hexAddressString + " has allowance of " + addressAllowance + " and needs at least " + neededAllowance;
+        }
+        return "";
 
-        return new String(hexStringToByteArray(hexString), StandardCharsets.UTF_8);
     }
 
     public static byte[] hexStringToByteArray(String hexString) {
