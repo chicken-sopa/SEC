@@ -51,14 +51,19 @@ This tests aims to show a regular execution of both the consensus and EVM, with 
 12. Try to transfer 40 more ISTCoin, and check that an error is returned with  ``10 0 1 40``
 13. Go back to Client 4 and blacklist Client 5 with ``1 1``
 14. Verify that all these movements did indeed change your balance with ``7``
-14. Verify that he is blacklisted with ``3 1``
-15. Go back to client 5 and try to transfer funds to Client 4 with ``4 0 10`` and verify the error
-
+15. Verify that he is blacklisted with ``3 1``
+16. Go back to client 5 and try to transfer funds to Client 4 with ``4 0 10`` and verify the error
+17. Now look at the file that persists the Blockhain.json, to see all these blocks with transactions.
 
 ## 4. Byzantine Consensus tests
 
 ### 4.1 A non leader tries to initiate consensus
-1. Run the "
+1. Run the " Byzantine Behaviour 0" run configuration.
+2. This will start server 1 with byzantine properties, such as trying to start a consensus without being the leader.
+3. Go to Client 4, and try sending a transaction like getting your own balance with ``7``
+4. Go to server 1 (the byzantine one), and check that he failed to start a consensus (it should have printed something like "**BYZANTINE PROCESS COULDN'T START CONSENSUS WHEN NOT LEADER"**)
+
+
 
 ### Troubleshooting Test Issues
 - Ensure all dependencies are correctly added and recognized.
