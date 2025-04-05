@@ -41,6 +41,7 @@ public class KeyManager {
             return EOA_KEYS.get(1);
         }
         else{
+            System.out.println("THE SOURCE ADDRESS WAS NONE OF THE KNOWN ONES, GETTING PUBLIC KEY OF REGULAR NODE");
             return PUBLIC_KEYS.get(1);
         }
     }

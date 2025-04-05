@@ -81,6 +81,10 @@ public class Transaction implements Serializable {
     }
 
     public String signTransaction(PrivateKey privateKey) throws Exception {
+        if(Objects.equals(sourceAccount, "0x583031D1113aD414F02576BD6afaBfb302140225")){
+            System.out.println("!!!!!!!!!!!!!!!!! swapped private key when signing");
+            privateKey = KeyManager.getEOAPrivateKey("CA35b7d915458EF540aDe6068dFe2F44E8fa733c");
+        }
         Signature rsa = Signature.getInstance("SHA256withRSA");
 
         rsa.initSign(privateKey);

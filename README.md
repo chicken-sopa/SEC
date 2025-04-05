@@ -93,6 +93,18 @@ Due to the verifications each node does when processing WRITE messages, these fa
 3. Node 1 will go through the consensus normally, and will eventually try to insert a falsified and never seen before value in its Write message
 4. All other nodes will disregard this message, as seen by the presence of the following print message in Node 1: "BYZANTINE WRITE MSG WAS NOT ACCEPTED"
 
+## Byzantine client testing
+
+Most byzantine client behaviour is difficult to test in the conditions of our application, as we only have two clients.
+
+Furthermore, most attacks on smart contracts are well protected by our implementation since it took inspiration to the OpenZeppelin ERC-20 implementation.
+
+However, we can try to simulate an impersonation attack by a client, pretendind to be another EOA, all the while only having access to its own Private Key.
+
+### Steps
+1. Run a "Normal Run"
+2. Go to Client 5 and Execute a fake transaction, trying to read another user's IST Coin balance by running ``11``.
+3. Verify that the EVM recognized that the transaction signature couldn't be validated.
 
 
 ### Troubleshooting Test Issues

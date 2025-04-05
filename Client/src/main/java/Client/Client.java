@@ -92,6 +92,7 @@ public class Client {
                 "OPERATION 8  : TransferDEPCoins(<TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
                 "OPERATION 9  : FetchMyDEPCoinBalance()\n" +
                 "OPERATION 10 : TransferISTCoinsFrom(<FROM ACCOUNT ADDRESS>, <TO ACCOUNT ADDRESS>, <AMOUNT>)\n" +
+                "OPERATION 11 : Byzantine Operation (check README.md)\n" +
                 "Type what to send in format: \"<OPERATION-NUMBER> <ARG 1> <ARG 2> <ARG 3> ...\"\n" +
                 "When an address is to be inputted, please use numbers 0-3 according to the provided list of addresses");
         String input = sc.nextLine();
@@ -172,6 +173,10 @@ public class Client {
                     } catch (Exception e) {
                         System.out.println("Inserted value is not valid");
                     }
+                    break;
+                case 11:
+                    // try to fake a transaction
+                    trans = lib.MyBalance("0x583031D1113aD414F02576BD6afaBfb302140225");
                     break;
                 default:
                     System.out.println("Value out of range (1-10)");
