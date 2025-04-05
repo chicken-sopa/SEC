@@ -1,6 +1,5 @@
 package EVM;
 
-import EVM.Genesis.*;
 import com.sec.BlockChain.AuxFunctions;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
@@ -40,7 +39,7 @@ public class EVM implements IEVM {
         tracer = new StandardJsonTracer(printStream, true, true, true, true);
 
         // Genesis
-        GenesisBlock genesisblock = GenesisBlock.readGenesisBlockFromJson();
+        Block genesisblock = Block.readGenesisBlockFromJson();
         evmExecutor = EVMExecutor.evm(EvmSpecVersion.CANCUN);
 
 

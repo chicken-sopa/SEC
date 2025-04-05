@@ -2,7 +2,6 @@ package Communication.Consensus;
 
 import EVM.EVM;
 import EVM.EVMClientResponse;
-import EVM.Genesis.GenesisBlock;
 import EVM.IEVM;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -50,8 +49,7 @@ public class Blockchain {
     }
 
     private Block getGenesisBlock() {
-        GenesisBlock initBlock = GenesisBlock.readGenesisBlockFromJson();
-        return initBlock.toBlock();
+        return Block.readGenesisBlockFromJson();
     }
 
 
@@ -126,7 +124,7 @@ public class Blockchain {
 
 
     public static void main(String[] args) throws IOException {
-        GenesisBlock genesisBlock = GenesisBlock.readGenesisBlockFromJson();
+        Block genesisBlock = Block.readGenesisBlockFromJson();
         int genesisHash = Objects.hashCode(genesisBlock);
         System.out.println("genesis hash = " + genesisBlock);
 
