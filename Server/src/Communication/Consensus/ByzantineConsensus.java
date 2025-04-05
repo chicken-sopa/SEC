@@ -93,7 +93,7 @@ public class ByzantineConsensus extends ConsensusBFT {
         }
 
         BaseMessage stateMessage = createStateMessage(msg.getMsgConsensusID()).toBaseMessage(); // SEND IT HAS BASE MSG AND TRY MANUAL TRANSFORM IN RECEIVER
-        System.out.println("SENDING STATUS RESPONSE WITH == " + stateMessage.prettyPrint());
+        System.out.println("SENDING FAKE STATUS RESPONSE WITH == " + stateMessage.toStateMessage().getWriteset().getWriteset().size());
         link.sendMessage(stateMessage, 4550);
         ;}
         else{
@@ -116,8 +116,13 @@ public class ByzantineConsensus extends ConsensusBFT {
         if (consensusByzantineActionID == 1) {
             try {
                 SignedValTSPair byzantineVal = createByzantineVal();
-                if (collectedMessage.getCollectedStates().get(this.SERVER_ID).getWriteset().getWriteset().contains(byzantineVal)) {
-                    System.out.println("BYZANTINE STATE MSG WAS ACCEPTED BY LEADER");
+                System.out.println("size of fake collected == " + collectedMessage.getCollectedStates().values().size() );
+                if(collectedMessage.getCollectedStates().get(this.SERVER_ID) != null){
+                    if (collectedMessage.getCollectedStates().get(this.SERVER_ID).getWriteset().getWriteset().contains(byzantineVal)) {
+                        System.out.println("BYZANTINE STATE MSG WAS ACCEPTED BY LEADER");
+                    }
+                }else{
+                    System.out.println("BYZANTINE STATE MSG WAS NOT ACCEPTED BY LEADER");
                 }
 
             } catch (Exception e) {
