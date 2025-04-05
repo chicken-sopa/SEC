@@ -409,7 +409,7 @@ public class ConsensusBFT {
             try {
                 conditionTimerConsensus.await(TIMEOUT, TimeUnit.MILLISECONDS); // Wake up one waiting thread
                 System.out.println("------------------------------------------TIMER OVER----------------------------------------------------- || ConsensusState = " + leaderConsensusState.getOrDefault(consensusID, ConsensusState.PROCESSING) + " || consensusID = " + consensusID );
-                if (leaderConsensusState.getOrDefault(currentConsensusID.get(), ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
+                if (leaderConsensusState.getOrDefault(consensusID, ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
                     leaderConsensusState.put(consensusID, ConsensusState.Aborted);
                     System.out.println("---------------------------------------CONSENSUS TIMEOUT ABORT-----------------------------------------");
                     this.conditionalCollectByConsensusID.get(consensusID).abortConditionalCollect();
