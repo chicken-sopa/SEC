@@ -1,6 +1,7 @@
 package Communication.Consensus;
 
 import Communication.Collection.*;
+import com.sec.BlockChain.Transaction;
 import com.sec.Links.AuthenticatedPerfectLink;
 import com.sec.Messages.*;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
@@ -373,7 +374,12 @@ public class ConsensusBFT {
                 System.out.println("Consensus is decided");
             } else if (leaderConsensusState.get(currentConsensusID.get()) == ConsensusState.Aborted) {
                 //currentTimestamp += 1;
-                leaderConsensusState.put(currentConsensusID.getAndIncrement(), ConsensusState.PROCESSING);
+                // send ABORT MESSAGE TO CLIENT
+                Transaction transaction = this.currentValTSPairByConsensusID.get(this.currentConsensusID.get()).getValTSPair().val();
+                AbortedConsensusMessage abortedMessage = new AbortedConsensusMessage(this.SERVER_ID, this.currentConsensusID.get(), transaction);
+                link.sendMessage(abortedMessage, transaction.);
+                currentConsensusID.getAndIncrement();
+
             }
 
 

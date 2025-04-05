@@ -9,5 +9,6 @@ public enum MessageType {
     ACCEPT,
     APPEND,
     FINISHED,
-    EVMRESULT
+    EVMRESULT,
+    ABORTED
 }
