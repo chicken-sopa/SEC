@@ -22,4 +22,8 @@ public interface ILib {
     // DEP Coin functions
     public Transaction TransferDepCoin(String fromAddress, String toAddress, int value) throws Exception;
     public Transaction MyDepCoinBalance(String fromAddress) throws Exception;
+
+
+
 }
+
