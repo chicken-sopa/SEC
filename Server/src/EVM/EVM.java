@@ -190,7 +190,7 @@ public class EVM implements IEVM {
                 boolean response = AuxFunctions.extractBooleanFromReturnData(byteArrayOutputStream);
                 answer = String.valueOf(response);
                 if (!response){
-                    answer += AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
+                    answer += " " +AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
                 }
             }
         }
