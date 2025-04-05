@@ -37,8 +37,11 @@ public class KeyManager {
     public static PublicKey getEOAPublicKey(String address) {
         if(address.startsWith("787")) {
             return EOA_KEYS.get(0);
-        }else {
+        }else if (address.startsWith("CA")){
             return EOA_KEYS.get(1);
+        }
+        else{
+            return PUBLIC_KEYS.get(1);
         }
     }
 
@@ -53,12 +56,16 @@ public class KeyManager {
     }
 
     public static PrivateKey getEOAPrivateKey(String address) {
+
         try {
             if(address.startsWith("787")) {
                 return loadPrivateKey("crypto/EOA_Owner_private.pem");
 
-            }else {
+            }else if (address.startsWith("CA")) {
                 return loadPrivateKey("crypto/EOA_User_private.pem");
+            }
+            else { //for byzantine behaviour
+                return loadPrivateKey("crypto/1_private.pem");
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load private key for EOA with address " + address , e);

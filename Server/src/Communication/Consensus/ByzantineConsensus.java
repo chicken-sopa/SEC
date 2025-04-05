@@ -130,7 +130,7 @@ public class ByzantineConsensus extends ConsensusBFT {
 
     @Override
     public void sendWriteRequest(SignedValTSPair pairToWrite, int msgConsensusID) throws Exception {
-        if (consensusByzantineActionID == 3) {
+        if (consensusByzantineActionID == 2) {
             SignedValTSPair byzantineVal = createByzantineVal();
             super.sendWriteRequest(byzantineVal, msgConsensusID);
 
