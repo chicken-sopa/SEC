@@ -40,7 +40,9 @@ public class ByzantineConsensus extends ConsensusBFT {
     public void tryStartFakeByzantineConsensus() throws Exception {
         if (consensusByzantineActionID == 0) {
             int currentConsensusID = 0;
-
+            waitLock.lock();
+            waitCondition.await(10000, TimeUnit.MILLISECONDS);
+            waitLock.unlock();
             //check if proposed has clientId and sign corrected
             ConditionalCollect<BaseMessage> conditionalCollect = new ConditionalCollect<BaseMessage>(link, quorumSize);
 
@@ -128,7 +130,7 @@ public class ByzantineConsensus extends ConsensusBFT {
 
     @Override
     public void sendWriteRequest(SignedValTSPair pairToWrite, int msgConsensusID) throws Exception {
-        if (consensusByzantineActionID == 3) {
+        if (consensusByzantineActionID == 2) {
             SignedValTSPair byzantineVal = createByzantineVal();
             super.sendWriteRequest(byzantineVal, msgConsensusID);
 
