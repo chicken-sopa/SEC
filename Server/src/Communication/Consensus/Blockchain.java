@@ -65,13 +65,14 @@ public class Blockchain {
         for (int i = 0; i < SIZE_TRANSACTIONS_IN_BLOCK; i++) {
             blockOfTransactions[i] = transactionsToAddToBlockchain.poll();
         }
-        int prevBlockHash = Objects.hashCode(blockchain.peek());
+        int prevBlockHash = blockchain.peek().getBlockHash();
         Block newBlock = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevBlockHash, blockOfTransactions);
         blockchain.add(newBlock);
 
         //CALL EVM TO RUN ALL THE TRANSACTIONS
 
         evm.processBlock(newBlock, evmClientResponse);
+        writeBlocksToFile(blockchain, "Blockchain.json");
     }
 
 

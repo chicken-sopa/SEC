@@ -11,12 +11,19 @@ import com.sec.Messages.BaseMessage;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 import static Configuration.ProcessConfig.getProcessId;
 
 public class ByzantineConsensus extends ConsensusBFT {
     DigitalSignatureAuth<BaseMessage> digitalSignatureAuth;
 
     int consensusByzantineActionID;
+
+    ReentrantLock waitLock = new ReentrantLock();
+    Condition waitCondition = waitLock.newCondition();
 
     public ByzantineConsensus(int quorumSize, AuthenticatedPerfectLink<BaseMessage> link, int serverID, Blockchain blockchain, DigitalSignatureAuth<BaseMessage> digitalSignatureAuth, int typeByzantineAction) throws Exception {
         super(quorumSize, link, serverID, blockchain);
@@ -42,8 +49,14 @@ public class ByzantineConsensus extends ConsensusBFT {
 
             conditionalCollect.startCollection(currentConsensusID);
 
-            //WAIT 5 SEC TO GET MESSAGES
-            wait(5000);
+            waitLock.lock();
+            try {
+                // Some condition check
+                waitCondition.await(5000, TimeUnit.MILLISECONDS);
+                // Code after waiting
+            } finally {
+                waitLock.unlock();
+            }
 
             if (conditionalCollect.getCollectedMessages().size() >= this.quorumSize) {
                 System.out.println("BYZANTINE PROCESS STARTED CONSENSUS WHEN NOT LEADER");
@@ -119,7 +132,15 @@ public class ByzantineConsensus extends ConsensusBFT {
             SignedValTSPair byzantineVal = createByzantineVal();
             super.sendWriteRequest(byzantineVal, msgConsensusID);
 
-            wait(5000);
+
+            waitLock.lock();
+            try {
+                // Some condition check
+                waitCondition.await(5000, TimeUnit.MILLISECONDS);
+                // Code after waiting
+            } finally {
+                waitLock.unlock();
+            }
             if(this.writeRequestsReceivedByConsensusID.get(msgConsensusID).get(pairToWrite.hashCode()) >= 1){
                 System.out.println("BYZANTINE WRITE MSG WAS ACCEPTED");
             }else {

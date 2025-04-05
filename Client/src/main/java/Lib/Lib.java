@@ -61,8 +61,6 @@ public class Lib implements ILib {
     @Override
     public Transaction TransferISTCoin (String senderAddress, String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
-
-
         return CreateTransaction(Constants.ISTCoinContractAddress, senderAddress, "", "",
                 Constants.transferFunctionSignature, fromAddress, toAddress, Integer.toHexString(value));
     }
@@ -79,13 +77,6 @@ public class Lib implements ILib {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.decreaseAllowanceFunctionSignature, spenderAddress, Integer.toHexString(subtractedValue));
-    }
-
-    @Override
-    public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception {
-        // TODO -> Add signature
-        return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
-                Constants.approveFunctionSignature, spenderAddress,Integer.toHexString(amount));
     }
 
     @Override
@@ -108,17 +99,5 @@ public class Lib implements ILib {
 
     private Transaction CreateTransaction(String destinationAddress, String fromAddress, String amount, String signature, String... args) throws Exception {
         return new Transaction(destinationAddress, fromAddress, args, amount,  getProcessId());
-    }
-
-
-
-    public void addMessageListener(Consumer<BaseMessage> listener) {
-        listeners.add(listener);
-    }
-
-    private void notifyListeners(BaseMessage message) {
-        for (Consumer<BaseMessage> listener : listeners) {
-            listener.accept(message);
-        }
     }
 }

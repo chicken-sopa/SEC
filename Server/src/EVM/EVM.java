@@ -20,7 +20,6 @@ import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.security.Key;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.util.Base64;
@@ -190,12 +189,13 @@ public class EVM implements IEVM {
                 boolean response = AuxFunctions.extractBooleanFromReturnData(byteArrayOutputStream);
                 answer = String.valueOf(response);
                 if (!response){
-                    answer += AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
+                    answer += " " +AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
                 }
             }
         }
         respondingToClientMethod.sendEVMAnswerToClient(answer,transaction.transactionOwnerId());
     }
+
     private boolean isSignatureValid(Transaction transaction, PublicKey senderPublicKey) {
         try {
             Signature verifier = Signature.getInstance("SHA256withRSA");
@@ -212,6 +212,4 @@ public class EVM implements IEVM {
             return false;
         }
     }
-
-
 }

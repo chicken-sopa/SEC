@@ -32,17 +32,12 @@ public class AuxFunctions {
 
         String memory = trace.get("memory").getAsString();
         JsonArray stack = trace.get("stack").getAsJsonArray();
-//        System.out.println(memory);
+
         int offset = Integer.decode(stack.get(stack.size() - 1).getAsString());
         int size = Integer.decode(stack.get(stack.size() - 2).getAsString());
         String word = memory.substring(2 + offset * 2, 2 + offset * 2 + size * 2);
         System.out.println("Word received from outputStream -> " + word);
         return word;
-    }
-
-    public static String extractAddressFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
-        String word = extractWordFromReturnData(byteArrayOutputStream);
-        return word.replaceFirst("^0+", "");
     }
 
     public static boolean extractBooleanFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
@@ -71,26 +66,28 @@ public class AuxFunctions {
                 hexString;
     }
 
-    public static String convertIntegerToHex256Bit(int number) {
-        BigInteger bigInt = BigInteger.valueOf(number);
-
-        return String.format("%064x", bigInt);
-    }
-
 
     public static String extractErrorFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
         String returnData = extractWordFromReturnData(byteArrayOutputStream);
         // Check if the return data starts with the Solidity Error function selector
-        if (!returnData.startsWith("08c379a0")) {
-            return "";
+        if (returnData.startsWith("08c379a0")){
+
+            // Extract the offset (should always be 32)
+            int offset = Integer.decode("0x" + returnData.substring(8, 8 + 64));
+            int stringLength = Integer.decode("0x" + returnData.substring(offset * 2 + 8, offset * 2 + 64 + 8));
+            String hexString = returnData.substring(offset * 2 + 64 + 8, offset * 2 + 64 + stringLength * 2 + 8);
+
+            return new String(hexStringToByteArray(hexString), StandardCharsets.UTF_8);
         }
+        else if(returnData.startsWith("fb8f41b2")){
+            String hexAddressString = returnData.substring(8, 8 + 64).replaceFirst("^0+(?!$)", "");
+            int addressAllowance = Integer.decode("0x" + returnData.substring(8 + 64, 8 + 64 * 2));
+            int neededAllowance = Integer.decode("0x" + returnData.substring(8 + 64 * 2));
 
-        // Extract the offset (should always be 32)
-        int offset = Integer.decode("0x" + returnData.substring(8, 8 + 64));
-        int stringLength = Integer.decode("0x" + returnData.substring(offset * 2 + 8, offset * 2 + 64 + 8));
-        String hexString = returnData.substring(offset * 2 + 64 + 8, offset * 2 + 64 + stringLength * 2 + 8);
+            return hexAddressString + " has allowance of " + addressAllowance + " and needs at least " + neededAllowance;
+        }
+        return "";
 
-        return new String(hexStringToByteArray(hexString), StandardCharsets.UTF_8);
     }
 
     public static byte[] hexStringToByteArray(String hexString) {

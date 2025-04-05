@@ -15,9 +15,6 @@ import java.util.Objects;
 
 public class Transaction implements Serializable {
 
-    // TODO -> Change to destrinationAddress to support DEPCoin transferences
-    // Add value -> represents depCoin
-    // logic - if value != 0/null, use logic to remove from one account, add to another
     String destinationAddress;
     String sourceAccount;
     String[] functionAndArgs;
