@@ -68,7 +68,8 @@ This tests aims to show a regular execution of both the consensus and EVM, with 
 1. Run the  "Byzantine Behaviour 1"
 2. Go to Client 4 and check your own balance with ``7``
 3. Verify that server 1 tries to falsify a transaction in the state message
-4. 
+4.  The leader should have not accepted this message, so look for a print Server 1 that looks like this: "BYZANTINE STATE MSG WAS NOT ACCEPTED BY LEADER"
+5. This means that the collected message received had ignored the fake state that was inserted by the byzantine value
 
 
 ### Troubleshooting Test Issues

@@ -53,3 +53,4 @@ bin/
 /Common/target/classes/com/sec/BlockChain/AccountState.class
 /Common/target/classes/com/sec/BlockChain/Block$1.class
 /Common/target/classes/com/sec/Messages/CollectedMessage.class
+/Common/target/classes/com/sec/Messages/AbortedConsensusMessage.class
