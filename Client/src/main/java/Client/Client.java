@@ -18,7 +18,6 @@ import java.util.Scanner;
 
 public class Client {
     private final ILib lib;
-    private int counter = 1;
     private final int id;
     private final Scanner sc;
     private final int[] destPorts;

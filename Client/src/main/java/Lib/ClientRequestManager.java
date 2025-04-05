@@ -43,10 +43,6 @@ public class ClientRequestManager {
 
     public void waitForResponses() {
         while (numberAnswersReceived.get() < fPlusOne && !consensusAborted) {
-
-            /*ReentrantLock lock;
-            lock.wait();
-            lock.no*/
         }
         if (consensusAborted) {
             System.out.println("------------------CONSENSUS WAS ABORTED---------------------------------");

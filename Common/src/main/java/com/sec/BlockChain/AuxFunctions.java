@@ -32,17 +32,12 @@ public class AuxFunctions {
 
         String memory = trace.get("memory").getAsString();
         JsonArray stack = trace.get("stack").getAsJsonArray();
-//        System.out.println(memory);
+
         int offset = Integer.decode(stack.get(stack.size() - 1).getAsString());
         int size = Integer.decode(stack.get(stack.size() - 2).getAsString());
         String word = memory.substring(2 + offset * 2, 2 + offset * 2 + size * 2);
         System.out.println("Word received from outputStream -> " + word);
         return word;
-    }
-
-    public static String extractAddressFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
-        String word = extractWordFromReturnData(byteArrayOutputStream);
-        return word.replaceFirst("^0+", "");
     }
 
     public static boolean extractBooleanFromReturnData(ByteArrayOutputStream byteArrayOutputStream) {
@@ -69,12 +64,6 @@ public class AuxFunctions {
 
         return "0".repeat(targetLength - length) +
                 hexString;
-    }
-
-    public static String convertIntegerToHex256Bit(int number) {
-        BigInteger bigInt = BigInteger.valueOf(number);
-
-        return String.format("%064x", bigInt);
     }
 
 

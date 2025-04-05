@@ -45,10 +45,6 @@ public class Block implements Serializable {
         return state;
     }
 
-    public Block toBlock() {
-        return new Block(5, getBlockHash(), getTransactions());
-    }
-
     public static Block readGenesisBlockFromJson() {
         try (Reader reader = new FileReader(Constants.genesisLocation)) {
 
