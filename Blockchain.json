@@ -22,7 +22,7 @@
     }
   },
   {
-    "blockHash": 2141048382,
+    "blockHash": 662229835,
     "previousBlockHash": 1555845260,
     "transactions": [
       {
@@ -35,8 +35,55 @@
         "transactionOwnerId": 4,
         "signature": "nPqOc5GmJWxqBiW148pvsumFsIcbo5EVAeEmljv3bTZA8NUh3qfh/QqUwC+scD3j9jlO418NbaIxyK0Pb28CyZFjkhJdkBxzclrrpq0QGdfCJDU3SfweOGjKPR//BqbzwcewF3odV+LFK9pW186Xfuci4rgWiK6reRUrdCRL3jmZmmHNuFyCoJbemUH/gEjBfkFZjR8RGAwULLDrhguatleASt/+pfWJNY8SypLj9ZWPU7QIdZv41KrjkcpnltM7ly6wKLUJGzkuKvYasu0rAPYSWhwWCwUqzib22L8VBlAyE5FEX1m9M6r5Yb1djdDAcbjT90EPXLbEEzMlSs3iFQ\u003d\u003d"
       },
+      {
+        "destinationAddress": "0x17F6AD8Ef982297579C203069C1DbfFE4348c372",
+        "sourceAccount": "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB",
+        "functionAndArgs": [
+          "myBalance()"
+        ],
+        "amount": "",
+        "transactionOwnerId": 4,
+        "signature": "nPqOc5GmJWxqBiW148pvsumFsIcbo5EVAeEmljv3bTZA8NUh3qfh/QqUwC+scD3j9jlO418NbaIxyK0Pb28CyZFjkhJdkBxzclrrpq0QGdfCJDU3SfweOGjKPR//BqbzwcewF3odV+LFK9pW186Xfuci4rgWiK6reRUrdCRL3jmZmmHNuFyCoJbemUH/gEjBfkFZjR8RGAwULLDrhguatleASt/+pfWJNY8SypLj9ZWPU7QIdZv41KrjkcpnltM7ly6wKLUJGzkuKvYasu0rAPYSWhwWCwUqzib22L8VBlAyE5FEX1m9M6r5Yb1djdDAcbjT90EPXLbEEzMlSs3iFQ\u003d\u003d"
+      },
       null,
       null,
+      null
+    ]
+  },
+  {
+    "blockHash": 422279018,
+    "previousBlockHash": 1555845260,
+    "transactions": [
+      {
+        "destinationAddress": "0x17F6AD8Ef982297579C203069C1DbfFE4348c372",
+        "sourceAccount": "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB",
+        "functionAndArgs": [
+          "myBalance()"
+        ],
+        "amount": "",
+        "transactionOwnerId": 4,
+        "signature": "nPqOc5GmJWxqBiW148pvsumFsIcbo5EVAeEmljv3bTZA8NUh3qfh/QqUwC+scD3j9jlO418NbaIxyK0Pb28CyZFjkhJdkBxzclrrpq0QGdfCJDU3SfweOGjKPR//BqbzwcewF3odV+LFK9pW186Xfuci4rgWiK6reRUrdCRL3jmZmmHNuFyCoJbemUH/gEjBfkFZjR8RGAwULLDrhguatleASt/+pfWJNY8SypLj9ZWPU7QIdZv41KrjkcpnltM7ly6wKLUJGzkuKvYasu0rAPYSWhwWCwUqzib22L8VBlAyE5FEX1m9M6r5Yb1djdDAcbjT90EPXLbEEzMlSs3iFQ\u003d\u003d"
+      },
+      {
+        "destinationAddress": "0x17F6AD8Ef982297579C203069C1DbfFE4348c372",
+        "sourceAccount": "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB",
+        "functionAndArgs": [
+          "myBalance()"
+        ],
+        "amount": "",
+        "transactionOwnerId": 4,
+        "signature": "nPqOc5GmJWxqBiW148pvsumFsIcbo5EVAeEmljv3bTZA8NUh3qfh/QqUwC+scD3j9jlO418NbaIxyK0Pb28CyZFjkhJdkBxzclrrpq0QGdfCJDU3SfweOGjKPR//BqbzwcewF3odV+LFK9pW186Xfuci4rgWiK6reRUrdCRL3jmZmmHNuFyCoJbemUH/gEjBfkFZjR8RGAwULLDrhguatleASt/+pfWJNY8SypLj9ZWPU7QIdZv41KrjkcpnltM7ly6wKLUJGzkuKvYasu0rAPYSWhwWCwUqzib22L8VBlAyE5FEX1m9M6r5Yb1djdDAcbjT90EPXLbEEzMlSs3iFQ\u003d\u003d"
+      },
+      {
+        "destinationAddress": "0x17F6AD8Ef982297579C203069C1DbfFE4348c372",
+        "sourceAccount": "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB",
+        "functionAndArgs": [
+          "myBalance()"
+        ],
+        "amount": "",
+        "transactionOwnerId": 4,
+        "signature": "nPqOc5GmJWxqBiW148pvsumFsIcbo5EVAeEmljv3bTZA8NUh3qfh/QqUwC+scD3j9jlO418NbaIxyK0Pb28CyZFjkhJdkBxzclrrpq0QGdfCJDU3SfweOGjKPR//BqbzwcewF3odV+LFK9pW186Xfuci4rgWiK6reRUrdCRL3jmZmmHNuFyCoJbemUH/gEjBfkFZjR8RGAwULLDrhguatleASt/+pfWJNY8SypLj9ZWPU7QIdZv41KrjkcpnltM7ly6wKLUJGzkuKvYasu0rAPYSWhwWCwUqzib22L8VBlAyE5FEX1m9M6r5Yb1djdDAcbjT90EPXLbEEzMlSs3iFQ\u003d\u003d"
+      },
       null,
       null
     ]

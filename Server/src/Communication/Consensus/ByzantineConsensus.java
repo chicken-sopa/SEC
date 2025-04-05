@@ -147,14 +147,16 @@ public class ByzantineConsensus extends ConsensusBFT {
             } finally {
                 waitLock.unlock();
             }
-            if(this.writeRequestsReceivedByConsensusID.get(msgConsensusID).get(pairToWrite.hashCode()) >= 1){
-                System.out.println("BYZANTINE WRITE MSG WAS ACCEPTED");
-            }else {
-                System.out.println("BYZANTINE WRITE MSG WAS NOT ACCEPTED");
-            }
+            if (this.acceptRequestsReceivedByConsensusID.get(msgConsensusID) != null) {
+                if (this.acceptRequestsReceivedByConsensusID.get(msgConsensusID).get(pairToWrite.hashCode()) != null) {
+                    System.out.println("BYZANTINE WRITE MSG WAS ACCEPTED");
+                } else {
+                    System.out.println("BYZANTINE WRITE MSG WAS NOT ACCEPTED");
+                }
 
-        } else {
-            super.sendWriteRequest(pairToWrite, msgConsensusID);
+            } else {
+                super.sendWriteRequest(pairToWrite, msgConsensusID);
+            }
         }
     }
 }

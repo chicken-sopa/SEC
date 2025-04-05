@@ -37,21 +37,18 @@ public class Lib implements ILib {
     // Region BlackListCalls
     @Override
     public Transaction AddToBlackList(String fromAddress, String addressToAdd) throws Exception {
-        // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.addToBlacklistFunctionSignature, addressToAdd);
     }
 
     @Override
     public Transaction RemoveFromBlackList(String fromAddress, String addressToRemove) throws Exception {
-        // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.removeFromBlacklistFunctionSignature, addressToRemove);
     }
 
     @Override
     public Transaction IsBlackListed(String fromAddress, String blackListAddress) throws Exception {
-        // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.isBlackListedFunctionSignature, blackListAddress);
     }
@@ -60,28 +57,25 @@ public class Lib implements ILib {
     // Region ISTCoin Calls
     @Override
     public Transaction TransferISTCoin (String senderAddress, String fromAddress, String toAddress, int value) throws Exception {
-        // TODO -> Add signature
+
         return CreateTransaction(Constants.ISTCoinContractAddress, senderAddress, "", "",
                 Constants.transferFunctionSignature, fromAddress, toAddress, Integer.toHexString(value));
     }
 
     @Override
     public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception {
-        // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.increaseAllowanceFunctionSignature, spenderAddress, Integer.toHexString(addedValue));
     }
 
     @Override
     public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception {
-        // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.decreaseAllowanceFunctionSignature, spenderAddress, Integer.toHexString(subtractedValue));
     }
 
     @Override
     public Transaction MyBalance(String fromAddress) throws Exception {
-        // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
                 Constants.myBalanceFunctionSignature);
     }
