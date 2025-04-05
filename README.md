@@ -46,9 +46,9 @@ This tests aims to show a regular execution of both the consensus and EVM, with 
 7. Go to Client with Id 5.
 8. Verify that you have received the funds with ``7``.
 9. Go back to Client 4 and increase allowance for Client 5 with ``5 1 120``
-10. Go back to Client 5 and transfer yourself 100 from Client 4 with ``10 0 100``
+10. Go back to Client 5 and transfer yourself 100 from Client 4 with ``10 0 1 100``
 11. Verify your balance with ``7``
-12. Try to transfer 40 more ISTCoin, and check that an error is returned with  ``10 0 40``
+12. Try to transfer 40 more ISTCoin, and check that an error is returned with  ``10 0 1 40``
 13. Go back to Client 4 and blacklist Client 4 with ``1 1``
 14. Verify that he is blacklisted with ``2 1``
 15. Go back to client 5 and try to transfer funds to Client 4 with ``4 0 10`` and verify the error

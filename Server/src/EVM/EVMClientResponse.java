@@ -15,11 +15,13 @@ public class EVMClientResponse implements IEVMClientResponse {
     }
 
 
+
     @Override
-    public void sendEVMAnswerToClient(String answerFromEVM) {
+    public void sendEVMAnswerToClient(String answerFromEVM, int transactionOwnerId) {
+        System.out.println("SENDING RESPONSE to EVM CLIENT" + (5550 + transactionOwnerId) );
         try {
             EvmResultMessage message = new EvmResultMessage(this.SENDER_ID, answerFromEVM);
-            link.sendMessage(message, 5554);
+            link.sendMessage(message, 5550 + transactionOwnerId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

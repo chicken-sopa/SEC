@@ -136,7 +136,7 @@ public class Blockchain {
 
         EVM evm = new EVM();
 
-        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100", "fakeSignature");
+        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100", "fakeSignature",100);
 
         Transaction[] blockOfTransactions = new Transaction[SIZE_TRANSACTIONS_IN_BLOCK];
         for (int i = 0; i < SIZE_TRANSACTIONS_IN_BLOCK; i++) {

@@ -1,22 +1,69 @@
 package com.sec.BlockChain;
 
+import com.sec.Keys.KeyManager;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.security.PrivateKey;
+import java.security.Signature;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Objects;
 
-public record Transaction(
-        // TODO -> Change to destrinationAddress to support DEPCoin transferences
-        // Add value -> represents depCoin
-        // logic - if value != 0/null, use logic to remove from one account, add to another
-        String destinationAddress,
-        String sourceAccount,
-        String[] functionAndArgs,
-        String amount,
-        String signature
+public class Transaction(
+
 ) implements Serializable {
+
+    // TODO -> Change to destrinationAddress to support DEPCoin transferences
+    // Add value -> represents depCoin
+    // logic - if value != 0/null, use logic to remove from one account, add to another
+    String destinationAddress;
+    String sourceAccount;
+    String[] functionAndArgs;
+    String amount;
+    int transactionOwnerId;
+    String signature;
+
+    public String destinationAddress() {
+        return destinationAddress;
+    }
+
+    public String sourceAccount() {
+        return sourceAccount;
+    }
+
+    public String[] functionAndArgs() {
+        return functionAndArgs;
+    }
+
+    public String amount() {
+        return amount;
+    }
+
+    public int transactionOwnerId() {
+        return transactionOwnerId;
+    }
+
+    public String signature() {
+        return signature;
+    }
+
+    public Transaction(String destinationAddress, String sourceAccount, String[] functionAndArgs, String amount, int transactionOwnerId) {
+        this.destinationAddress = destinationAddress;
+        this.sourceAccount = sourceAccount;
+        this.functionAndArgs = functionAndArgs;
+        this.amount = amount;
+        this.transactionOwnerId = transactionOwnerId;
+
+        this.signature = signTransaction(KeyManager.getEOAPrivateKey(sourceAccount));
+    }
+
+
+
+
 
     public byte[] getBytes() throws IOException {
         try (
@@ -38,9 +85,25 @@ public record Transaction(
         return sb.toString();
     }
 
+    private String signTransaction(PrivateKey privateKey) throws Exception {
+        Signature rsa = Signature.getInstance("SHA256withRSA");
+
+        rsa.initSign(privateKey);
+
+        byte[] hashBytes = ByteBuffer.allocate(4).putInt(this.hashCode()).array();  // Convert hashCode to bytes
+
+        rsa.update(hashBytes);
+
+        byte[] signatureBytes = rsa.sign();
+
+        return Base64.getEncoder().encodeToString(signatureBytes);
+    }
+
     @Override
     public int hashCode(){
-        return Objects.hash(destinationAddress(), sourceAccount(), signature(), amount(), Arrays.hashCode(functionAndArgs()));
+        return Objects.hash(destinationAddress(), sourceAccount(), amount(), Arrays.hashCode(functionAndArgs()));
     }
+
+
 
 }

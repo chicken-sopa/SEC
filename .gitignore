@@ -50,3 +50,6 @@ bin/
 /Common/target/classes/com/sec/BlockChain/Block.class
 /Server/target/classes/META-INF/jpms.args
 /Common/target/classes/com/sec/BlockChain/Transaction.class
+/Common/target/classes/com/sec/BlockChain/AccountState.class
+/Common/target/classes/com/sec/BlockChain/Block$1.class
+/Common/target/classes/com/sec/Messages/CollectedMessage.class
