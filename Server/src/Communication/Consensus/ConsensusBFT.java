@@ -44,7 +44,7 @@ public class ConsensusBFT {
 
     final int SERVER_ID;
 
-    final int f = 1; // TODO THIS IS WRONG // F NEEDS TO BE CALCULATED
+    final int f = 1;
 
     final int quorumSize;
     final AuthenticatedPerfectLink<BaseMessage> link;

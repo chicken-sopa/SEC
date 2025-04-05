@@ -55,7 +55,7 @@ This test aims to show a regular execution of both the consensus and EVM, with n
 16. Go back to client 5 and try to transfer funds to Client 4 with ``4 0 10`` and verify the error
 17. Now look at the file that persists the Blockhain.json, to see all these blocks with transactions.
 18. You can verify that each block only held one transaction, because we either wait for 5 seconds, or 1 transaction before outputting the block.
-19. Now, sending 4 or 5 ``7`` in quick succession. Take in mind this will break the readibility of the command line a bit due to duplicated messages.
+19. Now, sending 4 or 5 ``7`` in quick succession. Take in mind this will break the readability of the command line a bit due to duplicated messages.
 20. However, if you check Blockchain.json again, you can see all those transactions were appended to the same block.
 21. It's best to stop running the servers now, as well as the clients to not overload your CPU. 
 22. This concludes the test.
