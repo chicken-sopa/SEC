@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Default Run Test" type="CompoundRunConfigurationType">
-    <toRun name="Client.Main" type="Application" />
+  <configuration default="false" name="Normal Run" type="CompoundRunConfigurationType">
+    <toRun name="Cliente 4" type="Application" />
+    <toRun name="Cliente 5" type="Application" />
     <toRun name="Server 0 Leader" type="Application" />
-    <toRun name="Server 1" type="Application" />
+    <toRun name="Server 1 " type="Application" />
     <toRun name="Server 2" type="Application" />
     <toRun name="Server 3" type="Application" />
     <method v="2" />

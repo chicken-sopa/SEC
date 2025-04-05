@@ -4,6 +4,7 @@ import com.sec.BlockChain.AuxFunctions;
 import com.sec.BlockChain.Block;
 import com.sec.BlockChain.Transaction;
 import com.sec.Helpers.Constants;
+import com.sec.Keys.KeyManager;
 import org.apache.tuweni.bytes.Bytes;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
@@ -15,9 +16,14 @@ import org.hyperledger.besu.evm.frame.MessageFrame;
 import org.hyperledger.besu.evm.tracing.StandardJsonTracer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.util.Base64;
 import java.util.Objects;
 
 public class EVM implements IEVM {
@@ -92,9 +98,19 @@ public class EVM implements IEVM {
         Address senderAddress = Address.fromHexString(transaction.sourceAccount());
         Address destinationAddress = Address.fromHexString(transaction.destinationAddress());
 
-        // TODO
-        // Check Transaction signature against who the transaction says it came from
-        // Client needs to be modified to produce said signature
+        PublicKey senderPublicKey = KeyManager.getEOAPublicKey(transaction.sourceAccount());
+
+        if (senderPublicKey == null) {
+            System.out.println("No public key found for address " + transaction.sourceAccount());
+            respondingToClientMethod.sendEVMAnswerToClient("Error verifying transaction validity",transaction.transactionOwnerId());
+            return;
+        }
+
+        if (!isSignatureValid(transaction, senderPublicKey)) {
+            System.out.println("Invalid Signature for transaction");
+            respondingToClientMethod.sendEVMAnswerToClient("Error verifying transaction validity",transaction.transactionOwnerId());
+            return;
+        }
 
         StringBuilder hexStringBuilder = new StringBuilder();
         StringBuilder humanReadableStringBuilder = new StringBuilder();
@@ -174,12 +190,27 @@ public class EVM implements IEVM {
                 boolean response = AuxFunctions.extractBooleanFromReturnData(byteArrayOutputStream);
                 answer = String.valueOf(response);
                 if (!response){
-                    answer += AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
+                    answer += " " +AuxFunctions.extractErrorFromReturnData(byteArrayOutputStream);
                 }
             }
         }
-        respondingToClientMethod.sendEVMAnswerToClient(answer);
+        respondingToClientMethod.sendEVMAnswerToClient(answer,transaction.transactionOwnerId());
     }
 
+    private boolean isSignatureValid(Transaction transaction, PublicKey senderPublicKey) {
+        try {
+            Signature verifier = Signature.getInstance("SHA256withRSA");
+            verifier.initVerify(senderPublicKey);
 
+            byte[] hashBytes = ByteBuffer.allocate(4).putInt(transaction.hashCode()).array();
+            verifier.update(hashBytes);
+
+            byte[] signatureBytes = Base64.getDecoder().decode(transaction.signature());
+
+            return verifier.verify(signatureBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

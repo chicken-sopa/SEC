@@ -63,7 +63,7 @@ public class Client {
 
                     } else if (msg instanceof EvmResultMessage) {
                         if(clientRequests.updateEvmReceivedMessage() == fPlusOne)
-                            System.out.println("F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal());
+                            System.out.println("------------------------ F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal() + "---------------------------------------");
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -164,7 +164,7 @@ public class Client {
                         var addressFrom = ParseAddressArgument(inputValues[1]);
                         var addressTo = ParseAddressArgument(inputValues[2]);
                         if (addressFrom == null || addressTo == null) return null;
-                        int value =  Integer.parseInt(inputValues[2]);
+                        int value =  Integer.parseInt(inputValues[3]);
                         trans = lib.TransferISTCoin(myAddress, addressFrom, addressTo, value);
                     }catch (Exception e){
                         System.out.println("Inserted value is not valid");

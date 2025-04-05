@@ -59,31 +59,31 @@ public class Lib implements ILib {
 
     // Region ISTCoin Calls
     @Override
-    public Transaction TransferISTCoin(String senderAddress, String fromAddress, String toAddress, int value) throws Exception {
+    public Transaction TransferISTCoin (String senderAddress, String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, senderAddress, "", "",
-                Constants.transferFunctionSignature, fromAddress, toAddress, String.valueOf(value));
+                Constants.transferFunctionSignature, fromAddress, toAddress, Integer.toHexString(value));
     }
 
     @Override
     public Transaction IncreaseAllowance(String fromAddress, String spenderAddress, int addedValue) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
-                Constants.increaseAllowanceFunctionSignature, spenderAddress, String.valueOf(addedValue));
+                Constants.increaseAllowanceFunctionSignature, spenderAddress, Integer.toHexString(addedValue));
     }
 
     @Override
     public Transaction DecreaseAllowance(String fromAddress, String spenderAddress, int subtractedValue) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
-                Constants.decreaseAllowanceFunctionSignature, spenderAddress, String.valueOf(subtractedValue));
+                Constants.decreaseAllowanceFunctionSignature, spenderAddress, Integer.toHexString(subtractedValue));
     }
 
     @Override
     public Transaction Approve(String fromAddress, String spenderAddress, int amount) throws Exception {
         // TODO -> Add signature
         return CreateTransaction(Constants.ISTCoinContractAddress, fromAddress, "", "",
-                Constants.approveFunctionSignature, spenderAddress, String.valueOf(amount));
+                Constants.approveFunctionSignature, spenderAddress,Integer.toHexString(amount));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class Lib implements ILib {
 
     @Override
     public Transaction TransferDepCoin(String fromAddress, String toAddress, int value) throws Exception {
-        return CreateTransaction(toAddress, fromAddress, String.valueOf(value), "");
+        return CreateTransaction(toAddress, fromAddress, Integer.toHexString(value), "");
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Lib implements ILib {
     // End of ISTCoin Calls
 
     private Transaction CreateTransaction(String destinationAddress, String fromAddress, String amount, String signature, String... args) throws Exception {
-        return new Transaction(destinationAddress, fromAddress, args, amount, signature);
+        return new Transaction(destinationAddress, fromAddress, args, amount,  getProcessId());
     }
 
 

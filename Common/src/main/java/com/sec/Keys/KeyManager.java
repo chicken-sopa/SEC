@@ -10,6 +10,7 @@ import static com.sec.Keys.KeyLoader.loadPublicKey;
 
 public class KeyManager {
     private static final Map<Integer, PublicKey> PUBLIC_KEYS = new HashMap<>();
+    private static final Map<Integer, PublicKey> EOA_KEYS = new HashMap<>(); //<EOA_ADDRESS,KEY>
 
 
     static {
@@ -22,6 +23,8 @@ public class KeyManager {
             PUBLIC_KEYS.put(4, loadPublicKey("crypto/4_public.pem"));
             PUBLIC_KEYS.put(5, loadPublicKey("crypto/5_public.pem"));
             PUBLIC_KEYS.put(6, loadPublicKey("crypto/6_public.pem"));
+            EOA_KEYS.put(0,loadPublicKey("crypto/EOA_Owner_public.pem"));
+            EOA_KEYS.put(1,loadPublicKey("crypto/EOA_User_public.pem"));
         } catch (Exception e) {
             throw new RuntimeException("Failed to load public keys", e);
         }
@@ -31,6 +34,14 @@ public class KeyManager {
         return PUBLIC_KEYS.get(processId);
     }
 
+    public static PublicKey getEOAPublicKey(String address) {
+        if(address.startsWith("787")) {
+            return EOA_KEYS.get(0);
+        }else {
+            return EOA_KEYS.get(1);
+        }
+    }
+
 
     // Dynamically load the private key based on the process ID
     public static PrivateKey getPrivateKey(int processId) {
@@ -38,6 +49,19 @@ public class KeyManager {
             return loadPrivateKey("crypto/" + processId + "_private.pem");
         } catch (Exception e) {
             throw new RuntimeException("Failed to load private key for process " + processId, e);
+        }
+    }
+
+    public static PrivateKey getEOAPrivateKey(String address) {
+        try {
+            if(address.startsWith("787")) {
+                return loadPrivateKey("crypto/EOA_Owner_private.pem");
+
+            }else {
+                return loadPrivateKey("crypto/EOA_User_private.pem");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load private key for EOA with address " + address , e);
         }
     }
 

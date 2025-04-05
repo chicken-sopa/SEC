@@ -15,7 +15,7 @@ To ensure all modules have access to the necessary dependencies, you need to add
 2. Navigate to **File** > **Project Structure** (`Ctrl + Alt + Shift + S` on Windows/Linux or `Cmd + ;` on macOS).
 3. In the left panel, go to **Libraries**.
 4. Click on the **+** button and select **Java**.
-5. Navigate to the location of the required JAR files.
+5. Navigate to the location of the required JAR files (the jars folder in the root project directory).
 6. Select all necessary JARs and click **OK**.
 7. Ensure the added libraries are marked for all modules in the project.
 8. Click **Apply** and **OK** to save the changes.
@@ -46,15 +46,19 @@ This tests aims to show a regular execution of both the consensus and EVM, with 
 7. Go to Client with Id 5.
 8. Verify that you have received the funds with ``7``.
 9. Go back to Client 4 and increase allowance for Client 5 with ``5 1 120``
-10. Go back to Client 5 and transfer yourself 100 from Client 4 with ``10 0 100``
+10. Go back to Client 5 and transfer yourself 100 from Client 4 with ``10 0 1 100``
 11. Verify your balance with ``7``
-12. Try to transfer 40 more ISTCoin, and check that an error is returned with  ``10 0 40``
-13. Go back to Client 4 and blacklist Client 4 with ``1 1``
-14. Verify that he is blacklisted with ``2 1``
+12. Try to transfer 40 more ISTCoin, and check that an error is returned with  ``10 0 1 40``
+13. Go back to Client 4 and blacklist Client 5 with ``1 1``
+14. Verify that all these movements did indeed change your balance with ``7``
+14. Verify that he is blacklisted with ``3 1``
 15. Go back to client 5 and try to transfer funds to Client 4 with ``4 0 10`` and verify the error
 
 
 ## 4. Byzantine Consensus tests
+
+### 4.1 A non leader tries to initiate consensus
+1. Run the "
 
 ### Troubleshooting Test Issues
 - Ensure all dependencies are correctly added and recognized.
