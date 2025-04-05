@@ -68,6 +68,8 @@ public class Server {
             } else {
                 consensusBFT = new ConsensusBFT(quorumSize, authenticatedPerfectLink, processId, blockchain);
             }
+            //consensusBFT = new ConsensusBFT(quorumSize, authenticatedPerfectLink, processId, blockchain);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

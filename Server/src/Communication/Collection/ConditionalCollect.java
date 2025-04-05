@@ -19,7 +19,7 @@ public class ConditionalCollect<T extends BaseMessage> {
 
     private final AuthenticatedPerfectLink<BaseMessage> link;
     private final int quorumSize;
-    private final Map<Integer, StateMessage> collectedMessages = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, StateMessage> collectedMessages = new ConcurrentHashMap<>();
     private final Set<Integer> receivedFrom = Collections.synchronizedSet(new HashSet<>());
 
     public ConditionalCollect(AuthenticatedPerfectLink<T> link, int quorumSize) {
@@ -43,9 +43,9 @@ public class ConditionalCollect<T extends BaseMessage> {
      */
     public void waitForStateMessages() throws Exception {
         while (collectedMessages.size() < quorumSize && collectedMessages.get(0) != null) {
-
+            System.out.println("---------------------WAITING FOR STATE MESSAGES --------------------------------------");
         }
-        System.out.println("Received quorum of replies STATE MSG");
+        System.out.println("Received quorum of replies STATE MSG || number received messages = " + quorumSize);
     }
 
 
@@ -68,7 +68,7 @@ public class ConditionalCollect<T extends BaseMessage> {
     /**
      * Returns the collected messages once the quorum is reached.
      */
-    public Map<Integer, StateMessage> getCollectedMessages() {
+    public ConcurrentHashMap<Integer, StateMessage> getCollectedMessages() {
         return collectedMessages;
     }
 

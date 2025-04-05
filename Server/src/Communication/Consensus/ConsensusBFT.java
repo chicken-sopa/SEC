@@ -2,22 +2,17 @@ package Communication.Consensus;
 
 import Communication.Collection.*;
 import com.sec.Links.AuthenticatedPerfectLink;
-import com.sec.Messages.AcceptMessage;
+import com.sec.Messages.*;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 import com.sec.Keys.KeyManager;
 
-import java.security.PublicKey;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.sec.Messages.BaseMessage;
-import com.sec.Messages.StateMessage;
-import com.sec.Messages.WriteMessage;
 
 
 import static Configuration.ProcessConfig.getProcessId;
@@ -77,7 +72,7 @@ public class ConsensusBFT {
     }
 
 
-    public Map<Integer, StateMessage> sendReadRequestAndReceiveStates(int currentConsensusID) throws Exception {
+    public ConcurrentHashMap<Integer, StateMessage> sendReadRequestAndReceiveStates(int currentConsensusID) throws Exception {
         //check if proposed has clientId and sign corrected
         ConditionalCollect<BaseMessage> conditionalCollect = new ConditionalCollect<BaseMessage>(link, quorumSize);
 
@@ -94,7 +89,7 @@ public class ConsensusBFT {
             conditionalCollect.getCollectedMessages().put(this.SERVER_ID, leaderStateMessage);
         }
 
-        return (Map<Integer, StateMessage>) conditionalCollect.getCollectedMessages();
+        return conditionalCollect.getCollectedMessages();
     }
 
 
@@ -130,11 +125,17 @@ public class ConsensusBFT {
     }
 
 
-    public void sendCollectedMsg(Map<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
+    public void sendCollectedMsg(ConcurrentHashMap<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<>(link, quorumSize);
-        CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, collectedStates, msgConsensusID);
+
+        ConcurrentHashMap<Integer, StateMessage>newCollectedStatesDeepCopy = StateMessage.deepCopy(collectedStates); // ensures that no other value is added after the creation of collected msg until all of them are sent
+
+
+        CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, newCollectedStatesDeepCopy, msgConsensusID);
+        System.out.println(CollectedMessage.prettyPrintCollectedMSg(collectedMessage));
         broadcastMessage.sendBroadcast(collectedMessage);
     }
+
 
 
     public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage, int senderID) {
@@ -142,6 +143,7 @@ public class ConsensusBFT {
         //3º if none then value of the leader
 
         System.out.println("IM PROCESSING THE COLLECTED STATES");
+        System.out.println(CollectedMessage.prettyPrintCollectedMSg(collectedMessage));
         System.out.println("LEADER WRITESET  = " + collectedMessage.getCollectedStates().get(0).getWriteset().getWriteset().size());
 
 
@@ -189,6 +191,7 @@ public class ConsensusBFT {
                     .map(StateMessage::getWriteset)
                     .filter(set -> {
                         try {
+
                             return set.verifyWriteset(collectedMessage.getSenderId());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
@@ -414,7 +417,7 @@ public class ConsensusBFT {
         }
 
 
-        Map<Integer, StateMessage> collectedStates = sendReadRequestAndReceiveStates(consensusID);
+        ConcurrentHashMap<Integer, StateMessage> collectedStates = sendReadRequestAndReceiveStates(consensusID);
 
         System.out.println("Received collected Messages");
         System.out.println("Sending Collected Messages for Consensus = " + consensusID);

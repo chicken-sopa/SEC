@@ -45,7 +45,7 @@ public class BaseMessage implements IMessage, Serializable {
 
     @Override
     public String prettyPrint(){
-        return "Type("+ messageType+") ";
+        return "Type("+ messageType+") || consensusID = "+ this.consensusID+" ";
     }
 
     public int getMsgConsensusID() {return this.consensusID;}

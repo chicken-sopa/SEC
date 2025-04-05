@@ -12,6 +12,7 @@ import com.sec.Links.LinkMessages.UdpLinkMessage;
 import com.sec.Links.Security.DigitalSignatureAuth;
 import com.sec.Keys.KeyManager;
 import com.sec.Messages.BaseMessage;
+import com.sec.Messages.CollectedMessage;
 import com.sec.Messages.MessageType;
 import com.sec.Messages.StateMessage;
 
@@ -110,6 +111,9 @@ public class AuthenticatedPerfectLink<T extends IMessage> extends PerfectLink<T>
                     }else{
                         System.out.println("RECEIVING STATE WITH WRITESET SIZE = " + stateMessage.getWriteset().getWriteset().size());
                     }
+                }
+                if (baseMessage.getMessageType() == MessageType.COLLECTED){
+                    System.out.println("Error In Collected MSG \n" + CollectedMessage.prettyPrintCollectedMSg((CollectedMessage) baseMessage));
                 }
             }
             return null;

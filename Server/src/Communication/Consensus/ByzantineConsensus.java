@@ -1,6 +1,6 @@
 package Communication.Consensus;
 
-import Communication.Collection.CollectedMessage;
+import com.sec.Messages.CollectedMessage;
 import Communication.Collection.ConditionalCollect;
 import Communication.Collection.ReadMessage;
 import com.sec.BlockChain.Transaction;
@@ -22,6 +22,8 @@ public class ByzantineConsensus extends ConsensusBFT {
         super(quorumSize, link, serverID, blockchain);
         consensusByzantineActionID = typeByzantineAction;
         this.digitalSignatureAuth = digitalSignatureAuth;
+
+        System.out.println("---------------------THIS NODE IS BYZANTINE!!!!!!---------------------");
 
         tryStartFakeByzantineConsensus();
     }
