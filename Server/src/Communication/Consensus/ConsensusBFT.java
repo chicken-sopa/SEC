@@ -10,6 +10,7 @@ import com.sec.Keys.KeyManager;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -22,7 +23,7 @@ import static Configuration.ProcessConfig.getProcessId;
 public class ConsensusBFT {
     final int LEADER_ID = 0;
     final int CLIENT_ID = 0;
-    final int TIMEOUT = 5000;
+    final int TIMEOUT = 25000;
     final ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
 
     final ConcurrentHashMap<Integer, ConditionalCollect<BaseMessage>> conditionalCollectByConsensusID = new ConcurrentHashMap<>();
@@ -53,7 +54,9 @@ public class ConsensusBFT {
 
     private final Lock leaderConsensusThreadLock = new ReentrantLock();
     private final Condition conditionConsensus = leaderConsensusThreadLock.newCondition();
-    private final Condition conditionTimerConsensus = leaderConsensusThreadLock.newCondition();
+
+    private final Lock timerConsensusLock = new ReentrantLock();
+    private final Condition conditionTimerConsensus = timerConsensusLock.newCondition();
 
 
     //private
@@ -129,14 +132,17 @@ public class ConsensusBFT {
 
 
     public void sendCollectedMsg(ConcurrentHashMap<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
-        BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<>(link, quorumSize);
 
-        ConcurrentHashMap<Integer, StateMessage> newCollectedStatesDeepCopy = StateMessage.deepCopy(collectedStates); // ensures that no other value is added after the creation of collected msg until all of them are sent
+        if (leaderConsensusState.get(msgConsensusID) != ConsensusState.Aborted) {
+            BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<>(link, quorumSize);
+
+            ConcurrentHashMap<Integer, StateMessage> newCollectedStatesDeepCopy = StateMessage.deepCopy(collectedStates); // ensures that no other value is added after the creation of collected msg until all of them are sent
 
 
-        CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, newCollectedStatesDeepCopy, msgConsensusID);
-        System.out.println(CollectedMessage.prettyPrintCollectedMSg(collectedMessage));
-        broadcastMessage.sendBroadcast(collectedMessage);
+            CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, newCollectedStatesDeepCopy, msgConsensusID);
+            System.out.println(CollectedMessage.prettyPrintCollectedMSg(collectedMessage));
+            broadcastMessage.sendBroadcast(collectedMessage);
+        }
     }
 
 
@@ -354,7 +360,7 @@ public class ConsensusBFT {
     public synchronized void leaderConsensusThread() throws Exception {
 
         while (!messagesFromClient.isEmpty()) {
-
+            consensusTimer(this.currentConsensusID.get()); // this starts a thread to check if timeout has passed and if so then cancels conditional collect and sets consensusStat has aborted
             startConsensus(currentConsensusID.get());
 
             while (leaderConsensusState.getOrDefault(currentConsensusID.get(), ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
@@ -383,7 +389,8 @@ public class ConsensusBFT {
 
                 Transaction transaction = this.currentValTSPairByConsensusID.get(this.currentConsensusID.get()).getValTSPair().val();
                 AbortedConsensusMessage abortedMessage = new AbortedConsensusMessage(this.SERVER_ID, this.currentConsensusID.get(), transaction);
-                link.sendMessage(abortedMessage, transaction.transactionOwnerId());
+                System.out.println("CLIENT SENDER ID ABORT -------------------------------> " + transaction.transactionOwnerId());
+                link.sendMessage(abortedMessage, 5550 + transaction.transactionOwnerId()); // send to client abort message
                 currentConsensusID.getAndIncrement();
             }
 
@@ -392,40 +399,43 @@ public class ConsensusBFT {
 
     }
 
-
+    // this starts a thread to check if timeout has passed and if so then cancels conditional collect and sets consensusStat has aborted
+    //it calls await that waits on timeout and checks is  ConsensusState.PROCESSING, and if so then cancels every operation waiting
     public void consensusTimer(int consensusID) {
         new Thread(() -> {
 
+            timerConsensusLock.lock();
+            System.out.println("---------------------------------------------TIMER STARTED -------------------------------------------------- || consensusID = " + consensusID);
+            try {
+                conditionTimerConsensus.await(TIMEOUT, TimeUnit.MILLISECONDS); // Wake up one waiting thread
+                System.out.println("------------------------------------------TIMER OVER----------------------------------------------------- || ConsensusState = " + leaderConsensusState.getOrDefault(consensusID, ConsensusState.PROCESSING) + " || consensusID = " + consensusID );
+                if (leaderConsensusState.getOrDefault(currentConsensusID.get(), ConsensusState.PROCESSING) == ConsensusState.PROCESSING) {
+                    leaderConsensusState.put(consensusID, ConsensusState.Aborted);
+                    System.out.println("---------------------------------------CONSENSUS TIMEOUT ABORT-----------------------------------------");
+                    this.conditionalCollectByConsensusID.get(consensusID).abortConditionalCollect();
+                    wakeUpConsensusLeader();
+                }
 
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                timerConsensusLock.unlock();
+            }
 
         }).start();
     }
 
     public void startConsensus(int consensusID) throws Exception {
-        //readMessages = sendReadRequest();
-        //process message read
-        //TODO leader decides message to send
-
-        //int currentConsensusID = writesetByConsensusID.size();
-
-        /*
-         *  If Leader has no prior current write value or write then get one of the messages sent from the client
-         * TODO
-         *   -ask how to get messages from client
-         *   -make that when no messages from client wait()
-         *   -when message the notify() the thread if a sleep
-         **/
-
         System.out.println("-------------------------------------------");
         System.out.println("Start Consenusus with ID = " + consensusID);
 
+
+        //   If Leader has no prior current write value or write then get one of the messages sent from the client
         if (writesetByConsensusID.get(consensusID) == null && currentValTSPairByConsensusID.get(consensusID) == null) {
 
-            //SignedValTSPair newPair = new SignedValTSPair();
             SignedValTSPair msg = messagesFromClient.pollFirst();
 
             if (msg == null) {
-
                 System.out.println("---------------INIT MSG FOR CONSENSUS IS NULL ERROR---------------------");
                 return;
             }

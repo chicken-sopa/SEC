@@ -7,7 +7,7 @@ public class AbortedConsensusMessage extends BaseMessage {
     Transaction val;
 
     public AbortedConsensusMessage(int senderID, int consensusID, Transaction val) {
-        super(MessageType.FINISHED, senderID, consensusID);
+        super(MessageType.ABORTED, senderID, consensusID);
         this.val = val;
     }
 
