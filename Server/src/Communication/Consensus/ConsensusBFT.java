@@ -53,6 +53,8 @@ public class ConsensusBFT {
 
     private final Lock leaderConsensusThreadLock = new ReentrantLock();
     private final Condition conditionConsensus = leaderConsensusThreadLock.newCondition();
+    private final Condition conditionTimerConsensus = leaderConsensusThreadLock.newCondition();
+
 
     //private
 
@@ -390,6 +392,14 @@ public class ConsensusBFT {
 
     }
 
+
+    public void consensusTimer(int consensusID) {
+        new Thread(() -> {
+
+
+
+        }).start();
+    }
 
     public void startConsensus(int consensusID) throws Exception {
         //readMessages = sendReadRequest();
