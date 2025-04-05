@@ -1,9 +1,10 @@
 package Communication.Collection;
 
-import  com.sec.Links.AuthenticatedPerfectLink;
-import  com.sec.Messages.BaseMessage;
-import  com.sec.Messages.MessageType;
-import  com.sec.Messages.StateMessage;
+import com.sec.Keys.KeyManager;
+import com.sec.Links.AuthenticatedPerfectLink;
+import com.sec.Messages.BaseMessage;
+import com.sec.Messages.MessageType;
+import com.sec.Messages.StateMessage;
 
 
 import java.util.*;
@@ -21,7 +22,7 @@ public class ConditionalCollect<T extends BaseMessage> {
     private final int quorumSize;
     private final ConcurrentHashMap<Integer, StateMessage> collectedMessages = new ConcurrentHashMap<>();
     private final Set<Integer> receivedFrom = Collections.synchronizedSet(new HashSet<>());
-    private boolean  conditionalCollectAborted = false;
+    private boolean conditionalCollectAborted = false;
 
     public ConditionalCollect(AuthenticatedPerfectLink<T> link, int quorumSize) {
         this.link = (AuthenticatedPerfectLink<BaseMessage>) link;
@@ -43,14 +44,14 @@ public class ConditionalCollect<T extends BaseMessage> {
      * Processes incoming collect responses.
      */
     public void waitForStateMessages() throws Exception {
-        while (collectedMessages.size() < quorumSize && !conditionalCollectAborted){
+        while (collectedMessages.size() < quorumSize && !conditionalCollectAborted) {
             //System.out.println("---------------------WAITING FOR STATE MESSAGES --------------------------------------");
         }
         System.out.println("Received quorum of replies STATE MSG || number received messages = " + collectedMessages.size());
     }
 
 
-    public void processStateMessage(BaseMessage received) {
+    public void processStateMessage(BaseMessage received) throws Exception {
         if (received == null) return; //signature couldn't be verified
         //TODO: this might be incorrect, we might not be supposed to drop this
 
@@ -58,12 +59,21 @@ public class ConditionalCollect<T extends BaseMessage> {
         if (received.getMessageType() == MessageType.STATE) {
             StateMessage receivedState = (StateMessage) received.toStateMessage();
 
+            if (receivedState.getVal() != null) {
+                boolean verifyVal = receivedState.getVal().verifySignature(KeyManager.getPublicKey(receivedState.getVal().getClientId()));
+                if (!verifyVal){
+                    System.out.println("ERROR IN VALIDATION FROM VAL IN STATE ");
+                    return; // if no valid verification then skip this message
+                }
+            }
 
             // Store the valid message if it's from a new sender
             if (receivedFrom.add(sender)) {
                 collectedMessages.put(sender, receivedState);
             }
         }
+
+
     }
 
     /**
@@ -79,7 +89,7 @@ public class ConditionalCollect<T extends BaseMessage> {
     public void isValidCollection() {
     }
 
-    public void abortConditionalCollect(){
+    public void abortConditionalCollect() {
         conditionalCollectAborted = true;
     }
 
