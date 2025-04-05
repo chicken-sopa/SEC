@@ -83,7 +83,7 @@ public class Transaction implements Serializable {
         return sb.toString();
     }
 
-    private String signTransaction(PrivateKey privateKey) throws Exception {
+    public String signTransaction(PrivateKey privateKey) throws Exception {
         Signature rsa = Signature.getInstance("SHA256withRSA");
 
         rsa.initSign(privateKey);
