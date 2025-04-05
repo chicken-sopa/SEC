@@ -53,7 +53,6 @@ public class ConditionalCollect<T extends BaseMessage> {
 
     public void processStateMessage(BaseMessage received) throws Exception {
         if (received == null) return; //signature couldn't be verified
-        //TODO: this might be incorrect, we might not be supposed to drop this
 
         int sender = received.getSenderId();
         if (received.getMessageType() == MessageType.STATE) {
