@@ -16,11 +16,11 @@ import org.hyperledger.besu.evm.frame.MessageFrame;
 import org.hyperledger.besu.evm.tracing.StandardJsonTracer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.security.Key;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.util.Base64;
@@ -196,6 +196,7 @@ public class EVM implements IEVM {
         }
         respondingToClientMethod.sendEVMAnswerToClient(answer,transaction.transactionOwnerId());
     }
+
     private boolean isSignatureValid(Transaction transaction, PublicKey senderPublicKey) {
         try {
             Signature verifier = Signature.getInstance("SHA256withRSA");
@@ -212,6 +213,4 @@ public class EVM implements IEVM {
             return false;
         }
     }
-
-
 }

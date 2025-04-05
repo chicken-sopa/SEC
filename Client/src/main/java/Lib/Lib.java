@@ -61,8 +61,6 @@ public class Lib implements ILib {
     @Override
     public Transaction TransferISTCoin (String senderAddress, String fromAddress, String toAddress, int value) throws Exception {
         // TODO -> Add signature
-
-
         return CreateTransaction(Constants.ISTCoinContractAddress, senderAddress, "", "",
                 Constants.transferFunctionSignature, fromAddress, toAddress, Integer.toHexString(value));
     }
