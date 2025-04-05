@@ -60,7 +60,8 @@ This tests aims to show a regular execution of both the consensus and EVM, with 
 ### 4.1 A non leader tries to initiate consensus
 1. Run the " Byzantine Behaviour 0" run configuration.
 2. This will start server 1 with byzantine properties, such as trying to start a consensus without being the leader.
-3. Go to Client 4, and try sending a transaction like getting your own balance with ``7``
+3. We made this test in a way where no transactions need to be sent for the fake leader to try to start consensus. Our goal was to demonstrate that nodes only accept INIT messages from the Leader.
+4. After about 10 secons, Server 1 will try to start consensus
 4. Go to server 1 (the byzantine one), and check that he failed to start a consensus (it should have printed something like "**BYZANTINE PROCESS COULDN'T START CONSENSUS WHEN NOT LEADER"**)
 
 

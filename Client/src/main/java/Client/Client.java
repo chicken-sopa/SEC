@@ -63,7 +63,7 @@ public class Client {
 
                     } else if (msg instanceof EvmResultMessage) {
                         if (clientRequests.updateEvmReceivedMessage() == fPlusOne)
-                            System.out.println("F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal());
+                            System.out.println("----------------------------------- F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal() + " -----------------------------------------------");
                     } else if (msg instanceof AbortedConsensusMessage) {
                         clientRequests.clientRequestAborted();
                     }
