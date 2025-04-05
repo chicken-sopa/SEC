@@ -22,8 +22,17 @@ contract ISTCoin is ERC20, Blacklist {
         return 2;
     }
 
-    function transfer(address from, address to, uint256 value) public returns (bool) {
-        _update(from, to, value);
+    function makeTransfer(address from, address to, uint256 value) public returns (bool) {
+        if (from == _msgSender()){
+            _update(from, to, value);
+        }
+        else{
+            if (from != address(0)) {
+                require(!isBlacklisted(from), "ISTCoin: Sender is blacklisted");
+            }
+            transferFrom(from, to, value);
+        }
+
         return true;
     }
 
