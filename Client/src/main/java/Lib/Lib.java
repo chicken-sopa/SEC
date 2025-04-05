@@ -107,7 +107,7 @@ public class Lib implements ILib {
     // End of ISTCoin Calls
 
     private Transaction CreateTransaction(String destinationAddress, String fromAddress, String amount, String signature, String... args) throws Exception {
-        return new Transaction(destinationAddress, fromAddress, args, amount, signature, getProcessId());
+        return new Transaction(destinationAddress, fromAddress, args, amount,  getProcessId());
     }
 
 

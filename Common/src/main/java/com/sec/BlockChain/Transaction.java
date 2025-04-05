@@ -13,9 +13,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
-public class Transaction(
-
-) implements Serializable {
+public class Transaction implements Serializable {
 
     // TODO -> Change to destrinationAddress to support DEPCoin transferences
     // Add value -> represents depCoin
@@ -51,7 +49,7 @@ public class Transaction(
         return signature;
     }
 
-    public Transaction(String destinationAddress, String sourceAccount, String[] functionAndArgs, String amount, int transactionOwnerId) {
+    public Transaction(String destinationAddress, String sourceAccount, String[] functionAndArgs, String amount, int transactionOwnerId) throws Exception {
         this.destinationAddress = destinationAddress;
         this.sourceAccount = sourceAccount;
         this.functionAndArgs = functionAndArgs;

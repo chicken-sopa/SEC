@@ -136,27 +136,27 @@ public class Blockchain {
 
         EVM evm = new EVM();
 
-        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100", "fakeSignature",100);
+//        Transaction fakeMsg = new Transaction("fakeContract", "fakeAccount", new String[]{"fake", "val"}, "100", "fakeSignature",100);
+//
+//        Transaction[] blockOfTransactions = new Transaction[SIZE_TRANSACTIONS_IN_BLOCK];
+//        for (int i = 0; i < SIZE_TRANSACTIONS_IN_BLOCK; i++) {
+//            blockOfTransactions[i] = fakeMsg;
+//        }
 
-        Transaction[] blockOfTransactions = new Transaction[SIZE_TRANSACTIONS_IN_BLOCK];
-        for (int i = 0; i < SIZE_TRANSACTIONS_IN_BLOCK; i++) {
-            blockOfTransactions[i] = fakeMsg;
-        }
-
-        int prevHah = 1234561;
-        Block block1 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevHah, blockOfTransactions);
-        blockchain.add(block1);
-
-        System.out.println("writing BlockChain");
-        writeBlocksToFile(blockchain, "Blockchain.json");
-
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-
-        Block bLock2 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, Objects.hashCode(block1), blockOfTransactions);
-        blockchain.add(bLock2);
-
-        writeBlocksToFile(blockchain, "Blockchain.json");
+//        int prevHah = 1234561;
+//        Block block1 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, prevHah, blockOfTransactions);
+//        blockchain.add(block1);
+//
+//        System.out.println("writing BlockChain");
+//        writeBlocksToFile(blockchain, "Blockchain.json");
+//
+//        Scanner sc = new Scanner(System.in);
+//        String input = sc.nextLine();
+//
+//        Block bLock2 = new Block(SIZE_TRANSACTIONS_IN_BLOCK, Objects.hashCode(block1), blockOfTransactions);
+//        blockchain.add(bLock2);
+//
+//        writeBlocksToFile(blockchain, "Blockchain.json");
 
     }
 
