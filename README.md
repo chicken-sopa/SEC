@@ -57,6 +57,9 @@ This tests aims to show a regular execution of both the consensus and EVM, with 
 
 ## 4. Byzantine Consensus tests
 
+### 4.1 A non leader tries to initiate consensus
+1. Run the "
+
 ### Troubleshooting Test Issues
 - Ensure all dependencies are correctly added and recognized.
 - If tests are not running, try rebuilding the project (`Build` > `Rebuild Project`).
