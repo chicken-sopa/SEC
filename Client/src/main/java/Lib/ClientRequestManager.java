@@ -42,12 +42,8 @@ public class ClientRequestManager {
 
     public void waitForResponses(){
         while(numberAnswersReceived.get() < fPlusOne) {
-
-            /*ReentrantLock lock;
-            lock.wait();
-            lock.no*/
         }
-        System.out.println("Received confirmation that transaction has beena agreed upon from f+1 processes.");
+        System.out.println("Received confirmation that transaction has been agreed upon from f+1 processes.");
 
     }
 
