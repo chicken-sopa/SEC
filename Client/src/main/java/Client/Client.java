@@ -5,6 +5,7 @@ import Lib.Lib;
 import com.sec.BlockChain.Transaction;
 import Lib.ClientRequestManager;
 import com.sec.Helpers.Constants;
+import com.sec.Messages.AbortedConsensusMessage;
 import com.sec.Messages.BaseMessage;
 import com.sec.Messages.ConsensusFinishedMessage;
 import com.sec.Messages.EvmResultMessage;
@@ -39,7 +40,7 @@ public class Client {
             while (true) {
                 try {
                     Transaction message = ProcessCommands();
-                    if(message != null) {
+                    if (message != null) {
                         clientRequests.sendMessage(message);
                         clientRequests.waitForResponses();
                     }
@@ -61,9 +62,12 @@ public class Client {
                         clientRequests.updateOnMessageCountReceivedMessage(transaction);
 
                     } else if (msg instanceof EvmResultMessage) {
-                        if(clientRequests.updateEvmReceivedMessage() == fPlusOne)
-                            System.out.println("------------------------ F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal() + "---------------------------------------");
+                        if (clientRequests.updateEvmReceivedMessage() == fPlusOne)
+                            System.out.println("F + 1 EVM Responses Received, operation confirmed ==> " + ((EvmResultMessage) msg).getVal());
+                    } else if (msg instanceof AbortedConsensusMessage) {
+                        clientRequests.clientRequestAborted();
                     }
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -113,32 +117,32 @@ public class Client {
                     trans = lib.IsBlackListed(myAddress, address);
                     break;
                 case 4:
-                    try{
+                    try {
                         address = ParseAddressArgument(inputValues[1]);
                         if (address == null) return null;
-                        int value =  Integer.parseInt(inputValues[2]);
+                        int value = Integer.parseInt(inputValues[2]);
                         trans = lib.TransferISTCoin(myAddress, myAddress, address, value);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Inserted value is not valid");
                     }
                     break;
                 case 5:
-                    try{
+                    try {
                         address = ParseAddressArgument(inputValues[1]);
                         if (address == null) return null;
-                        int value =  Integer.parseInt(inputValues[2]);
+                        int value = Integer.parseInt(inputValues[2]);
                         trans = lib.IncreaseAllowance(myAddress, address, value);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Inserted value is not valid");
                     }
                     break;
                 case 6:
-                    try{
+                    try {
                         address = ParseAddressArgument(inputValues[1]);
                         if (address == null) return null;
-                        int value =  Integer.parseInt(inputValues[2]);
+                        int value = Integer.parseInt(inputValues[2]);
                         trans = lib.DecreaseAllowance(myAddress, address, value);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Inserted value is not valid");
                     }
                     break;
@@ -146,12 +150,12 @@ public class Client {
                     trans = lib.MyBalance(myAddress);
                     break;
                 case 8:
-                    try{
+                    try {
                         address = ParseAddressArgument(inputValues[1]);
                         if (address == null) return null;
-                        int value =  Integer.parseInt(inputValues[2]);
+                        int value = Integer.parseInt(inputValues[2]);
                         trans = lib.TransferDepCoin(myAddress, address, value);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Inserted value is not valid");
                     }
                     break;
@@ -159,13 +163,13 @@ public class Client {
                     trans = lib.MyDepCoinBalance(myAddress);
                     break;
                 case 10:
-                    try{
+                    try {
                         var addressFrom = ParseAddressArgument(inputValues[1]);
                         var addressTo = ParseAddressArgument(inputValues[2]);
                         if (addressFrom == null || addressTo == null) return null;
-                        int value =  Integer.parseInt(inputValues[3]);
+                        int value = Integer.parseInt(inputValues[2]);
                         trans = lib.TransferISTCoin(myAddress, addressFrom, addressTo, value);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Inserted value is not valid");
                     }
                     break;
@@ -180,9 +184,9 @@ public class Client {
         }
     }
 
-    private String ParseAddressArgument(String addressArgument){
+    private String ParseAddressArgument(String addressArgument) {
         var addressIndex = Integer.parseInt(addressArgument);
-        if (addressIndex >= 0 && addressIndex <= Constants.allUserAddresses.length){
+        if (addressIndex >= 0 && addressIndex <= Constants.allUserAddresses.length) {
             return Constants.allUserAddresses[addressIndex];
         }
         return null;
