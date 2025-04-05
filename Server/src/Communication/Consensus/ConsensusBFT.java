@@ -19,31 +19,31 @@ import java.util.concurrent.locks.ReentrantLock;
 import static Configuration.ProcessConfig.getProcessId;
 
 
-
 public class ConsensusBFT {
     final int LEADER_ID = 0;
     final int CLIENT_ID = 0;
-     final ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
+    final int TIMEOUT = 5000;
+    final ConcurrentHashMap<Integer, SignedWriteset> writesetByConsensusID = new ConcurrentHashMap<>();
 
-     final ConcurrentHashMap<Integer, ConditionalCollect<BaseMessage>> conditionalCollectByConsensusID = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Integer, ConditionalCollect<BaseMessage>> conditionalCollectByConsensusID = new ConcurrentHashMap<>();
 
-     final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> writeRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-     final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> acceptRequestsReceivedByConsensusID = new ConcurrentHashMap<>();
 
-     final ConcurrentHashMap<Integer, ConsensusState> leaderConsensusState = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Integer, ConsensusState> leaderConsensusState = new ConcurrentHashMap<>();
 
-     final ConcurrentHashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Integer, SignedValTSPair> currentValTSPairByConsensusID = new ConcurrentHashMap<>();
 
-     //final int currentTS = 0;
+    //final int currentTS = 0;
 
-     final AtomicInteger currentConsensusID = new AtomicInteger(0);
+    final AtomicInteger currentConsensusID = new AtomicInteger(0);
 
-     public final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
+    public final Deque<SignedValTSPair> messagesFromClient = new ArrayDeque<>();
 
-     final int SERVER_ID;
+    final int SERVER_ID;
 
-     final int f = 1; // TODO THIS IS WRONG // F NEEDS TO BE CALCULATED
+    final int f = 1; // TODO THIS IS WRONG // F NEEDS TO BE CALCULATED
 
     final int quorumSize;
     final AuthenticatedPerfectLink<BaseMessage> link;
@@ -85,7 +85,7 @@ public class ConsensusBFT {
 
 
         //This ensures that leader always send its state message even if other process are quicker to send it
-        if(conditionalCollect.getCollectedMessages().get(this.SERVER_ID) == null){
+        if (conditionalCollect.getCollectedMessages().get(this.SERVER_ID) == null) {
             StateMessage leaderStateMessage = createStateMessage(currentConsensusID);
             conditionalCollect.getCollectedMessages().put(this.SERVER_ID, leaderStateMessage);
         }
@@ -106,7 +106,7 @@ public class ConsensusBFT {
 
         System.out.println("SENDING STATUS WITH WRITESET SIZE = " + currentWriteset.getWriteset().size());
 
-        SignedWriteset currentWritesetClone  = new SignedWriteset(currentWriteset); // to garantee that this is an inmutable copy we do clone of this writeset
+        SignedWriteset currentWritesetClone = new SignedWriteset(currentWriteset); // to garantee that this is an inmutable copy we do clone of this writeset
 
         StateMessage stateMessageToSend = new StateMessage(this.SERVER_ID, currentValTsPair, currentWritesetClone, msgConsensusID);
 
@@ -116,7 +116,7 @@ public class ConsensusBFT {
 
     public void processReadMessage(ReadMessage msg) throws Exception {
 
-        if(msg.getSenderId() != LEADER_ID ){
+        if (msg.getSenderId() != LEADER_ID) {
             return;
         }
 
@@ -129,14 +129,13 @@ public class ConsensusBFT {
     public void sendCollectedMsg(ConcurrentHashMap<Integer, StateMessage> collectedStates, int msgConsensusID) throws Exception {
         BroadcastMessage<BaseMessage> broadcastMessage = new BroadcastMessage<>(link, quorumSize);
 
-        ConcurrentHashMap<Integer, StateMessage>newCollectedStatesDeepCopy = StateMessage.deepCopy(collectedStates); // ensures that no other value is added after the creation of collected msg until all of them are sent
+        ConcurrentHashMap<Integer, StateMessage> newCollectedStatesDeepCopy = StateMessage.deepCopy(collectedStates); // ensures that no other value is added after the creation of collected msg until all of them are sent
 
 
         CollectedMessage collectedMessage = new CollectedMessage(this.SERVER_ID, newCollectedStatesDeepCopy, msgConsensusID);
         System.out.println(CollectedMessage.prettyPrintCollectedMSg(collectedMessage));
         broadcastMessage.sendBroadcast(collectedMessage);
     }
-
 
 
     public SignedValTSPair processCollectedStatesMessage(CollectedMessage collectedMessage, int senderID) {
@@ -213,10 +212,10 @@ public class ConsensusBFT {
             }
         }
 
-        if(collectedStates.get(0) == null){
+        if (collectedStates.get(0) == null) {
             System.out.println("ERROR");
             System.out.println("THE VALUE PROPOSED IN LEADER PROCESS STATUS = NULL");
-            collectedMessage.getCollectedStates().forEach((key, value) ->{
+            collectedMessage.getCollectedStates().forEach((key, value) -> {
                 value.getWriteset().getWriteset().forEach((signedValTSPair -> {
                     System.out.print(signedValTSPair.prettyPrint());
                 }));
@@ -241,7 +240,7 @@ public class ConsensusBFT {
             writesetByConsensusID.put(msgConsensusID, currentWriteset);
         }
 
-        System.out.println("--------------------------------UPDATING WRITESET VALUE val = " + pairToWrite.prettyPrint() +  " ----------------------------------------------");
+        System.out.println("--------------------------------UPDATING WRITESET VALUE val = " + pairToWrite.prettyPrint() + " ----------------------------------------------");
 
         // update writeSet and current Value to Write in specific consensusID
         currentWriteset.appendToWriteset(pairToWrite);
@@ -260,7 +259,7 @@ public class ConsensusBFT {
 
         SignedValTSPair pairToWrite = writeMessage.getPairToProposeWrite();
 
-        if(pairToWrite == null){
+        if (pairToWrite == null) {
 
             System.out.println("ERROORRR --> leader got a null to write  --> consensus aborted");
             leaderConsensusState.put(msgConsensusID, ConsensusState.Aborted);
@@ -375,11 +374,15 @@ public class ConsensusBFT {
             } else if (leaderConsensusState.get(currentConsensusID.get()) == ConsensusState.Aborted) {
                 //currentTimestamp += 1;
                 // send ABORT MESSAGE TO CLIENT
+                /*
+                 * IF error the send to client that consensus was aborted
+                 * and update the value of the consensus ID to the next on
+                 * */
+
                 Transaction transaction = this.currentValTSPairByConsensusID.get(this.currentConsensusID.get()).getValTSPair().val();
                 AbortedConsensusMessage abortedMessage = new AbortedConsensusMessage(this.SERVER_ID, this.currentConsensusID.get(), transaction);
-                link.sendMessage(abortedMessage, transaction.);
+                link.sendMessage(abortedMessage, transaction.transactionOwnerId());
                 currentConsensusID.getAndIncrement();
-
             }
 
 
@@ -411,7 +414,7 @@ public class ConsensusBFT {
             //SignedValTSPair newPair = new SignedValTSPair();
             SignedValTSPair msg = messagesFromClient.pollFirst();
 
-            if(msg == null){
+            if (msg == null) {
 
                 System.out.println("---------------INIT MSG FOR CONSENSUS IS NULL ERROR---------------------");
                 return;
@@ -440,7 +443,7 @@ public class ConsensusBFT {
             case STATE -> {
                 StateMessage msg = (StateMessage) message.toStateMessage();
                 System.out.println("COLLECTED RECEIVED == " + msg.prettyPrint() + " || senderID = " + msg.getSenderId());
-                if(!msg.getWriteset().getWriteset().isEmpty()){
+                if (!msg.getWriteset().getWriteset().isEmpty()) {
                     System.out.println("WRITESET ISNT NULLLLL = " + msg.getWriteset().getWriteset().get(0).prettyPrint());
                 }
 
