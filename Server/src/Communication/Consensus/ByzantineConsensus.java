@@ -11,6 +11,7 @@ import com.sec.Messages.BaseMessage;
 import com.sec.Messages.Types.ValTSPair.SignedValTSPair;
 import com.sec.Messages.Types.Writeset.SignedWriteset;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -61,9 +62,14 @@ public class ByzantineConsensus extends ConsensusBFT {
             }
 
             if (conditionalCollect.getCollectedMessages().size() >= this.quorumSize) {
-                System.out.println("BYZANTINE PROCESS STARTED CONSENSUS WHEN NOT LEADER");
+
+                System.out.println("--------------------------CHECKING IF BYZANTINE STARTED CONSENSUS WHEN NOT LEADER----------------------------------");
+                System.out.println("\n                         BYZANTINE PROCESS STARTED CONSENSUS WHEN NOT LEADER \n");
+                System.out.println("-------------------------------------------------------------------------------------------------");
             }else {
-                System.out.println("BYZANTINE PROCESS COULDN'T START CONSENSUS WHEN NOT LEADER");
+                System.out.println("--------------------------CHECKING IF BYZANTINE STARTED CONSENSUS WHEN NOT LEADER----------------------------------");
+                System.out.println("\n                         BYZANTINE PROCESS COULDN'T START CONSENSUS WHEN NOT LEADER \n");
+                System.out.println("-------------------------------------------------------------------------------------------------");
             }
         }
 
@@ -118,10 +124,16 @@ public class ByzantineConsensus extends ConsensusBFT {
                 SignedValTSPair byzantineVal = createByzantineVal();
                 if(collectedMessage.getCollectedStates().get(this.SERVER_ID) != null){
                     if (collectedMessage.getCollectedStates().get(this.SERVER_ID).getWriteset().getWriteset().contains(byzantineVal)) {
-                        System.out.println("BYZANTINE STATE MSG WAS ACCEPTED BY LEADER");
+
+                        System.out.println("--------------------------CHECKING IF BYZANTINE STATE MSG WAS RECEIVED----------------------------------");
+                        System.out.println("\n                         BYZANTINE STATE MSG WAS ACCEPTED BY LEADER \n");
+                        System.out.println("-------------------------------------------------------------------------------------------------");
                     }
                 }else{
-                    System.out.println("BYZANTINE STATE MSG WAS NOT ACCEPTED BY LEADER");
+
+                    System.out.println("--------------------------CHECKING IF BYZANTINE STATE MSG WAS RECEIVED----------------------------------");
+                    System.out.println("\n                         BYZANTINE STATE MSG WAS NOT ACCEPTED BY LEADER \n");
+                    System.out.println("-------------------------------------------------------------------------------------------------");
                 }
 
             } catch (Exception e) {
@@ -143,20 +155,32 @@ public class ByzantineConsensus extends ConsensusBFT {
             try {
                 // Some condition check
                 waitCondition.await(5000, TimeUnit.MILLISECONDS);
+
                 // Code after waiting
+
+                ConcurrentHashMap<Integer, Integer> acceptRequestsReceived =
+                        acceptRequestsReceivedByConsensusID.computeIfAbsent(msgConsensusID, k -> new ConcurrentHashMap<>());
+
+                if (this.acceptRequestsReceivedByConsensusID.getOrDefault(msgConsensusID,  new ConcurrentHashMap<Integer, Integer>()) != null) {
+
+                    if (this.acceptRequestsReceivedByConsensusID.get(msgConsensusID).get(pairToWrite.hashCode()) != null) {
+                        System.out.println("--------------------------CHECKING IF BYZANTINE WRITE WAS RECEIVED----------------------------------");
+                        System.out.println("\n|                     BYZANTINE WRITE MSG WAS ACCEPTED               |\n");
+                        System.out.println("-------------------------------------------------------------------------------------------------");
+                    }else {
+                        System.out.println("--------------------------CHECKING IF BYZANTINE WRITE WAS RECEIVED----------------------------------");
+                        System.out.println("\n                         BYZANTINE WRITE MSG WAS NOT ACCEPTED \n");
+                        System.out.println("-------------------------------------------------------------------------------------------------");
+                    }
+                }
+
             } finally {
                 waitLock.unlock();
             }
-            if (this.acceptRequestsReceivedByConsensusID.get(msgConsensusID) != null) {
-                if (this.acceptRequestsReceivedByConsensusID.get(msgConsensusID).get(pairToWrite.hashCode()) != null) {
-                    System.out.println("BYZANTINE WRITE MSG WAS ACCEPTED");
-                } else {
-                    System.out.println("BYZANTINE WRITE MSG WAS NOT ACCEPTED");
-                }
 
-            } else {
-                super.sendWriteRequest(pairToWrite, msgConsensusID);
-            }
+        }
+        else {
+            super.sendWriteRequest(pairToWrite, msgConsensusID);
         }
     }
 }
